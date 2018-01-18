@@ -20,8 +20,7 @@ Page({
     });
   },
 
-  loadStockDataEOD: function (ticker, startDate, endDate) {
-    var page = this;
+  loadStockDataEOD: function (ticker, startDate, endDate, callback) {
     var requestTask = wx.request({
       url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + ticker + '/data.json?start_date=' + startDate + '&end_date=' + endDate + '&api_key=' + this.apiKey, //仅为示例，并非真实的接口地址
       header: {
@@ -29,39 +28,40 @@ Page({
       },
       success: function (res) {
         console.log(res.data);
-        var categories = [];
+        var dates = [];
         var data = [];
-        for (var i = 1; i < res.data.dataset_data.data.length; i++) {
-          categories.push(res.data.dataset_data.data[i][0]);
-          data.push(res.data.dataset_data.data[i][2]);
+        var closeIdx = res.data.dataset_data.column_names.indexOf("Adj. Close");
+        var dateIdx = res.data.dataset_data.column_names.indexOf("Date");
+        for (var i = 0; i < res.data.dataset_data.data.length; i++) {
+          dates.push(res.data.dataset_data.data[i][dateIdx]);
+          data.push(res.data.dataset_data.data[i][closeIdx]);
         }
         var stockData = {
           ticker: ticker,
-          categories: categories,
-          data: data
+          dates: dates.reverse(),
+          data: data.reverse()
         }
         console.log(stockData);
-        page.createChart(stockData);
-        console.log("success");
-
-        // data = res.data;
-        //page.changeName(res.data.dataset_data.data[0]);
+        callback(stockData);
+        console.log("loadStockDataEOD success");
       },
       fail: function (res) {
         console.log(res);
-        return false;
       }
     });
   },
 
+  // aggregate: function(stockData) {
+  //   this.portfolio = [];
+  // },
   createChart: function (stockData) {
-    if (stockData.data.length <= 0 || stockData.categories.length <= 0) {
+    if (stockData.data.length <= 0 || stockData.dates.length <= 0) {
       return;
     }
     lineChart = new wxCharts({
       canvasId: 'lineCanvas',
       type: 'line',
-      categories: stockData.categories,
+      categories: stockData.dates,
       animation: true,
       series: [{
         name: stockData.ticker,
@@ -103,7 +103,7 @@ Page({
     }
 
     //var simulationData = this.createSimulationData();
-    this.loadStockDataEOD('FB', '2018-01-01', '2018-01-16');
+    this.loadStockDataEOD('FB', '2018-01-01', '2018-01-17', this.createChart);
     //console.log(realdata);
 
   }
