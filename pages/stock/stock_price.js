@@ -1,86 +1,110 @@
-// pages/stock/stock_price.js
-
-var helloData = {
-  name: 'WeChat'
-}
-
+var wxCharts = require('../../utils/wxcharts.js');
+var app = getApp();
+var lineChart = null;
+var startPos = null;
 Page({
-
-  /**
-   * 页面的初始数据
-   */
-  data:  helloData,
-  changeName: function (value) {
-    // sent data change to view
-    this.setData({
-      name: value
-    })
+  data: {
   },
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
+  touchHandler: function (e) {
+    lineChart.scrollStart(e);
+  },
+  moveHandler: function (e) {
+    lineChart.scroll(e);
+  },
+  touchEndHandler: function (e) {
+    lineChart.scrollEnd(e);
+    lineChart.showToolTip(e, {
+      format: function (item, category) {
+        return category + ' ' + item.name + ':' + item.data
+      }
+    });
+  },
+
+  loadStockDataEOD: function (ticker, startDate, endDate) {
     var page = this;
-    wx.request({
-      url: 'https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?start_date=2018-01-01&end_date=2018-01-16&api_key=weN4-vHsp1yBg9LBEkmJ', //仅为示例，并非真实的接口地址
+    var requestTask = wx.request({
+      url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + ticker + '/data.json?start_date=' + startDate + '&end_date=' + endDate + '&api_key=' + this.apiKey, //仅为示例，并非真实的接口地址
       header: {
         'content-type': 'application/json' // 默认值
       },
       success: function (res) {
         console.log(res.data);
+        var categories = [];
+        var data = [];
+        for (var i = 1; i < res.data.dataset_data.data.length; i++) {
+          categories.push(res.data.dataset_data.data[i][0]);
+          data.push(res.data.dataset_data.data[i][2]);
+        }
+        var stockData = {
+          ticker: ticker,
+          categories: categories,
+          data: data
+        }
+        console.log(stockData);
+        page.createChart(stockData);
+        console.log("success");
+
         // data = res.data;
-        page.changeName(res.data.dataset_data.data[0]);
+        //page.changeName(res.data.dataset_data.data[0]);
+      },
+      fail: function (res) {
+        console.log(res);
+        return false;
       }
     });
-    
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
+  createChart: function (stockData) {
+    if (stockData.data.length <= 0 || stockData.categories.length <= 0) {
+      return;
+    }
+    lineChart = new wxCharts({
+      canvasId: 'lineCanvas',
+      type: 'line',
+      categories: stockData.categories,
+      animation: true,
+      series: [{
+        name: stockData.ticker,
+        data: stockData.data,
+        format: function (val, name) {
+          //return val.toFixed(2) + '万';
+          return val;
+        }
+      }],
+      xAxis: {
+        disableGrid: false
+      },
+      yAxis: {
+        title: 'price',
+        format: function (val) {
+          return val.toFixed(2);
+        },
+        min: 0
+      },
+      width: this.windowWidth,
+      height: 200,
+      dataLabel: true,
+      dataPointShape: true,
+      enableScroll: true,
+      extra: {
+        lineStyle: 'curve'
+      }
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
+  onLoad: function (e) {
+    this.apiKey = 'weN4-vHsp1yBg9LBEkmJ';
+    this.windowWidth = 320;
+    try {
+      var res = wx.getSystemInfoSync();
+      this.windowWidth = res.windowWidth;
+    } catch (e) {
+      console.error('getSystemInfoSync failed!');
+    }
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
-  },
+    //var simulationData = this.createSimulationData();
+    this.loadStockDataEOD('FB', '2018-01-01', '2018-01-16');
+    //console.log(realdata);
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
   }
-})
+});
