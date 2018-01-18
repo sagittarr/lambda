@@ -1,0 +1,3 @@
+<!--pages/stock/stock_price.wxml-->
+<text>pages/stock/stock_price.wxml</text>
+<view>Hello {{ name }}!</view>
