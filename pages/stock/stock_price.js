@@ -20,35 +20,65 @@ Page({
     });
   },
 
-  loadStockDataEOD: function (ticker, startDate, endDate, callback) {
-    var requestTask = wx.request({
-      url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + ticker + '/data.json?start_date=' + startDate + '&end_date=' + endDate + '&api_key=' + this.apiKey, //仅为示例，并非真实的接口地址
-      header: {
-        'content-type': 'application/json' // 默认值
-      },
-      success: function (res) {
-        console.log(res.data);
-        var dates = [];
-        var data = [];
-        var closeIdx = res.data.dataset_data.column_names.indexOf("Adj. Close");
-        var dateIdx = res.data.dataset_data.column_names.indexOf("Date");
-        for (var i = 0; i < res.data.dataset_data.data.length; i++) {
-          dates.push(res.data.dataset_data.data[i][dateIdx]);
-          data.push(res.data.dataset_data.data[i][closeIdx]);
-        }
-        var stockData = {
-          ticker: ticker,
-          dates: dates.reverse(),
-          data: data.reverse()
-        }
-        console.log(stockData);
-        callback(stockData);
-        console.log("loadStockDataEOD success");
-      },
-      fail: function (res) {
-        console.log(res);
-      }
+  compositeQuandlURL: function (data) {
+    if (data.dataset == 'WIKI') {
+      var url = 'https://www.quandl.com/api/v3/datasets/WIKI/' + 
+        data.ticker + '/data.json?start_date=' + data.startDate + 
+        '&end_date=' + data.endDate + '&api_key=' + this.apiKey;
+      return url;
+    }
+    return null;
+  },
+
+  loadPortfolio: function (tickers, startDate, endDate, callback){
+    var page = this;
+    function aggregate(stock){
+      console.log(stock);
+    };
+    tickers.forEach(function (element, index, array) {
+      page.loadStockDataEOD(element, startDate, endDate, aggregate);
+
     });
+
+  },
+
+  loadStockDataEOD: function (ticker, startDate, endDate, callback) {
+    var requestTask = wx.request(
+      {
+        url: this.compositeQuandlURL(
+          {
+            dataset: 'WIKI',
+            ticker: ticker,
+            startDate: startDate,
+            endDate: endDate
+          }
+        ),
+        header: {
+          'content-type': 'application/json' // 默认值
+        },
+        success: function (res) {
+          var dates = [];
+          var data = [];
+          var closeIdx = res.data.dataset_data.column_names.indexOf("Adj. Close");
+          var dateIdx = res.data.dataset_data.column_names.indexOf("Date");
+          for (var i = 0; i < res.data.dataset_data.data.length; i++) {
+            dates.push(res.data.dataset_data.data[i][dateIdx]);
+            data.push(res.data.dataset_data.data[i][closeIdx]);
+          }
+          var stockData = 
+          {
+            ticker: ticker,
+            dates: dates.reverse(),
+            data: data.reverse()
+          }
+          console.log(stockData);
+          callback(stockData);
+          console.log("loadStockDataEOD success");
+        },
+        fail: function (res) {
+          console.log(res);
+        }
+      });
   },
 
   // aggregate: function(stockData) {
@@ -67,7 +97,6 @@ Page({
         name: stockData.ticker,
         data: stockData.data,
         format: function (val, name) {
-          //return val.toFixed(2) + '万';
           return val;
         }
       }],
@@ -103,6 +132,7 @@ Page({
     }
 
     //var simulationData = this.createSimulationData();
+    this.loadPortfolio(['FB','AMZN'], '2018-01-01', '2018-01-17', this.createChart);
     this.loadStockDataEOD('FB', '2018-01-01', '2018-01-17', this.createChart);
     //console.log(realdata);
 
