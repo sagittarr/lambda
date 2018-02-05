@@ -1,0 +1,70 @@
+/* pages/portfolio/index.wxss */
+page {
+    background: #F6F6F6;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+ /* .selector{
+    width: 100%;
+    font-size: 15px;
+    align-items: left;
+}  */
+
+.table {
+  border: 0px solid darkgray;
+}
+.tr {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  height: 3rem;
+  align-items: center;
+}
+.td {
+    width:40%;
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+}
+.bg-w{
+  background: snow;
+}
+.bg-g{
+  background: #E6F3F9;
+}
+.th {
+  width: 40%;
+  justify-content: center;
+  background: #3366FF;
+  color: #fff;
+  display: flex;
+  height: 3rem;
+  align-items: center;
+}
+
+#selector_time {
+    width: 710rpx;
+    height: 60rpx;
+    background-color: #f8f8f8;
+    margin: 16rpx auto 14rpx auto;
+}
+
+#selector_time text {
+    display: inline-block;
+    width: 20%;
+    height: 100%;
+    box-sizing: border-box;
+    font-size: 26rpx;
+    color: #353535;
+    text-align: center;
+    line-height: 60rpx;
+}
+
+ #selector_time text:first-child {
+    border-radius: 8rpx 0 0 8rpx;
+}
+
+#selector_time text:last-child {
+    border-radius: 0 8rpx 8rpx 0;
+} 
