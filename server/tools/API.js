@@ -77,13 +77,7 @@ async function build_strategy_ts_from_id(productId, tickers, inception_date) {
   return new Promise(function (resolve, rej) {
     knex('phases').select('*').where({ id: productId }).then(function (rows) {
       if(rows.length == 0){
-        load_historical_data(tickers).then(function (dataset) {
-          console.log('ds', dataset)
-          var agg = aggregate_timeseries(dataset)
-          computeQuantMetrics(agg)
-          agg.timeRange = timeRangeSlice(agg, inception_date)
-          resolve(agg)
-        })
+        resolve("no record found");
       }
       else{
         var inputs = []
@@ -94,7 +88,8 @@ async function build_strategy_ts_from_id(productId, tickers, inception_date) {
             rows[i-1].to = parseInt(row.date);
           }
           if(i == rows.length -1){
-            row.to = 20180420
+//             row.to = 20180420
+            row.to = parseInt(util.yearAgo2Today().to);
           }
           })
         build_strategy_ts(rows).then(function (result) { resolve(result)})
@@ -106,24 +101,18 @@ async function build_strategy_ts_from_id(productId, tickers, inception_date) {
 
 // input = [{tickers, from, to}]
 async function build_strategy_ts(inputs){
-
-  var samples = []
+  var slices = []
   return new Promise(function (res, rej) {
     inputs.map((input, i) => {
-      console.log(input)
+//       console.log(input)
       load_historical_data(input.tickers).then(function (dataset) {
-        console.log(dataset)
+//         console.log(dataset)
         var agg = aggregate_timeseries(dataset)
-        console.log(agg)
-        if (i != 0) {
-          samples.push(cut_off(agg, input.from, input.to))
-        }
-        else {
-          samples.push(cut_off(agg, input.from, input.to))
-        }
-        if (samples.length == inputs.length) {
+//         console.log(agg)
+        slices.push(cut_off(agg, input.from, input.to))
+        if (slices.length == inputs.length) {
           // res(samples)
-          var final_ts = concat_ts(samples)
+          var final_ts = concat_ts(slices)
           res(final_ts)
         }
       })
