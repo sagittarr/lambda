@@ -1,0 +1,27 @@
+.multiple-select {
+  padding: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 50px;
+}
+
+.multiple-select text {
+  width: 20%;
+  height: 60rpx;
+  display: block;
+  border: 1rpx solid #ddd;
+  line-height: 60rpx;
+  font-size: 28rpx;
+  text-align: center;
+  border-radius: 10rpx;
+  margin: 10rpx;
+  background: silver;
+  color: black;
+  border-color: silver;
+}
+
+.multiple-select text.active {
+  background: wheat;
+  color: #fff;
+  border-color: #f7982a;
+}

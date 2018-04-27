@@ -1,0 +1,48 @@
+ <template name="inputForm">
+  <view class="popup-example--center zan-popup zan-popup--center {{ showBottomPopup ? 'zan-popup--show' : ''}}" >
+    <view class="zan-popup__mask" catchtap="toggleBottomPopup" style="z-index:15"></view>
+    <view class="zan-popup__container" style='width:90%;z-index:15' >
+      <view class="weui-cells__title">Create new portfolio</view>
+      <view class="weui-cells__tips">{{input_hint}}</view>
+      <view class="zan-panel">
+        <view class="weui-cells weui-cells_after-title">
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <view class="weui-label">日期</view>
+            </view>
+            <view class="weui-cell__bd">
+              <picker mode="date" value="{{date}}" start="2018-01-01" end="2019-09-01" bindchange="bindDateChange">
+                <view class="weui-input">{{date}}</view>
+              </picker>
+            </view>
+          </view>
+        </view>
+        <view class="weui-cells__tips">创建日期不得修改</view>
+        <form bindsubmit="formSubmit" bindreset="formReset" bindconfirm="true">
+          <view class="weui-cells__title">输入投资策略/组合名称(MAX 12)</view>
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__bd">
+                <input name='name' class="weui-input" maxlength="12" placeholder="请输入" />
+              </view>
+            </view>
+          </view>
+
+          <view class="weui-cells__title">输入介绍(MAX 100)</view>
+          <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+              <view class="weui-cell__bd">
+                <textarea name="desp" class="weui-textarea" maxlength="100" placeholder="请输入文本" style="height: 5em" />
+              </view>
+            </view>
+          </view>
+          <view class="zan-btns">
+            <button class="weui-btn" type="default" formType="submit" bindconfirm="submitConfirm" style='background-color:wheat; width:60%;'>Submit</button>
+            <button class="weui-btn" type="default" formType="reset" style='width:60%;'>Reset</button>
+            <button class="weui-btn" type="default" bindtap="toggleBottomPopup" style='width:60%;'>Close</button>
+          </view>
+        </form>
+      </view>
+    </view>
+  </view>
+</template>

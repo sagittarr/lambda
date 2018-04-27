@@ -1,0 +1,58 @@
+/* pages/search/search.wxss */
+@import "../common/SearchBar/SearchBar.wxss";
+@import "../../utils/zanui.wxss";
+@import "../../utils/icons.wxss";
+@import "../../utils/weapp.wxss";
+@import "../../utils/multi-select.wxss";
+.search_view {
+  width: 100%;
+  height: 130rpx;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+
+.list_item {
+  display: flex;
+  flex-direction: row;
+  /* position: relative; */
+  width: 100%;
+  align-items: center;
+}
+
+.item_type {
+  position: relative;
+  border-style: solid;
+  border-radius: 6rpx;
+  border-width: 1rpx;
+  padding: 6rpx;
+  text-align: center;
+  font-size: 10px;
+    margin-left: 20rpx;
+   margin-right: 20rpx;
+}
+
+.list_item .item_text {
+  position: relative;
+  font-size: 14px;
+      margin-left: 20rpx;
+   margin-right: 20rpx;
+}
+
+.list_item image {
+  position: absolute;
+  width: 44rpx;
+  height: 100%;
+  right: 50rpx;
+}
+
+.popup-example--bottom .zan-popup__container {
+  left: 0;
+  right: 0;
+}
+
+.popup-example--center {
+  border-radius: 4px;
+}
+

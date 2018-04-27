@@ -1,0 +1,6 @@
+/* pages/libs/weui/input/input.wxss */
+@import "../../utils/weapp.wxss";
+@import "../../utils/icons.wxss";
+@import "../../utils/zanui.wxss";
+@import "../../utils/multi-select.wxss";
+/* @import "../../app.wxss"; */

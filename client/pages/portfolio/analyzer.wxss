@@ -1,0 +1,132 @@
+/* pages/portfolio/index.wxss */
+@import "/pages/common/StockCell/StockCell.wxss";
+@import "../../utils/zanui.wxss";
+@import "../../utils/icons.wxss";
+@import "../../utils/weapp.wxss";
+page {
+    background: #f8f8f8; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+ /* .selector{
+    width: 100%;
+    font-size: 15px;
+    align-items: left;
+}  */
+.item_title_icon {
+  position: relative;
+  width: 8rpx;
+  height: 30rpx;
+  margin-left: 0rpx;
+  border-radius: 3px;
+}
+.table {
+  border: 0px solid darkgray;
+}
+.tr {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+   height: 2.5em; 
+  align-items: center;
+}
+.td {
+    width:40%;
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+}
+.bg-w{
+  background: gainsboro;
+}
+.bg-g{
+  background: #ebebeb;
+}
+.th {
+  width: 40%;
+  justify-content: center;
+  background: #3366FF;
+  color: #fff;
+  display: flex;
+  height: 3rem;
+  align-items: center;
+}
+/* #edf0f4 */
+.item-tab{
+  height: 66rpx;
+  width: 100%;
+  background-color: #ebebeb;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: none;
+  border-right: none;
+  display: flex;
+  flex-direction: row;
+  /* align-items: center; */
+  transition: all 300ms ease;
+}
+
+.item-tab text {
+  /* width: 100%; */
+  line-height: 40px;
+  font-size: 30rpx;
+  color: black;
+  padding: 0rpx 0rpx 0rpx 20rpx;
+}
+
+.item-space {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+ .item-space-text {
+  width: 100%;
+  line-height: 25px; 
+   /* font-size: 25rpx; */
+  color: #3b3a37;
+  font-family: 'Trebuchet MS',
+                 'Lucida Sans Unicode',
+                 'Lucida Grande',
+                 'Lucida Sans',
+                 Arial,
+                 sans-serif;
+  font-style: normal;
+  position: relative;
+  padding: 0 0 0 28rpx;
+} 
+
+
+.item-tab text:after {
+  content: '';
+  display: inline-block;
+  vertical-align: 4rpx;
+  width: 0;
+  height: 0;
+  border-left: 12rpx solid transparent;
+  border-right: 12rpx solid transparent;
+  border-top: 12rpx solid #bbb;
+  margin-left: 8rpx;
+}
+
+.item-tab:not(.sort-tab) text.active:after {
+  border-top: 0;
+  border-bottom: 12rpx solid #f7982a;
+}
+
+.item-tab.sort-tab text.active:after {
+  border-top: 12rpx solid #f7982a;
+}
+
+/* .canvas {
+    width: 100%;
+    height: 200px;
+} */
+
+/* .hide {
+  display: none;
+}
+
+.show {
+  display: block;
+} */
+

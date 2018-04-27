@@ -1,13 +1,33 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/portfolio/index"
+    "pages/lab2/lab",
+    "pages/portfolio/analyzer",
+    "pages/about/about",
+    "pages/search/search",
+    "pages/input/input",
+    "pages/preview/preview"
   ],
   "window": {
-    "backgroundColor": "#F6F6F6",
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "Lambda Portfolio Analytics",
-    "navigationBarTextStyle": "black"
-  }
+    "navigationBarTitleText": "掌控美股",
+    "enablePullDownRefresh": true,
+    "navigationBarBackgroundColor": "#3b3a37",
+    "navigationBarTextStyle": "white"
+  },
+    "tabBar": {
+      "selectedColor": "#ee7600",
+      "list": [
+        {
+          "pagePath": "pages/lab2/lab",
+          "iconPath": "images/list.png",
+          "selectedIconPath": "images/list-active.png",
+          "text": "策略选股"
+        },
+        {
+          "pagePath": "pages/about/about",
+          "iconPath": "images/lambda.png",
+          "selectedIconPath": "images/lambda-active.png",
+          "text": "关于掌控"
+        }
+      ]
+    }
 }

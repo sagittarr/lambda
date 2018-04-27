@@ -1,0 +1,130 @@
+<import src="../common/line.wxml" />
+
+<view class="zan-popup {{ showOperationPopup ? 'zan-popup--show' : ''}}">
+  <view class="zan-popup__mask" bindtap="togglePopup"></view>
+  <view class="zan-popup__container popup-example--center" style="width:50%;  border-radius: 5px;">
+    <view class="zan-btns" style="flex-direction: column; text-align:center">
+      <text class=" T5 S8">{{currentPick.name}}</text>
+        <!-- <button class="weui-btn" type="default" bindtap="onPublish" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>发布</button>   -->
+      <!-- <button class="weui-btn" type="default" bindtap="onUpdate" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>更新</button>   -->
+      <button class="weui-btn" type="default" bindtap="onEditClick" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>编辑</button>
+      <button class="weui-btn" type="default" bindtap="onDeleteClick" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>删除</button>
+      <button class="weui-btn" type="default" bindtap="togglePopup" style='width:100%;'>返回</button>
+    </view>
+  </view>
+</view>
+
+<view class="zan-popup {{ showConfirmPopup ? 'zan-popup--show' : ''}}">
+  <view class="zan-popup__mask" bindtap="togglePopup"></view>
+  <view class="zan-popup__container popup-example--center" style="width:50%; height:40%; border-radius: 5px;">
+    <view class="zan-btns" style="flex-direction: column; text-align:center">
+      <text class=" T3 S4">{{confirmQuestion}}</text>
+      <button class="weui-btn" type="default" bindtap="onConfirm" style='background-color:brown; width:100%;'>是</button>
+      <button class="weui-btn" type="default" bindtap="onCancel" style='width:100%;'>否</button>
+    </view>
+  </view>
+</view>
+
+<view class="page">
+   <view class="weui-flex">
+  <block wx:key="name" wx:for="{{marketIndex}}" wx:for-item="item" wx:for-index="index">
+    <view class="weui-flex__item" bindtap="onIndexTap" data-index="{{index}}">
+      <view class="index_placeholder" style='background-color:{{item.bg}};color:{{item.color}}; font-weight: bold'>
+        <view style="flex-direction:row; text-align: center; width:100%">
+        <text class="S6 T5" style='color:{{item.color}}'>{{item.name}}</text>
+        <text class="S2 T1" style='color:#4d4d4d' wx:if="{{item.active}}">  live</text>
+        </view>
+        <text class="S6">{{item.price}}</text>
+        <text class="S6" wx:if="{{!item.showPct}}">{{item.zd}}</text>
+        <text class="S6" wx:if="{{item.showPct}}">{{item.pct}}</text>
+      </view>
+    </view>
+    </block>
+  </view> 
+  <view class="page__hd" style='padding:10px'>
+    <view style='display: inline-flex; flex-direction: row; width:100%'>
+      <text class="page__title" style="width:50%">投资策略分析</text>
+     
+       <view class="weui-flex" style="width:65%">
+              <view class="weui-flex__item">
+                <!-- <navigator url="../about/about" open-type="navigate"> 
+      <image class="inline_icon_left" style="background:gainsboro;" src="../../images/Help_02-512.png" />
+             </navigator>  -->
+      </view>
+       <view class="weui-flex__item">
+        <image class="inline_icon_right" style="background:gainsboro;" src="../../images/Plus_01-66-512.png" bindtap="onNewPortfolioTap"/>
+
+      </view>
+      </view>
+    </view>
+    <!-- <view class="page__desc">控制风险，提高收益</view> -->
+  </view>
+  <view class="page__bd">
+    <view class="weui-tab">
+      <view class="weui-navbar">
+        <block wx:for="{{tabs}}" wx:key="*this">
+          <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+            <view class="weui-navbar__title">{{item}}</view>
+          </view>
+        </block>
+        <view class="weui-navbar__slider" style=" left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+      </view>
+    </view>
+  </view>
+  <view class="page__bd">
+    <view class="weui-panel weui-panel_access" style="background-color:#ebebeb">
+       <view class="weui-panel__hd"></view> 
+<!-- 请点击文字进入分析页面 -->
+    <view class="logo" wx:if="{{collection.length==0}}">
+      <!-- <image src="../../images/optional_add.png" /> -->
+      <!-- <image class="icon_panel_icon" style="background:gainsboro;" src="../../images/Plus_01-66-512.png" bindtap="onNewPortfolioTap"/>
+      
+      <view><text>请创建新的分析案例</text></view> -->
+      <text style="font-size:30rpx;">暂无数据</text>
+    </view>
+
+      <block wx:key="id" wx:for="{{collection}}" wx:for-item="item" wx:for-index="index">
+        <view style="display:flex; flex-direction:row; width:100%;background-color:#F8F8F8;margin-bottom:3%">
+          <view class="weui-panel__bd" style="height:100%;width:100%">
+            <navigator url="../portfolio/analyzer" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" bindtap="onPortfolioSelect" open-type="navigate" data-item="{{item}}">
+              <!-- <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                <image class="weui-media-box__thumb" src="{{item.icon_path}}" />
+              </view> -->
+              <view class="weui-media-box__bd weui-media-box__bd_in-appmsg" style="height:60px">
+                <view class="weui-media-box__title">{{item.name}}</view>
+                <!-- <view class=" T2 S3">创建者{{item.publisher}}     {{item.inception}}</view> -->
+                <view class="weui-media-box__desc">{{item.short_desp}}</view>
+              </view>
+            </navigator>
+            <view class="weui-flex">
+              <view class="weui-flex__item">
+                <view class="cell_placeholder" style="color:{{item.ltsChgPct_bg}}">
+                  <text class='S2 T2'>{{keywords.latest_change}}</text>
+                  <text class='S8'>{{item.ratiosDisplay.latestChgPct}}</text>
+                </view>
+              </view>
+              <view class="weui-flex__item">
+                <view class="cell_placeholder" style="color:{{item.dailyReturn_bg}}">
+                  <text class='S2 T2'>{{keywords.avg_return}}</text>
+                  <text class='S8'>{{item.ratiosDisplay.dailyReturn}}</text>
+                </view>
+              </view>
+              <view class="weui-flex__item">
+                <view class="cell_placeholder" style="color:{{item.return_bg}}">
+                  <text class='S2 T2'>{{keywords.return}}</text>
+                  <text class='S8'>{{item.ratiosDisplay.return}}</text>
+                </view>
+              </view>
+              <!-- </block> -->
+            </view>
+          </view>
+          <view class="weui-flex menu_bar">
+             <image class="menu_bar__thumb" src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex == 1}}"  /> 
+             <!-- <image class="menu_bar__thumb" src="../../images/Info_01-512.png" /> -->
+            <!-- <image class="menu_bar__thumb" src="../../images/List-512.png" />  -->
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

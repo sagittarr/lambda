@@ -1,0 +1,9 @@
+
+<view class="about-tab" style="display:flex; flex-direction:row">
+  <image class="userinfo-avatar" src="{{logged ? userInfo.avatarUrl : '../../images/crown_regal_king-512.png'}}" background-size="cover"></image>
+  <!-- <text bindtap="onChangeShowState" class="{{showView?'active':''}}">关于</text> -->
+</view>
+<view class="about-space">
+<!-- class="hide{{showView?'show':''}}" -->
+  <text >公众号：掌控研投社\n 开发者：燕歌行； Wechat ID: swifter003\n 版本号：{{version}}</text>
+</view>

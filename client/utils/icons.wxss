@@ -1,0 +1,44 @@
+
+.icon_panel {
+  display: flex;
+  background-color: #edf0f4
+}
+.icon_panel_item {
+  flex: 1;
+  flex-direction: column;
+  text-align: center; 
+  padding: 0 0 0 0;
+  font-size: 25rpx;
+  font-style:inherit;
+}
+
+.icon_panel_icon {
+  margin: 0 auto;
+  width: 75rpx;
+  height: 75rpx;
+  /* border-radius: 4px; */
+  background-color: gainsboro
+}
+
+.icon_panel__icon :active{
+  background-color: wheat; 
+}
+.inline_icon_right{
+   /* display: inline-block;  */
+  width: 75rpx;
+  height: 75rpx;
+  float: right;
+  /* border-left: 2rpx solid silver; */
+}
+.inline_icon_right :active{
+  background-color: wheat; 
+}
+.inline_icon_left{
+   /* display: inline-block;  */
+  width: 75rpx;
+  height: 75rpx;
+  float: left;
+}
+.inline_icon_left :active{
+  background-color: wheat; 
+}

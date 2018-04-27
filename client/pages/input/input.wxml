@@ -1,0 +1,57 @@
+<import src="../common/StockCell/StockCell.wxml" />
+<import src="../common/line.wxml" />
+<import src="/utils/dist/toptips/index.wxml"/>
+
+<view class="page" xmlns:wx="http://www.w3.org/1999/xhtml">
+<template is="zan-toptips" data="{{ zanTopTips }}"></template>
+
+  <!-- <text class="weui-cells__title S6">创建/修改投资策略基本信息</text>   -->
+  <view class="weui-cells__title">入选个股</view>
+  <view class="multiple-select" style="background-color:white">
+    <block wx:key="ticker" wx:for="{{stockList}}" wx:for-item="item" wx:for-index="index">
+      <text bindtap="onCheckStock" data-ticker="{{item.ticker}}" class="{{item.toDel?'active':''}}">{{item.ticker}}</text>
+    </block>
+  </view>
+  <view class="page__bd">
+    <view class="weui-toptips weui-toptips_warn" wx:if="{{showTopTips}}">{{topInfo}}</view>
+
+    <form bindsubmit="formSubmit" bindreset="formReset" bindconfirm="true">
+      <view class="weui-cells__title">输入案例名称</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__bd">
+            <input name='name' class="weui-input S4" maxlength="10" placeholder="请输入"  value="{{name_value}}"/>
+          </view>
+        </view>
+      </view>
+
+      <view class="weui-cells__title">输入介绍</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <textarea name="desp" class="weui-textarea S4" maxlength="100" placeholder="请输入文本" value="{{desp_value}}" style="height: 3.3em" />
+            <!-- <view class="weui-textarea-counter">0/100</view> -->
+          </view>
+        </view>
+      </view>
+      <view class="weui-cells__title">创建日期 {{inception}}</view>
+      <view class="weui-cells__title">{{date_tip}}</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label S4">日期</view>
+          </view>
+          <view class="weui-cell__bd">
+            <picker mode="date" value="{{date}}" start="2018-01-01" end="2019-09-01" bindchange="bindDateChange">
+              <view class="weui-input">{{date}}</view>
+            </picker>
+          </view>
+        </view>
+      </view>
+      <view class="weui-btn-area">
+        <button ass="weui-btn" type="default" style="background-color:wheat" formType="submit" bindconfirm="submitConfirm">提交</button>
+        <button class="weui-btn" type="default" formType="reset">重置</button>
+      </view>
+    </form>
+  </view>
+</view>

@@ -15,9 +15,12 @@ const { auth: { authorizationMiddleware, validationMiddleware } } = require('../
 router.get('/login', authorizationMiddleware, controllers.login)
 // 用户信息接口（可以用来验证登录态）
 router.get('/user', validationMiddleware, controllers.user)
-// router.get('/stock_history', queryStockHistory)
-router.get('/stock_history', controllers.stockhistory)
 
+router.get('/stock_history', controllers.stock_historical_price)
+router.get('/realtime_price', controllers.realtime_price)
+router.get('/ticker_search', controllers.ticker_search)
+router.get('/db_handler', controllers.db_handler)
+router.get('/stock_data_quote', controllers.stock_data_quote)
 // --- 图片上传 Demo --- //
 // 图片上传接口，小程序端可以直接将 url 填入 wx.uploadFile 中
 router.post('/upload', controllers.upload)

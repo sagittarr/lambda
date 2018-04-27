@@ -1,0 +1,165 @@
+var config = require('../../config')
+var util = require('../../utils/util.js');
+const validator = require('./validator.js')
+var Zan = require('../../utils/dist/index');
+Page({
+    data: {
+        // showTopTips: false,
+        // topInfo: '',
+        stockList: [],
+        radioItems: [
+          { name: '平均分配', value: '0', checked: true},
+            // {name: '自定义', value: '1'}
+        ],
+        checkboxItems: [
+            {name: 'standard is dealt for u.', value: '0', checked: true},
+            {name: 'standard is dealicient for u.', value: '1'}
+        ],
+        inception: '--',
+        date: "2018-03-01",
+        date_tip:'',
+        initial_date_tip: '创建日期(创建后不得修改)',
+        update_date_tip: '更新日期(提交后不得更改)'
+    },
+    onLoad: function (){
+
+      if (getApp().globalData.useExistingProfile) {
+        var profile = getApp().globalData.selected
+        this.setData({
+          name_value: profile.name,
+          desp_value: profile.desp,
+          inception: profile.inception,
+          date_tip: this.data.update_date_tip
+        })
+      }
+      else{
+        this.setData({
+          date_tip: this.data.initial_date_tip,
+        })
+      }
+      if (getApp().globalData.stocksForCreateOrModify.length>0){
+        this.setData({ stockList: getApp().globalData.stocksForCreateOrModify})
+        // this.data.stockList = getApp().globalData.stocksForCreateOrModify
+      }
+      console.log(getApp().globalData.stocksForCreateOrModify)
+       
+    },
+
+    radioChange: function (e) {
+        console.log('radio发生change事件，携带value值为：', e.detail.value);
+
+        var radioItems = this.data.radioItems;
+        for (var i = 0, len = radioItems.length; i < len; ++i) {
+            radioItems[i].checked = radioItems[i].value == e.detail.value;
+        }
+
+        this.setData({
+            radioItems: radioItems
+        });
+    },
+
+    checkboxChange: function (e) {
+        console.log('checkbox发生change事件，携带value值为：', e.detail.value);
+
+        var checkboxItems = this.data.checkboxItems, values = e.detail.value;
+        for (var i = 0, lenI = checkboxItems.length; i < lenI; ++i) {
+            checkboxItems[i].checked = false;
+
+            for (var j = 0, lenJ = values.length; j < lenJ; ++j) {
+                if(checkboxItems[i].value == values[j]){
+                    checkboxItems[i].checked = true;
+                    break;
+                }
+            }
+        }
+        this.setData({
+            checkboxItems: checkboxItems
+        });
+    },
+
+    bindDateChange: function (e) {
+        this.setData({
+            date: e.detail.value
+        })
+        console.log(e)
+        console.log(e)
+    },
+
+    bindTimeChange: function (e) {
+        this.setData({
+            time: e.detail.value
+        })
+    },
+
+    showTopTips: function (info) {
+      Zan.TopTips.showZanTopTips(this, info);
+    },
+
+    storeProfile: function (info, data ){
+      var that = this
+      let profile = getApp().globalData.selected
+      let date = this.data.date.replace('-', '').replace('-', '')
+      let lambda_key = getApp().globalData.lambda_key
+      if (data == undefined) {
+        data = {}
+      }
+      if (!profile) {
+        profile = {}
+      }
+      if (!profile.id){
+        var n = new Date().getTime();
+        profile.id = n.toString()
+        profile.inception = date
+        // profile.ratiosTable = {}
+      }
+      profile.name = info.name
+      profile.desp = info.desp
+      profile.last_update = date,
+      profile.isLocal = true
+      profile.tickers = that.data.stockList
+      data[profile.id] = profile
+      wx.setStorage({
+        key: lambda_key,
+        data: data
+      })
+      console.log('store', data)
+      wx.navigateBack({
+        delta: 2
+      })
+      util.showSuccess('Create ' + profile.name + ' done')
+    },
+
+    formSubmit: function (e) {
+      var that = this;
+      var info = e.detail.value;
+      var lambda_key = getApp().globalData.lambda_key
+      let profile = getApp().globalData.selected
+      // console.log(this.data.date.replace('-', ''))
+      // var date = validator.validateDate(this.data.date.replace('-',''));
+      // console.log(date)
+      // if (!date) {
+      //   this.showTopTips("invalid date input")
+      //   return;
+      // }
+      let date = this.data.date.replace('-', '').replace('-', '')
+
+      if (info.name.length == 0) {
+        this.showTopTips("Name is empty")
+        return
+      }
+      if (info.desp.length == 0) {
+        this.showTopTips("Description is empty")
+        return
+      }
+      wx.getStorage({
+        key: lambda_key,
+        success: function (res) {
+          that.storeProfile(info,res.data)
+        },
+        fail: function(res){
+          console.log(lambda_key, ' not found')
+          that.storeProfile(info)
+        }
+      });
+    },
+});

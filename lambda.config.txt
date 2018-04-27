@@ -1,3 +1,0 @@
-  "apiKey":{
-	"alphaVantage": "WLM4RKKDFEXZAQK6"
-  }

@@ -1,0 +1,53 @@
+[
+    {
+      "name": "Portfolio A",
+      "holdings": ["HUBS", "MB", "VRNS", "PFPT", "SPLK", "PXLW"],
+      "desp": "this is a demo",
+      "icon": "../../images/net.jpg",
+      "return_icon": "../../images/gauges_g.png",
+      "risk_icon": "../../images/gauges_g.png",
+      "show": false,
+      "inception": "2018-01-01",
+      "inc_return": "0.016",
+      "inc_volatility": "0.015"
+    },
+    {
+      "name": "Quantopian Selection A",
+      "holdings": ["AVXS", "BGNE", "ACAD", "ARRY", "PTLA", "BPMC", "SRPT", "SHOP", "UBNT", "KKR"
+      ],
+      "desp": "The startegy based on working capital over asset",
+      "icon": "../../images/bio.jpg",
+      "return_icon": "../../images/gauges_g.png",
+      "risk_icon": "../../images/gauges_2.png",
+      "show": false,
+      "inception": "2018-02-07",
+      "inc_return": "0.095",
+      "inc_volatility": "0.023"
+    },
+    {
+      "name": "Quantopian Selection B",
+      "holdings": ["SEE", "CIEN", "EXEL", "JHX", "NKTR", "BBL", "VIRT", "BGNE"
+      ],
+      "desp": "cap1500 & roic_top150 & eps_growth_top150",
+      "icon": "../../images/target.jpg",
+      "return_icon": "../../images/gauges_g.png",
+      "risk_icon": "../../images/gauges_g.png",
+      "show": false,
+      "inception": "2018-02-07",
+      "inc_return": "0.153",
+      "inc_volatility": "0.013"
+    },
+    {
+      "name": "Tech growth",
+      "holdings": ["SQ", "NFLX", "NVDA", "BABA", "ATVI"
+      ],
+      "desp": "fast growing tech companies",
+      "icon": "../../images/tech_ai2.jpg",
+      "return_icon": "../../images/gauges_g.png",
+      "risk_icon": "../../images/gauges_g.png",
+      "show": false,
+      "inception": "2018-01-01",
+      "inc_return": "0.112",
+      "inc_volatility": "0.022"
+    }
+]

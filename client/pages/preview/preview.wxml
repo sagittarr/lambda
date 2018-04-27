@@ -1,0 +1,50 @@
+<view class="page" xmlns:wx="http://www.w3.org/1999/xhtml">
+  <view class="page__hd" style='padding:10px'>
+    <view style=' flex-direction: row; width:100%'>
+      <text class="S6">发布信息预览</text>
+    </view>
+    <!-- <view class="page__desc">根据不同的投资策略，若干支个股组成一个投资组合</view> -->
+  </view>
+  <view class="weui-cells__title">入选个股</view>
+  <view class="multiple-select" style="background-color:white">
+    <block wx:key="ticker" wx:for="{{stockList}}" wx:for-item="item" wx:for-index="index">
+      <text bindtap="onCheckStock" data-ticker="{{item.ticker}}" class="{{item.toDel?'active':''}}">{{item.ticker}}</text>
+    </block>
+  </view>
+  <view class="page__bd">
+    <view class="weui-toptips weui-toptips_warn" wx:if="{{showTopTips}}">{{topInfo}}</view>
+
+    <!-- <form bindsubmit="formSubmit" bindreset="formReset" bindconfirm="true"> -->
+
+      <view class="weui-cells__title">投资策略/组合名称</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <text>{{name_value}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="weui-cells__title">介绍</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <text>{{desp_value}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="weui-cells__title">日期</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <text>{{inception}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="weui-btn-area">
+        <button ass="weui-btn" type="default" style="background-color:wheat" bindtap="onPublish">确认发布</button>
+        <button class="weui-btn" type="default" bindtap="onCancel">取消</button>
+      </view>
+    <!-- </form> -->
+  </view>
+</view>

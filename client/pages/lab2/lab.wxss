@@ -1,0 +1,103 @@
+@import "../../utils/weapp.wxss";
+@import "../../utils/icons.wxss";
+@import "../../utils/zanui.wxss";
+
+.logo {
+  text-align:center;
+  padding-top:50rpx;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #AAA
+}
+.logo image {
+  width: 250rpx;
+  height: 250rpx;
+}
+
+.placeholder {
+  margin: 5px;
+  padding: 0 10px;
+  background-color: #ebebeb;
+  height: 2.3em;
+  line-height: 2.3em;
+  color: #cfcfcf;
+  /* font-size: 30rpx;
+    display: flex;
+    flex-direction: column */
+}
+
+.index_placeholder {
+  margin: 5px;
+  /* padding: 0 10px; */
+  background-color:#ebebeb ;
+  height: 5em;
+
+  color: #cfcfcf;
+  /* font-size: 30rpx; */
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.cell_placeholder {
+  margin: 5px;
+  padding: 0 5px;
+   background-color: #ebebeb; 
+   height: 3em; 
+  line-height: 1.5em; 
+  color: darkgray;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-weight: bold;
+  /* padding-left: 1em; */
+  /* border-left: 1px solid #cecece; */
+}
+.card__header {
+  display: inline-block;
+  flex-direction: row;
+  width: 100%;
+  border-top:1rpx solid darkgray;
+  background-color: #F8F8F8;
+  /* line-height: 1em;*/
+    height: 66rpx;  
+   align-content: center;
+   margin-bottom: 15rpx
+}
+.menu_bar {
+  height: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+.menu_bar__thumb {
+  width: 75rpx;
+  height: 75rpx;
+  margin-top: 5rpx;  
+  margin-bottom: 5rpx;
+  background-color: gainsboro;
+  /* vertical-align: top; */
+}
+.menu_bar__thumb :active {
+  background-color: wheat;
+}
+.zan-btn :active{
+  background-color: wheat;
+}
+ /* .card__hd {
+   padding: 14px 15px 10px; 
+  color: #999;
+  font-size: 13px;
+  position: relative;
+}
+
+.card__hd:after {
+  content: " ";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 1px;
+  border-bottom: 1rpx solid #e5e5e5;
+  color: #e5e5e5;
+  left: 15px;
+}  */

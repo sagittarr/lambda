@@ -1,0 +1,113 @@
+/**index.wxss**/
+
+ page {
+  background: #F8F8F8;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+} 
+
+/* .userinfo, .uploader, .tunnel {
+    margin-top: 40rpx;
+    height: 140rpx;
+    width: 100%;
+    background: #FFF;
+    border: 1px solid rgba(0, 0, 0, .1);
+    border-left: none;
+    border-right: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: all 300ms ease;
+} */
+
+
+
+.about-tab{
+    margin-top: 20rpx;
+}
+.userinfo-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  font-size: 32rpx;
+  color: #007aff;
+}
+
+.about-tab text {
+  /* width: 100%; */
+  line-height: 52px;
+  font-size: 34rpx;
+  color: #3b3a37;
+}
+
+.about-space {
+  margin-top: 0rpx;
+  width: 100%;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  height: auto;
+  padding: 0 0 0 40rpx;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.about-space text {
+  width: 100%;
+  line-height: 30px;
+  font-size: 30rpx;
+  color: #3b3a37;
+  font-family: 'Trebuchet MS',
+                 'Lucida Sans Unicode',
+                 'Lucida Grande',
+                 'Lucida Sans',
+                 Arial,
+                 sans-serif;
+  font-style: normal;
+  position: relative;
+  margin-left: 16rpx;
+}
+.about-space radio {
+  /* width: 100%; */
+  line-height: 50px;
+  font-size: 20rpx;
+  color: #3b3a37;
+}
+.about-tab text:after {
+  content: '';
+  display: inline-block;
+  vertical-align: 4rpx;
+  width: 0;
+  height: 0;
+  border-left: 12rpx solid transparent;
+  border-right: 12rpx solid transparent;
+  border-top: 12rpx solid #bbb;
+  margin-left: 8rpx;
+}
+
+.about-tab text.active {
+  color: #e0bc28;
+  /* background-color: #3b3a37; */
+}
+
+.about-tab:not(.sort-tab) text.active:after {
+  border-top: 0;
+  border-bottom: 12rpx solid #f7982a;
+}
+
+.about-tab.sort-tab text.active:after {
+  border-top: 12rpx solid #f7982a;
+}
+
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}

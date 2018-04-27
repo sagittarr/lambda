@@ -7,7 +7,7 @@
 var host = "https://kkbkpixp.qcloud.la";
 // var socketHost = 'wss://nbpuar4i.ws.qcloud.la';
 var config = {
-
+    // portfolio: 'port1',
     // 下面的地址配合云端 Demo 工作
     service: {
         host,
@@ -23,8 +23,11 @@ var config = {
 
         // 上传图片接口
         uploadUrl: `${host}/weapp/upload`,
-
-        stockHistoryUrl: `${host}/weapp/stock_history`
+        db_handler: `${host}/weapp/db_handler`,
+        stockHistoryUrl: `${host}/weapp/stock_history`,
+        stockDataQuote: `${host}/weapp/stock_data_quote`,
+        realtime_price: `${host}/weapp/realtime_price`,
+        ticker_search: `${host}/weapp/ticker_search`
     },
 
     // enviroment: {
