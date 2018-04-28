@@ -93,9 +93,9 @@ Page({
     console.log(_tickers)
     var options = {
       url: config.service.db_handler,
-      data: { operation: 'RHD', tickers: _tickers, inception: profile.inception },
+      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception },
       success(result) {
-        console.log("read RHD", result)
+        console.log("read LOAD_PORTFOLIO", result)
         result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts['range']] = ts})
         lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
       },

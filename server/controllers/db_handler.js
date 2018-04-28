@@ -16,7 +16,19 @@ module.exports = async (ctx, next) => {
   await next()
   // read history
   console.log(ctx.query)
-  if (ctx.query.operation.toUpperCase() == 'STB2') {
+  if (ctx.query.operation.toUpperCase() == 'DEBUG-LOAD_PORTFOLIO') {
+    var tickers = JSON.parse(ctx.query.tickers)
+    var inception_date = ctx.query.inception
+    await api.load_historical_data(tickers).then(function (dataset) {
+      console.log('ds', dataset)
+      var agg = api.aggregateStockData(dataset)
+      api.computeQuantMetrics(agg)
+      agg.timeRange = api.timeRangeSlice(agg, inception_date)
+      ctx.state.data = agg
+      console.log('final data', ctx.state.data)
+    })
+  }
+  else if (ctx.query.operation.toUpperCase() == 'STB2') {
     var productId = JSON.parse(ctx.query.productId)
     var tickers = JSON.parse(ctx.query.tickers)
     var inception_date = ctx.query.inception
@@ -40,18 +52,19 @@ module.exports = async (ctx, next) => {
       console.log('final data', ctx.state.data)
     })
   }
-  if(ctx.query.operation.toUpperCase() == 'RHD'){
+  if (ctx.query.operation.toUpperCase() == 'LOAD_PORTFOLIO'){
     var tickers = JSON.parse(ctx.query.tickers)
-    // var dts = util.yearAgo2Today()
     var inception_date = ctx.query.inception
     await api.load_historical_data(tickers).then(function (dataset) { 
-      // ctx.state.data = api.aggregate_timeseries(dataset) 
-      console.log('ds', dataset)
       var agg = api.aggregateStockData(dataset)
       api.computeQuantMetrics(agg)
-      // console.log('incep',inception_date)
       agg.timeRange = api.timeRangeSlice(agg, inception_date)
-      ctx.state.data = agg
+      var finalData = {}
+      finalData.ticker = agg.ticker
+      finalData.avg_return = agg.avg_return
+      finalData.quant = agg.quant
+      finalData.timeRange = agg.timeRange
+      ctx.state.data = finalData
       console.log('final data', ctx.state.data) 
       })
   }
