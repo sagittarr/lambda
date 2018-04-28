@@ -47,7 +47,7 @@ module.exports = async (ctx, next) => {
     await api.load_historical_data(tickers).then(function (dataset) { 
       // ctx.state.data = api.aggregate_timeseries(dataset) 
       console.log('ds', dataset)
-      var agg = api.aggregate_timeseries(dataset)
+      var agg = api.aggregateStockData(dataset)
       api.computeQuantMetrics(agg)
       // console.log('incep',inception_date)
       agg.timeRange = api.timeRangeSlice(agg, inception_date)

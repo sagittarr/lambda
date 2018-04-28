@@ -1,5 +1,9 @@
 var yahooFinance = require('yahoo-finance');
 var Promise = require('promise')
+var _u = require('underscore');
+// var Series = require('pandas-js').Series;
+// var DataFrame = require('pandas-js').DataFrame;
+// var DF = require('data-forge');
 var knex = require('knex')({
   client: 'mysql',
   connection: {
@@ -107,7 +111,7 @@ async function build_strategy_ts(inputs){
 //       console.log(input)
       load_historical_data(input.tickers).then(function (dataset) {
 //         console.log(dataset)
-        var agg = aggregate_timeseries(dataset)
+        var agg = aggregateStockData(dataset)
 //         console.log(agg)
         slices.push(cut_off(agg, input.from, input.to))
         if (slices.length == inputs.length) {
@@ -137,7 +141,7 @@ async function load_historical_data(tickers) {
               insert_historical(t, JSON.stringify(ts), last_update);
               // console.log(ts)
               ts.map(t => { t.date = util.date2Str(new Date(t.date))})
-              var stockData = process_stock_timeseries(ts, t)
+              var stockData = processStockData(ts, t)
               stockData.last_update = last_update
               stockData.isBenchmark = t == 'SPY' ? true : false;
               dataset.push(stockData)
@@ -148,7 +152,7 @@ async function load_historical_data(tickers) {
             )
           }
           else {
-            var stockData = process_stock_timeseries(JSON.parse(rows[0].data), t)
+            var stockData = processStockData(JSON.parse(rows[0].data), t)
             stockData.last_update = rows[0].last_update
             stockData.isBenchmark = t == 'SPY' ? true : false;
             dataset.push(stockData)
@@ -172,67 +176,61 @@ function computeDailyReturns(stockData) {
   }
   return returns;
 };
-function process_stock_timeseries(stock_ts, ticker, benchmark_ticker = 'SPY') {
-  var adjClose_ts = []
+function processStockData(stock_ts, ticker, benchmark_ticker = 'SPY') {
+  var prices = []
+  var dates = []
   for (var i = 0; i < stock_ts.length; i++) {
-    adjClose_ts.push({date: stock_ts[i].date.slice(0,10).replace(/-/g,''), value:stock_ts[i]['adjClose']})
+    prices.push(stock_ts[i]['adjClose'])
+    dates.push(parseInt(stock_ts[i].date.slice(0, 10).replace(/-/g, '')))
   }
-  adjClose_ts = adjClose_ts.reverse()
+  prices = prices.reverse()
+  dates = dates.reverse()
   var stockData =
     {
       ticker: ticker,
-      adjClose: adjClose_ts,
-      values: adjClose_ts.map(function (x) { return parseFloat(x.value) / parseFloat(adjClose_ts[0].value) }),
-      dailyPctChange: undefined,
+      // adjClose: adjClose_ts,
+      adjClose: prices,
+      dailyPctChange: prices.map((v, i) => { return i > 0 ? v / prices[i - 1] : 1. }),
+      values: prices.map((v, i) =>  v / prices[0] ),
+      valuesWithDate: {},
+      dateIndex: dates,
       isBenchmark: ticker == benchmark_ticker? true: false,
-      show: false,
+      show: false
     }
-  stockData.dailyPctChange = computeDailyReturns(stockData);
+  stockData.values.map((v, i) => stockData.valuesWithDate[dates[i]] = v )
+  // stockData.dailyPctChange = computeDailyReturns(stockData);
   return stockData
 }
 
 
-function aggregate_timeseries(dataset) {
-  var agg_value_ts = []
-  var size = 0
-  if (dataset.length == 0) {
-    return 'dataset is empty'
-  }
-  var size_rep = []
-  for (var i = 0; i < dataset.length; i++) {
-    size_rep.push(dataset[i].ticker, dataset[i].adjClose.length)
-    if (size > 0 && dataset[i].adjClose.length != size) {
-      return size_rep
+function aggregateStockData(dataset) {
+  var benchmark;
+  dataset.map(stock=> {if(stock.isBenchmark) benchmark = stock} )
+  dataset.map(stock => { 
+    if(!stock.isBenchmark && stock.dateIndex.length<benchmark.dateIndex.length){ 
+      tmp = []
+      benchmark.dateIndex.map((v, i) => { tmp.push(stock.valuesWithDate[v])})
+      stock.values = tmp 
     }
-    size = dataset[i].adjClose.length;
+  })
+  var aggSeries = []
+  for (var i = 0; i < benchmark.dateIndex.length; i++) {
+    let all = []
+    dataset.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
+    all = _u.compact(all)
+    let avg = all.reduce((previous, current) => current += previous) / all.length;
+    aggSeries.push(avg);
   }
-  dataset[0].values.forEach(
-    function (_, i) {
-      var agg_value = 0.;
-      dataset.forEach(
-        function (stock) {
-          if (stock.isBenchmark == false) {
-            agg_value += stock.values[i]
-          }
-        }
-      );
-      agg_value = agg_value / (dataset.length - 1);
-      agg_value_ts.push(agg_value);
-    }
-  );
-  aggregation = {
+  var aggregation = {
     ticker: '投资组合',
-    values: agg_value_ts,
-    show: true
-  };
-  dataset.map(stock => {if(stock.isBenchmark){aggregation.benchmark = stock}})
-  aggregation.dateIndex = dataset[0].adjClose.map((item => {
-    return parseInt(item.date.replace(/-/g,''));
-  }))
-  aggregation.dataset = dataset
-  let cum_value = aggregation.values[aggregation.values.length - 1]
-  aggregation.avg_return = Math.pow(cum_value, 1. / (aggregation.values.length - 1)) //日均
-  aggregation.dailyPctChange = computeDailyReturns(aggregation)
+    values: aggSeries,
+    dateIndex : dataset[0].dateIndex,
+    dataset : dataset,
+    avg_return: Math.pow(_u.last(aggSeries), 1. / aggSeries.length - 1), //日均
+    dailyPctChange: aggSeries.map((v, i) => { return i > 0 ? v / aggSeries[i - 1] : 1. }),
+    show: true,
+    benchmark: benchmark
+  }
   return aggregation
 }
 
@@ -257,8 +255,8 @@ function timeRangeSlice(aggregation, inception_date, benchmark_ticker ='SPY',tim
       index = util.dateIndexPicker(aggregation.dateIndex, inception_date)
       aggregation.dataset.map(stock => { if (!stock.isBenchmark) { 
         // console.log(stock.adjClose.length - 1, index[0], stock.adjClose)
-        let pct = stock.adjClose[stock.adjClose.length - 1].value / stock.adjClose[index[0]].value; 
-        holdingPct.push({ticker: stock.ticker, value: pct}) }})
+        let totalPct = stock.adjClose[stock.adjClose.length - 1] / stock.adjClose[index[0]]; 
+        holdingPct.push({ ticker: stock.ticker, value: totalPct}) }})
     }
     var dates = index.map(i => { return aggregation.dateIndex[i].toString() })
     var values = index.map(i => { return aggregation.values[i] })
@@ -397,7 +395,7 @@ function insert_historical(ticker, data, time_stamp, update_time=null) {
 module.exports = {
   computeQuantMetrics: computeQuantMetrics,
   timeRangeSlice: timeRangeSlice,
-  aggregate_timeseries: aggregate_timeseries,
+  aggregateStockData: aggregateStockData,
   load_historical_data: load_historical_data,
   // quote_historical: quote_historical,
   quote_historical2: quote_historical2,
