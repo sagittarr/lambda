@@ -43,9 +43,9 @@ Page({
     this.updateData()
     var options = {
       url: config.service.db_handler,
-      data: { operation: 'LOAD_PORTFOLIO', tickers: ['SPY', 'AMD', 'X'], inception: '20180301' },
+      data: { operation: 'DEBUG-LOAD_PORTFOLIO', tickers: ['SPY', 'AMD', 'X'], inception: '20180301' },
       success(result) {
-        console.log("read LOAD_PORTFOLIO", result)
+        console.log("DEBUG-LOAD_PORTFOLIO", result)
       },
       fail(error) {
         util.showModel('请求失败', error);

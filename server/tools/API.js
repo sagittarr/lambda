@@ -66,9 +66,6 @@ function concat_ts(samples){
   // samples[0].values.map(v => { values.push(v)})
   var phases = []
   for(var i= 0; i< samples.length; i++){
-    // samples.dateIndex = samples.dateIndex.slice(1)
-    // samples[i].values = samples[i].values.slice(1) * samples[i - 1].values[samples[i - 1].values.length - 1]
-    // var lastPhaseReturn = samples[i - 1].values[samples[i - 1].values.length - 1]
     samples[i].values.map(v => { values.push(v) })
     samples[i].dateIndex.map(v => { dateIndex.push(v) })
     phases.push({ from: samples[i].dateIndex[0], to: samples[i].dateIndex[samples[i].dateIndex.length - 1]})
@@ -80,24 +77,24 @@ async function build_strategy_ts_from_id(productId, tickers, inception_date) {
   var samples = []
   return new Promise(function (resolve, rej) {
     knex('phases').select('*').where({ id: productId }).then(function (rows) {
-      if(rows.length == 0){
+      if (rows.length == 0) {
         resolve("no record found");
       }
-      else{
+      else {
         var inputs = []
-        rows.map((row,i)=>{
+        rows.map((row, i) => {
           row.tickers = JSON.parse(row.holds);
           row.from = parseInt(row.date);
-          if(i!=0){
-            rows[i-1].to = parseInt(row.date);
+          if (i != 0) {
+            rows[i - 1].to = parseInt(row.date);
           }
-          if(i == rows.length -1){
-//             row.to = 20180420
+          if (i == rows.length - 1) {
+            //             row.to = 20180420
             row.to = parseInt(util.yearAgo2Today().to);
           }
-          })
-        build_strategy_ts(rows).then(function (result) { resolve(result)})
-        
+        })
+        build_strategy_ts(rows).then(function (result) { resolve(result) })
+
       }
     })
   })
@@ -108,14 +105,10 @@ async function build_strategy_ts(inputs){
   var slices = []
   return new Promise(function (res, rej) {
     inputs.map((input, i) => {
-//       console.log(input)
       load_historical_data(input.tickers).then(function (dataset) {
-//         console.log(dataset)
         var agg = aggregateStockData(dataset)
-//         console.log(agg)
         slices.push(cut_off(agg, input.from, input.to))
         if (slices.length == inputs.length) {
-          // res(samples)
           var final_ts = concat_ts(slices)
           res(final_ts)
         }
@@ -124,11 +117,14 @@ async function build_strategy_ts(inputs){
   })
 }
 
-async function load_historical_data(tickers) {
+async function load_historical_data(tickers, inceptionDate, from = undefined) {
   var dataset = []
+  dataset.inceptionDate = inceptionDate
   var dts = util.yearAgo2Today()
-  var from = dts.from
-  var to = dts.to
+  var to = dts.to;
+  if (from == undefined) {
+    from = dts.from
+  }
   return new Promise(function (res, rej) {
     try {
       tickers.forEach(function (t) {
@@ -137,9 +133,7 @@ async function load_historical_data(tickers) {
             var request = { symbol: t, from: from, to: to, period: 'd' }
             quote_historical2(request).then(function (ts) {
               let last_update = Date.now() / 1000
-              // console.log(ts)
               insert_historical(t, JSON.stringify(ts), last_update);
-              // console.log(ts)
               ts.map(t => { t.date = util.date2Str(new Date(t.date))})
               var stockData = processStockData(ts, t)
               stockData.last_update = last_update
@@ -176,6 +170,7 @@ function computeDailyReturns(stockData) {
   }
   return returns;
 };
+
 function processStockData(stock_ts, ticker, benchmark_ticker = 'SPY') {
   var prices = []
   var dates = []
@@ -188,7 +183,6 @@ function processStockData(stock_ts, ticker, benchmark_ticker = 'SPY') {
   var stockData =
     {
       ticker: ticker,
-      // adjClose: adjClose_ts,
       adjClose: prices,
       dailyPctChange: prices.map((v, i) => { return i > 0 ? v / prices[i - 1] : 1. }),
       values: prices.map((v, i) =>  v / prices[0] ),
@@ -226,11 +220,18 @@ function aggregateStockData(dataset) {
     values: aggSeries,
     dateIndex : dataset[0].dateIndex,
     dataset : dataset,
-    avg_return: Math.pow(_u.last(aggSeries), 1. / aggSeries.length - 1), //日均
+    avgDlyRtn: Math.pow(_u.last(aggSeries), 1. / (aggSeries.length - 1)), //日均
     dailyPctChange: aggSeries.map((v, i) => { return i > 0 ? v / aggSeries[i - 1] : 1. }),
     show: true,
+    inceptionDate : dataset.inceptionDate,
     benchmark: benchmark
   }
+  var inception = parseInt(aggregation.inceptionDate)
+  var idx = aggregation.dateIndex.indexOf(inception)
+  if (idx >= 0) {
+    aggregation.returnSinceInception = _u.last(aggregation.values) / aggregation.values[idx]
+    aggregation.avgDlyRtnSinceInception = Math.pow(aggregation.returnSinceInception, 1. / (aggregation.dateIndex.length - idx))
+  } 
   return aggregation
 }
 
@@ -368,8 +369,10 @@ async function quote_historical2(request) {
 //     callback(quotes)
 //   });
 // }
-
-function insert_historical(ticker, data, time_stamp, update_time=null) {
+function insertPortfolioProfile(){
+  knex('historical_data').where('ticker', ticker).update({ data: data, last_update: time_stamp, update_time: new Date().toISOString() }).then(function (result) { console.log(result) })
+}
+function insert_historical(ticker, data, time_stamp, update_time = null) {
   // knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp }).then(function (data) {
   //   console.log('insert data',ticker)  });
 
@@ -382,9 +385,7 @@ function insert_historical(ticker, data, time_stamp, update_time=null) {
         return knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp, update_time: new Date().toISOString() })
       } else {
         console.log('try update', ticker)
-        knex('historical_data').where('ticker', ticker).update({ data: data, last_update: time_stamp, update_time: new Date().toISOString()}).then(function(result){console.log(result)})
-        // knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp })
-        // return or throw - duplicate name found
+        knex('historical_data').where('ticker', ticker).update({ data: data, last_update: time_stamp, update_time: new Date().toISOString() }).then(function (result) { console.log(result) })
       }
     })
     .catch(function (ex) {

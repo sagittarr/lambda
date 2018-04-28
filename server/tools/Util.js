@@ -14,7 +14,19 @@ function yearAgo2Today(){
   var to = yyyy + '' + mm + '' + dd;
   return {from: from, to: to}
 }
-
+function getToday(){
+  var today = new Date()
+  var dd = today.getDate();
+  if (dd < 10) {
+    dd = '0' + dd
+  }
+  var mm = today.getMonth() + 1; //January is 0!
+  if (mm < 10) {
+    mm = '0' + mm
+  }
+  var yyyy = today.getFullYear();
+  return  yyyy + '' + mm + '' + dd;
+}
 function date2Str(date){
   var dd = date.getDate();
   if (dd < 10) {
@@ -68,5 +80,6 @@ function dateIndexPicker(dateIndex, arg){
 module.exports = {
   date2Str: date2Str,
   yearAgo2Today: yearAgo2Today,
-  dateIndexPicker: dateIndexPicker
+  dateIndexPicker: dateIndexPicker,
+  getToday: getToday
 };

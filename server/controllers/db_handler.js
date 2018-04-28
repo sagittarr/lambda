@@ -19,7 +19,7 @@ module.exports = async (ctx, next) => {
   if (ctx.query.operation.toUpperCase() == 'DEBUG-LOAD_PORTFOLIO') {
     var tickers = JSON.parse(ctx.query.tickers)
     var inception_date = ctx.query.inception
-    await api.load_historical_data(tickers).then(function (dataset) {
+    await api.load_historical_data(tickers, inception_date).then(function (dataset) {
       console.log('ds', dataset)
       var agg = api.aggregateStockData(dataset)
       api.computeQuantMetrics(agg)
@@ -32,11 +32,7 @@ module.exports = async (ctx, next) => {
     var productId = JSON.parse(ctx.query.productId)
     var tickers = JSON.parse(ctx.query.tickers)
     var inception_date = ctx.query.inception
-    // var dts = util.yearAgo2Today()
-    // var inception_date = ctx.query.inception
-
     await api.build_strategy_ts_from_id(productId, tickers, inception_date).then(function (dataset) {
-      // ctx.state.data = api.aggregate_timeseries(dataset) 
       ctx.state.data = dataset
       console.log('final data', ctx.state.data)
     })
@@ -55,13 +51,13 @@ module.exports = async (ctx, next) => {
   if (ctx.query.operation.toUpperCase() == 'LOAD_PORTFOLIO'){
     var tickers = JSON.parse(ctx.query.tickers)
     var inception_date = ctx.query.inception
-    await api.load_historical_data(tickers).then(function (dataset) { 
+    await api.load_historical_data(tickers, inception_date).then(function (dataset) { 
       var agg = api.aggregateStockData(dataset)
       api.computeQuantMetrics(agg)
       agg.timeRange = api.timeRangeSlice(agg, inception_date)
       var finalData = {}
       finalData.ticker = agg.ticker
-      finalData.avg_return = agg.avg_return
+      finalData.avgDlyRtn = agg.avgDlyRtn
       finalData.quant = agg.quant
       finalData.timeRange = agg.timeRange
       ctx.state.data = finalData
@@ -104,7 +100,7 @@ module.exports = async (ctx, next) => {
     await knex('portfolio_metadata')
       .where('id', '=', portfolio.id)
       .update(
-      'ratiosTable', JSON.stringify(portfolio.ratiosTable)).then(function (data) {
+      'ratiosTable', JSON.stringify(portfolio.c)).then(function (data) {
         console.log(data);
         ctx.state.data = data
       });
