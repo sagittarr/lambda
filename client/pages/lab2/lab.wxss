@@ -14,6 +14,18 @@
   height: 250rpx;
 }
 
+.item_type {
+  /* position: relative; */
+  border-style: solid;
+  border-radius: 6rpx;
+  border-width: 2rpx;
+  padding: 2rpx; 
+  text-align: center;
+  height: 20px;
+  font-size: 12px;
+  margin-left: 20rpx; 
+  /* margin-right: 20rpx;  */
+}
 .placeholder {
   margin: 5px;
   padding: 0 10px;
@@ -84,20 +96,3 @@
 .zan-btn :active{
   background-color: wheat;
 }
- /* .card__hd {
-   padding: 14px 15px 10px; 
-  color: #999;
-  font-size: 13px;
-  position: relative;
-}
-
-.card__hd:after {
-  content: " ";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  height: 1px;
-  border-bottom: 1rpx solid #e5e5e5;
-  color: #e5e5e5;
-  left: 15px;
-}  */

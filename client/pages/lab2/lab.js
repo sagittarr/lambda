@@ -12,14 +12,11 @@ Page({
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,
-
     keywords: keywords,
     collection: [],
     public_list: [],
     marketIndex: helper.marketIndex,
-    // public_domain: true,
     showBottomPopup: false,
-    // showDeleteDialog: false,
     onLoadPopup: true,
     showMoreWidgets: false,
     marketState: '',
@@ -40,7 +37,8 @@ Page({
         });
       }
     });
-    this.updateData()
+
+    // this.updateData()
     // var options = {
     //   url: config.service.db_handler,
     //   data: { operation: 'LOAD_PORTFOLIO', tickers: ['SPY', 'AMD', 'X'], inception: '20180301', id: '0', mode:"debug" },
@@ -69,7 +67,6 @@ Page({
   },
 
   updateData: function () {
-    // console.log(this.data.marketIndex)
     helper.quoteMarketIndex(this, this.data.marketIndex);
     if (getApp().globalData.useDemoData) {
       helper.loadSampleData()
@@ -94,6 +91,7 @@ Page({
 
   onShow: function () {
     // 页面显示
+    util.showBusy('请求中...');
     this.updateData()
   },
 
@@ -188,10 +186,6 @@ Page({
       url: '../preview/preview'
     })
   },
-
-  // onUpdate: function(e){
-  //   getApp().globalData.selected = this.data.currentPick
-  // },
 
   onNewPortfolioTap: function () {
     getApp().globalData.selected = undefined

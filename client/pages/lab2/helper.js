@@ -104,10 +104,10 @@ function loadProfilefromServer(that) {
     data: { operation: 'R' },
     success(result) {
       console.log("read ", result)
-      result.data.data.forEach(function (e) {
-        e.curr_holds = JSON.parse(e.curr_holds)
-        DisplayMetrics(e, 'inception')
-        Colorify(e, 'inception')
+      result.data.data.forEach(function (loaded) {
+        loaded.curr_holds = JSON.parse(loaded.curr_holds)
+        DisplayMetrics(loaded, 'inception')
+        Colorify(loaded, 'inception')
       })
 
       that.setData({
@@ -118,6 +118,7 @@ function loadProfilefromServer(that) {
         quoteChangePrecentageForProfile(profile, that);
       })
       that.showProfileList()
+      util.showSuccess('数据请求完成')
     },
     fail(error) {
       util.showModel('请求失败', error);
@@ -175,7 +176,7 @@ function DisplayMetrics(profile, timeKey, marketState = '') {
     profile.ratiosDisplay.avgDlyReturn = '--'
     profile.ratiosDisplay.totalReturn = '--'
   }
-  profile.size = profile.curr_holds.length
+  // profile.size = profile.curr_holds.length
 
   if (profile.latestChgPct) {
     let mark = profile.latestChgPct > 0 ? '+' : ''
@@ -225,6 +226,9 @@ function Colorify(profile, timeKey) {
     }
     else if (ltsChgPct < 0) {
       profile.ltsChgPct_bg = color_style[2]
+    }
+    else if (latestChgPct == 'PRE'){
+      profile.ltsChgPct_bg = 'black'
     }
     else {
       profile.ltsChgPct_bg = color_style[3]
