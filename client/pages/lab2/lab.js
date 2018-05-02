@@ -41,24 +41,11 @@ Page({
       }
     });
     this.updateData()
-    var options = {
-      url: config.service.db_handler,
-      data: { operation: 'DEBUG-LOAD_PORTFOLIO', tickers: ['SPY', 'AMD', 'X'], inception: '20180301' },
-      success(result) {
-        console.log("DEBUG-LOAD_PORTFOLIO", result)
-      },
-      fail(error) {
-        util.showModel('请求失败', error);
-        console.log('request fail', error);
-      }
-    }
-    wx.request(options);
     // var options = {
     //   url: config.service.db_handler,
-    //   // data: { operation: 'STB', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: 20180117}, { tickers: ['LRCX', 'AMD'], from: 20180201, to: 20180301 }], inception: '20180301' },
-    //   data: { operation: 'STB2', productId: 1521986497295, tickers: ['SPY', 'AMD', 'X'], inception: '20180301'},
+    //   data: { operation: 'LOAD_PORTFOLIO', tickers: ['SPY', 'AMD', 'X'], inception: '20180301', id: '0', mode:"debug" },
     //   success(result) {
-    //     console.log("read STB", result)
+    //     console.log("DEBUG-LOAD_PORTFOLIO", result)
     //   },
     //   fail(error) {
     //     util.showModel('请求失败', error);
@@ -66,6 +53,19 @@ Page({
     //   }
     // }
     // wx.request(options);
+    var options = {
+      url: config.service.db_handler,
+      // data: { operation: 'STB', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: 20180117}, { tickers: ['LRCX', 'AMD'], from: 20180201, to: 20180301 }], inception: '20180301' },
+      data: { operation: 'STB2', productId: 1521986497295, inception: '20180301', mode: 'debug'},
+      success(result) {
+        console.log("read STB", result)
+      },
+      fail(error) {
+        util.showModel('请求失败', error);
+        console.log('request fail', error);
+      }
+    }
+    wx.request(options);
   },
 
   updateData: function () {

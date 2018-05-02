@@ -93,10 +93,10 @@ Page({
     console.log(_tickers)
     var options = {
       url: config.service.db_handler,
-      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception },
+      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception, id: profile.id , toUpdateDB : true},
       success(result) {
         console.log("read LOAD_PORTFOLIO", result)
-        result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts['range']] = ts})
+        result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts.timeId] = ts})
         lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
       },
       fail(error) {
@@ -172,25 +172,25 @@ Page({
     return ratios;
   },
   
-  updatePtfProfile2Cloud() {
-    // console.log("before saving",getApp().globalData.selected.ratiosTable)
-    var options = {
-      url: config.service.db_handler,
-      data: {
-        operation: 'W',
-        portfolio: getApp().globalData.selected
-      },
-      success(result) {
-        console.log('update profile in cloud: result code =  ' + result.code)
-      },
-      fail(error) {
-        // util.showModel('请求失败', error);
-        console.log('request fail', error);
-      }
-    }
-    // send request
-    wx.request(options);
-  },
+  // updatePtfProfile2Cloud() {
+  //   // console.log("before saving",getApp().globalData.selected.ratiosTable)
+  //   var options = {
+  //     url: config.service.db_handler,
+  //     data: {
+  //       operation: 'W',
+  //       portfolio: getApp().globalData.selected
+  //     },
+  //     success(result) {
+  //       console.log('update profile in cloud: result code =  ' + result.code)
+  //     },
+  //     fail(error) {
+  //       // util.showModel('请求失败', error);
+  //       console.log('request fail', error);
+  //     }
+  //   }
+  //   // send request
+  //   wx.request(options);
+  // },
 
   showPortfolioMetrics:function(table){
     this.data.metricsTbl[0].text = table.return.toFixed(2) + '%';
@@ -461,12 +461,7 @@ Page({
     this.setData({
       currentTimeIndex: index
     })
-
-    // this.computeComparisonMetrics(range)
-    // lineChart = chart_utils.createPortfolioLineChart(
-    //   this.data.portfolioCache[range],
-    //   getApp().globalData.selected.inception,
-    //   that.windowWidth);
+    console.log(that.data.timeSeriesData)
     lineChart = chart_utils.createPortfolioLineChart2(that.data.timeSeriesData[range], that.windowWidth);
     // pieChart = chart_utils.createPieChart2(that.data.timeSeriesData[range], that.windowWidth);
     // pieChart = chart_utils.createPieChart(

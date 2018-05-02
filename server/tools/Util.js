@@ -1,4 +1,6 @@
 const linspace = require('linspace')
+var _u = require('underscore');
+
 function yearAgo2Today(){
   var today = new Date()
   var dd = today.getDate();
@@ -63,13 +65,13 @@ function dateIndexPicker(dateIndex, arg){
   }
   else{//inception case
     var output = []
-    var cut = parseInt(arg)
+    var cut = arg
     dateIndex.map((d, i) => { if (d >= cut) output.push(i) })
     if(output.length > MAX){
-      arr = linspace(output[0], output[output.length - 1], MAX)
+      arr = linspace(output[0], _u.last(output), MAX)
     }
     else{
-    arr = output;
+      arr = output;
     }
   }
   return arr.map(num => {

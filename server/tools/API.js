@@ -73,7 +73,7 @@ function concat_ts(samples){
   return {values: values, dateIndex : dateIndex, phases : phases}
 }
 
-async function build_strategy_ts_from_id(productId, tickers, inception_date) {
+async function build_strategy_ts_from_id(productId, debug = false) {
   var samples = []
   return new Promise(function (resolve, rej) {
     knex('phases').select('*').where({ id: productId }).then(function (rows) {
@@ -94,7 +94,6 @@ async function build_strategy_ts_from_id(productId, tickers, inception_date) {
           }
         })
         build_strategy_ts(rows).then(function (result) { resolve(result) })
-
       }
     })
   })
@@ -103,6 +102,11 @@ async function build_strategy_ts_from_id(productId, tickers, inception_date) {
 // input = [{tickers, from, to}]
 async function build_strategy_ts(inputs){
   var slices = []
+  inputs.map(input => { 
+    if (_u.indexOf(input.tickers, 'SPY') == -1) {
+      input.tickers.push('SPY')
+    }
+  })
   return new Promise(function (res, rej) {
     inputs.map((input, i) => {
       load_historical_data(input.tickers).then(function (dataset) {
@@ -163,6 +167,7 @@ async function load_historical_data(tickers, inceptionDate, from = undefined) {
     }
   })
 }
+
 function computeDailyReturns(stockData) {
   var returns = [1]
   for (var i = 1; i < stockData.values.length; i++) {
@@ -196,7 +201,6 @@ function processStockData(stock_ts, ticker, benchmark_ticker = 'SPY') {
   return stockData
 }
 
-
 function aggregateStockData(dataset) {
   var benchmark;
   dataset.map(stock=> {if(stock.isBenchmark) benchmark = stock} )
@@ -207,6 +211,7 @@ function aggregateStockData(dataset) {
       stock.values = tmp 
     }
   })
+  
   var aggSeries = []
   for (var i = 0; i < benchmark.dateIndex.length; i++) {
     let all = []
@@ -215,6 +220,7 @@ function aggregateStockData(dataset) {
     let avg = all.reduce((previous, current) => current += previous) / all.length;
     aggSeries.push(avg);
   }
+
   var aggregation = {
     ticker: '投资组合',
     values: aggSeries,
@@ -226,12 +232,13 @@ function aggregateStockData(dataset) {
     inceptionDate : dataset.inceptionDate,
     benchmark: benchmark
   }
-  var inception = parseInt(aggregation.inceptionDate)
-  var idx = aggregation.dateIndex.indexOf(inception)
-  if (idx >= 0) {
-    aggregation.returnSinceInception = _u.last(aggregation.values) / aggregation.values[idx]
-    aggregation.avgDlyRtnSinceInception = Math.pow(aggregation.returnSinceInception, 1. / (aggregation.dateIndex.length - idx))
-  } 
+  
+  // var inception = aggregation.inceptionDate
+  // var idx = aggregation.dateIndex.indexOf(inception)
+  // if (idx >= 0) {
+  //   aggregation.returnSinceInception = _u.last(aggregation.values) / aggregation.values[idx]
+  //   aggregation.avgDlyRtnSinceInception = Math.pow(aggregation.returnSinceInception, 1. / (aggregation.dateIndex.length - idx))
+  // } 
   return aggregation
 }
 
@@ -240,68 +247,55 @@ function computeQuantMetrics(aggregation){
   var sharp = Calculator.computeSharpRatio(aggregation.dailyPctChange, aggregation.benchmark.dailyPctChange)
   var mdd = Calculator.computeMDD(aggregation.values)
   var voli = Calculator.computeVolatility(aggregation.dailyPctChange)
-  var total_return = (aggregation.values[aggregation.values.length - 1] / aggregation.values[0] - 1.)
-  aggregation.quant = { '1y': { alpha: ab.alpha, beta: ab.beta, sharp: sharp, mdd: mdd, voli: voli, total_return: total_return}}
+  let totalReturn = (aggregation.values[aggregation.values.length - 1] / aggregation.values[0]) - 1
+  let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (aggregation.dateIndex.length - 1)) - 1
+  aggregation.quant = { '1y': { alpha: ab.alpha, beta: ab.beta, sharp: sharp, mdd: mdd, voli: voli, totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: aggregation.dateIndex.length}}
+  var incpIndex = _u.indexOf(aggregation.dateIndex, aggregation.inceptionDate, true)
+  if(incpIndex!=-1){
+    let totalReturn = _u.last(aggregation.values) / aggregation.values[incpIndex] - 1
+    let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (aggregation.dateIndex.length - incpIndex - 1)) - 1
+    aggregation.quant['inception'] = { totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: aggregation.dateIndex.length - incpIndex}
+  }
+  else{
+    aggregation.quant['inception'] = [aggregation.inceptionDate, aggregation.dateIndex]
+  }
+
 }
 
-function timeRangeSlice(aggregation, inception_date, benchmark_ticker ='SPY',time_range = ['1y','3m','30d','10d','inception']){
+function timeRangeSlice(aggregation, inception_date, id, benchmark_ticker ='SPY',time_range = ['1y','3m','30d','10d','inception']){
   var ts_dataset = {}
-  var ranges = time_range.map(rangeId => {
+  var ranges = time_range.map(timeId => {
     var holdingPct = []
     var index = undefined;
-    if (rangeId != 'inception') {
-      index = util.dateIndexPicker(aggregation.dateIndex, rangeId)
+    if (timeId != 'inception') {
+      index = util.dateIndexPicker(aggregation.dateIndex, timeId)
     }
     else{
       index = util.dateIndexPicker(aggregation.dateIndex, inception_date)
       aggregation.dataset.map(stock => { if (!stock.isBenchmark) { 
-        // console.log(stock.adjClose.length - 1, index[0], stock.adjClose)
         let totalPct = stock.adjClose[stock.adjClose.length - 1] / stock.adjClose[index[0]]; 
         holdingPct.push({ ticker: stock.ticker, value: totalPct}) }})
     }
     var dates = index.map(i => { return aggregation.dateIndex[i].toString() })
-    var values = index.map(i => { return aggregation.values[i] })
-    var benchmark = index.map(i => { return aggregation.benchmark.values[i] })
+    var values = index.map(i => { return aggregation.values[i]/aggregation.values[index[0]] })
+    var benchmark = index.map(i => { return aggregation.benchmark.values[i] / aggregation.benchmark.values[index[0]] })
     var series = [{ ticker: aggregation.ticker, data: values }, { ticker: benchmark_ticker, data: benchmark }]
-
-    return { range: rangeId, dates: dates, series, holdingPct : holdingPct }
+    // var avgDlyRtn = Math.pow(_u.last(values) / values[0], 1/values.length) - 1
+    // var totalRtn = (_u.last(values)/values[0] - 1)*100
+    return { timeId: timeId, dates: dates, series: series, holdingPct: holdingPct}
   })
   return ranges
 }
 
-// function historical_callback(rows, call_back) {
-//   if (rows.length === 0) {
-//     console.log('quote api data', ticker)
-//     api.quote_historical(
-//       { symbol: ticker, from: '2018-01-01', to: '2018-04-17', period: 'd' },
-//       function (x) {
-//         api.insert_historical(ticker, JSON.stringify(x), Date.now() / 1000);
-//       });
-//   }
-//   else {
-//     console.log('use db data', ticker)
-//     // callback(rows)
-//     return rows
-//   }
-// }
-// function handle_historical_request(ticker, callback){
-//   knex('historical_data').select('*').where({ ticker: ticker }).then(function (rows) {
-//     if (rows.length === 0) {
-//       console.log('quote api data', ticker)
-//       quote_historical(
-//         { symbol: ticker, from: '2018-01-01', to: '2018-04-17', period: 'd' },
-//         function (x) {
-//           insert_historical(ticker, JSON.stringify(x), Date.now() / 1000);
-//           callback(x);
-//         });
-//     }
-//     else {
-//       console.log('use db data', ticker)
-//       // callback(rows)
-//       return rows;
-//     }
-//   });
-// }
+function updatePortfolioProfile(id, table) {
+  if (id) {
+    // var quantMetricTable = {}
+    // console.log('updatePortfolioProfile', ranges, id )
+    // ranges.map(range => { console.log('updatePortfolioProfile', range.timeId); quantMetricTable[range.timeId] = { totalRtn: range.totalRtn, avgDlyRtn: range.avgDlyRtn } })
+    knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table) }).then(function (result) { console.log(result) })
+  }
+}
+
 async function read_historical(ticker){
   return new Promise(function (resolve, reject) {
     if (ticker == null) {
@@ -319,6 +313,7 @@ async function read_historical(ticker){
   })
 
 }
+
 async function retryer(retries, info, call){
   var i = 0;
   var success = false;
@@ -333,6 +328,7 @@ async function retryer(retries, info, call){
     }
   }
 }
+
 async function quote_historical2(request) {
   return new Promise(function (resolve, reject) {
     yahooFinance.historical({
@@ -369,9 +365,9 @@ async function quote_historical2(request) {
 //     callback(quotes)
 //   });
 // }
-function insertPortfolioProfile(){
-  knex('historical_data').where('ticker', ticker).update({ data: data, last_update: time_stamp, update_time: new Date().toISOString() }).then(function (result) { console.log(result) })
-}
+
+
+
 function insert_historical(ticker, data, time_stamp, update_time = null) {
   // knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp }).then(function (data) {
   //   console.log('insert data',ticker)  });
@@ -404,6 +400,7 @@ module.exports = {
   read_historical: read_historical,
   build_strategy_ts: build_strategy_ts,
   build_strategy_ts_from_id: build_strategy_ts_from_id,
+  updatePortfolioProfile: updatePortfolioProfile,
   retryer: retryer
   // handle_historical_request: handle_historical_request,
   // historical_callback: historical_callback

@@ -172,8 +172,8 @@ function DisplayMetrics(profile, timeKey, marketState = '') {
     profile.ratiosDisplay = {}
     profile.ratiosDisplay.latestChgPct = '--%'
     profile.ratiosDisplay.volatility = '--'
-    profile.ratiosDisplay.dailyReturn = '--'
-    profile.ratiosDisplay.return = '--'
+    profile.ratiosDisplay.avgDlyReturn = '--'
+    profile.ratiosDisplay.totalReturn = '--'
   }
   profile.size = profile.curr_holds.length
 
@@ -189,14 +189,16 @@ function DisplayMetrics(profile, timeKey, marketState = '') {
     profile.ratiosTable = JSON.parse(profile.ratiosTable)
   }
   if (profile.ratiosTable && profile.ratiosTable[timeKey]) {
-    let mark = profile.ratiosTable[timeKey].return > 0 ? '+' : ''
-    profile.ratiosDisplay.return = mark + profile.ratiosTable[timeKey].return.toFixed(2) + '%';
-    profile.ratiosDisplay.volatility = profile.ratiosTable[timeKey].volatility.toFixed(2) ;
+    let mark = profile.ratiosTable[timeKey].totalReturn > 0 ? '+' : ''
+    if (profile.ratiosTable[timeKey].totalReturn)
+      profile.ratiosDisplay.totalReturn = mark + profile.ratiosTable[timeKey].totalReturn.toFixed(2) + '%';
+    // profile.ratiosDisplay.volatility = profile.ratiosTable[timeKey].volatility.toFixed(2) ;
   }
 
-  if (profile.ratiosTable && profile.ratiosTable[timeKey] && profile.ratiosTable[timeKey].dailyReturn) {
-    let mark = profile.ratiosTable[timeKey].dailyReturn > 0 ? '+' : ''
-    profile.ratiosDisplay.dailyReturn = mark + profile.ratiosTable[timeKey].dailyReturn.toFixed(2) +'%';
+  if (profile.ratiosTable && profile.ratiosTable[timeKey] && profile.ratiosTable[timeKey].avgDlyReturn) {
+    let mark = profile.ratiosTable[timeKey].avgDlyReturn > 0 ? '+' : ''
+    if (profile.ratiosTable[timeKey].avgDlyReturn)
+      profile.ratiosDisplay.avgDlyReturn = mark + profile.ratiosTable[timeKey].avgDlyReturn.toFixed(2) +'%';
   }
 }
 
@@ -232,7 +234,7 @@ function Colorify(profile, timeKey) {
   // set color for cumulative return and volatility, and avg daily return
   // for given time period.
   if (profile.ratiosTable && profile.ratiosTable[timeKey]) {
-    var return_rank = profile.ratiosTable[timeKey].return > benchmark.target_return ? 1 : profile.ratiosTable[timeKey].return > benchmark.base_return ? 2 : 3
+    var return_rank = profile.ratiosTable[timeKey].totalReturn > benchmark.target_return ? 1 : profile.ratiosTable[timeKey].totalReturn> benchmark.base_return ? 2 : 3
     var volatility_rank = profile.ratiosTable[timeKey].volatility < benchmark.target_volatility ? 1 : profile.ratiosTable[timeKey].volatility < benchmark.base_volatility ? 2 : 3
 
     profile.return_bg = color_style[return_rank - 1]
@@ -240,9 +242,9 @@ function Colorify(profile, timeKey) {
     var total_rank = Math.ceil((return_rank + volatility_rank) / 2)
     profile.icon_path = icon_array[total_rank - 1]
 
-    var avgDlyRtn = profile.ratiosTable[timeKey].dailyReturn
-    if (avgDlyRtn) {
-      profile.dailyReturn_bg = avgDlyRtn > 0.5 ? color_style[0] : avgDlyRtn > 0 ? color_style[1] : color_style[2];
+    var avgDlyReturn = profile.ratiosTable[timeKey].avgDlyReturn
+    if (avgDlyReturn) {
+      profile.dailyReturn_bg = avgDlyReturn > 0.1 ? color_style[0] : avgDlyReturn > 0 ? color_style[1]: color_style[2];
     }
   }
 }

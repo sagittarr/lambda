@@ -106,13 +106,13 @@
               <view class="weui-flex__item">
                 <view class="cell_placeholder" style="color:{{item.dailyReturn_bg}}">
                   <text class='S2 T2'>{{keywords.avg_return}}</text>
-                  <text class='S8'>{{item.ratiosDisplay.dailyReturn}}</text>
+                  <text class='S8'>{{item.ratiosDisplay.avgDlyReturn}}</text>
                 </view>
               </view>
               <view class="weui-flex__item">
                 <view class="cell_placeholder" style="color:{{item.return_bg}}">
                   <text class='S2 T2'>{{keywords.return}}</text>
-                  <text class='S8'>{{item.ratiosDisplay.return}}</text>
+                  <text class='S8'>{{item.ratiosDisplay.totalReturn}}</text>
                 </view>
               </view>
               <!-- </block> -->
