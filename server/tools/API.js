@@ -217,8 +217,13 @@ function aggregateStockData(dataset) {
     let all = []
     dataset.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
     all = _u.compact(all)
-    let avg = all.reduce((previous, current) => current += previous) / all.length;
-    aggSeries.push(avg);
+    if(all.length == 0){
+      aggSeries.push(1.);
+    }
+    else{
+      let avg = all.reduce((previous, current) => current += previous) / all.length;
+      aggSeries.push(avg);
+    }
   }
 
   var aggregation = {

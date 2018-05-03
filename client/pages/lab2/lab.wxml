@@ -90,16 +90,29 @@
               <!-- <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
                 <image class="weui-media-box__thumb" src="{{item.icon_path}}" />
               </view> -->
-              <view class="" style="height:60px">
+              <view class="" style="height:60px; width:100%;">
                 <view class="T5 S6" style="width: 100%; display:flex; flex-direction: row;margin-left:10px">{{item.name}}
                   <view class="item_type" style="width:50px; height: 20px">主题投资</view>
+                   <!-- <image class="inline_icon_right" src="../../images/Info_01-512.png" />  -->
                 </view>
-                <view style="width: 100%; display:flex; flex-direction: column; margin-left:10px">
+
+                <view class="minor_cell_placeholder" style=" margin-left:10px">
                 <view class=" T2 S1">起始日期</view>
                   <view class=" T2 S1">{{item.inception}}</view>
                 </view>
+                 <view class="minor_cell_placeholder" style=" margin-left:10px">
+                <view class=" T2 S1">最新数据</view>
+                  <view class=" T2 S1">{{item.inception}}</view>
+                </view> 
+                 <view class="minor_cell_placeholder" style=" margin-left:10px">
+                <view class=" T2 S1">累计天数</view>
+                  <view class=" T2 S1">10</view>
+                </view>
 
-
+                <!-- <view class="minor_cell_placeholder" style=" margin-left:10px">
+                <view class=" T3 S1">发布者</view>
+                  <view class=" T3 S1">lambda</view>
+                </view> -->
                 <!-- <view class="weui-media-box__desc">{{item.short_desp}}</view> -->
               </view>
             </navigator>
@@ -126,7 +139,7 @@
             </view>
           </view>
           <view class="weui-flex menu_bar">
-            <image class="menu_bar__thumb" src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex == 1}}" />
+             <image class="menu_bar__thumb" src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex == 1}}" /> 
             <!-- <image class="menu_bar__thumb" src="../../images/Info_01-512.png" /> -->
             <!-- <image class="menu_bar__thumb" src="../../images/List-512.png" />  -->
           </view>

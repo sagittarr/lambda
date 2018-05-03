@@ -90,10 +90,10 @@ Page({
     var tickers = profile.curr_holds
     var _tickers = tickers
     _tickers.push('SPY')
-    console.log(_tickers)
+    console.log(_tickers, profile.inception, profile.id)
     var options = {
       url: config.service.db_handler,
-      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception, id: profile.id , toUpdateDB : true},
+      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception.toString(), id: profile.id.toString() , toUpdateDB : true},
       success(result) {
         console.log("read LOAD_PORTFOLIO", result)
         result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts.timeId] = ts})
