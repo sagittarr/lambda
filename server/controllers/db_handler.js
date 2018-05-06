@@ -34,6 +34,7 @@ module.exports = async (ctx, next) => {
       }
       else{
         var finalData = {}
+        finalData.id = id
         finalData.ticker = agg.ticker
         finalData.quant = agg.quant
         finalData.timeRange = agg.timeRange
@@ -53,9 +54,9 @@ module.exports = async (ctx, next) => {
   }
   else if (ctx.query.operation.toUpperCase() == 'STB') {
     var phases = JSON.parse(ctx.query.phases)
-    
-    await api.build_strategy_ts(phases).then(function (dataset) {
-      ctx.state.data = dataset
+    var numOfPhase = phases.length
+    await api.buildStrategyFromPhases(phases).then(function(finalData){
+      ctx.state.data = finalData
       console.log('final data', ctx.state.data)
     })
   }

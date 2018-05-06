@@ -386,7 +386,9 @@ class PortfolioUtils {
           callback(result.data.data.query.results.quote)                  
         }
         else{
-          console.error("quote real time fails: ", retry, tickers)
+          if (retry == 1){
+            console.error("quote real time fails: ", tickers)
+          }
           sleep(50); 
           PortfolioUtils.realtime_price(tickers, callback, retry-1);
         }

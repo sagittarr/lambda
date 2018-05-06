@@ -45,6 +45,9 @@ function date2Str(date){
 function dateIndexPicker(dateIndex, arg){
   var MAX = 24
   var arr = []
+  if (dateIndex.length<=24){
+    return dateIndex.map((v,i)=> i);
+  }
   if(arg == '1y'){
     if(dateIndex.length > 253){
       arr = linspace(0, 252, MAX)
@@ -54,7 +57,7 @@ function dateIndexPicker(dateIndex, arg){
     }
   }
   else if(arg == '3m'){
-    arr = linspace(dateIndex.length - 1 - 62, dateIndex.length - 1, 21)
+    arr = linspace(Math.max(dateIndex.length - 1 - 62, 0), dateIndex.length - 1, 24)
   }
   else if(arg == '10d'){
     return [...Array(10)].map((x, i) => {return dateIndex.length - 1 -i}).reverse();

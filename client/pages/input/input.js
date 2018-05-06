@@ -98,26 +98,40 @@ Page({
     storeProfile: function (info, data ){
       var that = this
       let profile = getApp().globalData.selected
-      let date = this.data.date.replace('-', '').replace('-', '')
+      let toSave ={}
+      let newDate = this.data.date.replace('-', '').replace('-', '')
       let lambda_key = getApp().globalData.lambda_key
       if (data == undefined) {
         data = {}
       }
-      if (!profile) {
-        profile = {}
-      }
-      if (!profile.id){
+      if (!profile || !profile.id){
         var n = new Date().getTime();
-        profile.id = n.toString()
-        profile.inception = date
-        // profile.ratiosTable = {}
+        toSave.id = n.toString()
+        toSave.inception = newDate
+        toSave.ratiosTable = {}
+        let stocks = that.data.stockList
+        let tickers = stocks.map(stock => stock.ticker)
+        toSave.phases = [{ phaseId: 1, 'stocks': stocks, 'tickers': tickers, from: toSave.inception, to: null}]
       }
-      profile.name = info.name
-      profile.desp = info.desp
-      profile.last_update = date,
-      profile.isLocal = true
-      profile.tickers = that.data.stockList
-      data[profile.id] = profile
+      else{
+        toSave.id = profile.id
+        toSave.inception = profile.inception
+        toSave.ratiosTable = profile.ratiosTable
+        toSave.phases = profile.phases
+        let num = toSave.phases.length
+        console.log(toSave.phases, num) 
+        toSave.phases[num-1].to = newDate
+        let stocks = that.data.stockList
+        let tickers = stocks.map(stock => stock.ticker)
+        toSave.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: null } )
+      }
+      
+      toSave.name = info.name
+      toSave.desp = info.desp
+      toSave.last_update = newDate,
+      toSave.isLocal = true
+      toSave.tickers = that.data.stockList
+      data[toSave.id] = toSave
       wx.setStorage({
         key: lambda_key,
         data: data
@@ -126,7 +140,7 @@ Page({
       wx.navigateBack({
         delta: 2
       })
-      util.showSuccess('Create ' + profile.name + ' done')
+      util.showSuccess('Create ' + toSave.name + ' done')
     },
 
     formSubmit: function (e) {
@@ -134,15 +148,7 @@ Page({
       var info = e.detail.value;
       var lambda_key = getApp().globalData.lambda_key
       let profile = getApp().globalData.selected
-      // console.log(this.data.date.replace('-', ''))
-      // var date = validator.validateDate(this.data.date.replace('-',''));
-      // console.log(date)
-      // if (!date) {
-      //   this.showTopTips("invalid date input")
-      //   return;
-      // }
       let date = this.data.date.replace('-', '').replace('-', '')
-
       if (info.name.length == 0) {
         this.showTopTips("Name is empty")
         return

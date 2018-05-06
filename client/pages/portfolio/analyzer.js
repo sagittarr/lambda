@@ -13,9 +13,19 @@ var ringChart = null;
 const lang = require('../../language.js')
 const keywords = lang.CH
 
-// function getTimePeriodDesp(index){
-
-// }
+function getToday() {
+  var today = new Date()
+  var dd = today.getDate();
+  if (dd < 10) {
+    dd = '0' + dd
+  }
+  var mm = today.getMonth() + 1; //January is 0!
+  if (mm < 10) {
+    mm = '0' + mm
+  }
+  var yyyy = today.getFullYear();
+  return yyyy + '' + mm + '' + dd;
+}
 Page({
   data: {
     sliderOffset: 0,
@@ -91,19 +101,54 @@ Page({
     var _tickers = tickers
     _tickers.push('SPY')
     console.log(_tickers, profile.inception, profile.id)
+
     var options = {
       url: config.service.db_handler,
-      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception.toString(), id: profile.id.toString() , toUpdateDB : true},
+      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception.toString(), id: profile.id.toString(), toUpdateDB: profile.isLocal != true},
       success(result) {
         console.log("read LOAD_PORTFOLIO", result)
-        result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts.timeId] = ts})
+        // result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts.timeId] = ts})
+
+        result.data.data.timeRange.map(ts => {
+          if (ts == null) return;
+          ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark}]
+          that.data.timeSeriesData[ts.timeId] = ts
+
+        })
         lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
+        if (profile.isLocal == true){
+          that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
+        }
       },
       fail(error) {
         util.showModel('请求失败', error);
         console.log('request fail', error);
       }
     }
+
+    // var options = {
+    //   url: config.service.db_handler,
+    //   data: { operation: 'STB', phases: profile.phases, inception: profile.inception },
+    //   // data: { operation: 'STB2', productId: 1521986497295, inception: '20180301', mode: 'debug'},
+    //   success(result) {
+    //     console.log("read STB", result)
+    //     result.data.data.timeRange.map(ts => {
+    //       if (ts == null) return;
+    //       ts.index = ts.index.map(i=> i?i.toString(): '')
+    //       ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark }]
+    //       that.data.timeSeriesData[ts.timeId] = ts
+
+    //     })
+    //     lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
+    //     // if (profile.isLocal == true){
+    //     //   that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
+    //     // }
+    //   },
+    //   fail(error) {
+    //     util.showModel('请求失败', error);
+    //     console.log('request fail', error);
+    //   }
+    // }
     wx.request(options);
 
 
@@ -147,18 +192,32 @@ Page({
     return metrics
   },
 
-  // computeMetrics2(aggregation) {
-  //   var ratios = {}
-  //   var ab = calculator.computeAlphaBeta(p);
-  //   ratios.dailyReturn = ((p.aggregation.avg_return - 1.) * 100)
-  //   ratios.return = ((p.aggregation.values[p.aggregation.values.length - 1] - 1) * 100)
-  //   ratios.volatility = calculator.computeVolatility(p.aggregation.returns)
-  //   ratios.sharpRatio = calculator.computeSharpRatio(p)
-  //   ratios.maxDrawdown = ((1. - calculator.computeMDD(p.aggregation.values)) * 100)
-  //   ratios.alpha = ab.alpha;
-  //   ratios.beta = ab.beta;
-  //   return ratios;
-  // },
+  syncDataToLocalStorage(id, table){
+    var lambda_key = getApp().globalData.lambda_key
+    var that = this
+    wx.getStorage({
+      key: lambda_key,
+      success: function (res) {
+        if (res.data[id]){
+          res.data[id].ratiosTable = table
+          wx.setStorage({
+            key: lambda_key,
+            data: res.data,
+            success: function(res){
+              console.log('sync ok', id)
+            },
+            fail: function(res){
+              console.log('sync fail', id)
+            }
+          })
+        }
+      },
+      fail: function (res) {
+        console.log(lambda_key, ' not found')
+      }
+    });
+  },
+
   computeMetrics(p) {
     var ratios = {}
     var ab = calculator.computeAlphaBeta(p);
@@ -172,26 +231,6 @@ Page({
     return ratios;
   },
   
-  // updatePtfProfile2Cloud() {
-  //   // console.log("before saving",getApp().globalData.selected.ratiosTable)
-  //   var options = {
-  //     url: config.service.db_handler,
-  //     data: {
-  //       operation: 'W',
-  //       portfolio: getApp().globalData.selected
-  //     },
-  //     success(result) {
-  //       console.log('update profile in cloud: result code =  ' + result.code)
-  //     },
-  //     fail(error) {
-  //       // util.showModel('请求失败', error);
-  //       console.log('request fail', error);
-  //     }
-  //   }
-  //   // send request
-  //   wx.request(options);
-  // },
-
   showPortfolioMetrics:function(table){
     this.data.metricsTbl[0].text = table.return.toFixed(2) + '%';
     this.data.metricsTbl[1].text = table.volatility.toFixed(2);
@@ -240,177 +279,6 @@ Page({
     var that = this;
     lineChart = chart_utils.createPortfolioLineChart2(ranges[4], that.windowWidth);
   },
-  // visualizeAndProcessData: function (p, timeKey, updateDB) {
-  //   var that = this;
-  //   lineChart = chart_utils.createPortfolioLineChart(p, timeKey, that.windowWidth);
-  //   pieChart = chart_utils.createPieChart(p, that.windowWidth);
-  //   p.ratiosTable = that.computeMetrics(p)
-  //   this.showPortfolioMetrics(p.ratiosTable)
-  //   if (updateDB) {
-  //     getApp().globalData.selected.ratiosTable = {}
-  //     getApp().globalData.selected.ratiosTable[timeKey] = p.ratiosTable;
-  //     if (getApp().globalData.selected.isLocal) {
-  //       var lambda_key = getApp().globalData.lambda_key
-  //       wx.getStorage({
-  //         key: lambda_key,
-  //         success: function (res) {
-  //           res.data[getApp().globalData.selected.id] = getApp().globalData.selected
-  //           wx.setStorage({
-  //             key: lambda_key,
-  //             data: res.data
-  //           })
-  //         },
-  //         fail: function (res) {
-  //           console.error(lambda_key, ' not found from analyzer.')
-  //         }
-  //       });
-  //     }
-  //     else {
-  //       that.updatePtfProfile2Cloud()
-  //     }
-  //   }
-  // },
-
-  // loadPortfolioDatafromYH: function (tickers, benchmark, inception) {
-  //   var that = this;
-  //   var today = (new Date()).toISOString().slice(0, 10);
-  //   var thritydays = Date.today().add(-30).days().toString('yyyy-MM-dd');
-  //   var tendays = Date.today().add(-15).days().toString('yyyy-MM-dd');
-  //   var fourteenWeeks = Date.today().add(-14).weeks().toString('yyyy-MM-dd');
-  //   var thriteenMths = Date.today().add(-14).months().toString('yyyy-MM-dd');
-  //   var date_arr = [
-  //     { startDate: tendays, endDate: today, period: undefined, freq: 'D', range: '10d' },
-  //     { startDate: thritydays, endDate: today, period: 20, freq: 'D', range: '30d'},
-  //     { startDate: fourteenWeeks, endDate: today, period: 13, freq: 'W' , range: '3m'},
-  //     { startDate: thriteenMths, endDate: today, period: 13, freq: 'M', range:'1y' },
-  //     { startDate: inception, endDate: today, period: undefined, freq: 'D', isInception: true, range : 'inception' }
-  //   ]
-
-  //   util.showBusy('请求中...');
-  //   let id = getApp().globalData.selected.id;
-  //   async.waterfall([
-  //     function (next) {
-  //       wx.getStorage({
-  //         key: "portfolio",
-  //         success: function (res) {
-  //           if (res.data[id] != undefined && Date.now() / 1000 - parseInt(res.data[id].lastUpdate) <= 3600) {
-  //             that.data.portfolioCache = res.data[id].ts;
-  //             console.log("load portfolio cache success", id, 'lastUpdate', res.data[id].lastUpdate);
-  //             date_arr.forEach(function (args, i) {
-  //               var portfolio = that.data.portfolioCache[args.range]
-  //               _callback(portfolio)
-  //             });
-  //           }
-  //           else {
-  //             next(null);
-  //           }
-  //         },
-  //         fail: function (res) {
-  //           next(null);
-  //         }
-  //       });
-  //     },
-  //     function(next){
-  //       let ct = 0;
-  //       date_arr.forEach(function (args, i) {
-  //         putils.loadPortfoliofromYF(tickers, benchmark, args,
-  //           function (p) {
-  //             ct += 1;
-  //             p.range = that.data.timeRange[i];
-  //             p.isInception = args.isInception;
-  //             _callback(p);
-  //             that.data.portfolioCache[p.range] = p;
-  //             if (ct == date_arr.length) {
-  //               next(null); //update in cache
-  //             }
-  //           })
-  //       })
-  //     },
-  //     function(next){
-  //       wx.getStorage({
-  //         key: "portfolio",
-  //         success: function (res) {
-  //           let id = getApp().globalData.selected.id;
-  //           if (res.data == undefined) {
-  //             res.data = {}
-  //           }
-  //           res.data[id] = {};
-  //           res.data[id].ts = that.data.portfolioCache;
-  //           res.data[id].lastUpdate = Math.floor(Date.now() / 1000)
-  //           wx.setStorage({ key: 'portfolio', data: res.data })
-  //           console.log("update portfolio cache success", id);
-  //         },
-  //         fail: function (res) {
-  //           console.log(res);
-  //           var data = {}
-  //           let id = getApp().globalData.selected.id;
-  //           data[id] = {};
-  //           data[id].ts = that.data.portfolioCache;
-  //           data[id].lastUpdate = Math.floor(Date.now() / 1000)
-  //           wx.setStorage({ key: 'portfolio', data: data })
-  //           console.log("update portfolio cache success", id);
-  //         }
-  //       });
-  //     }]
-  //   );
-
-  //   function _callback(p) {
-  //     that.data.portfolioCache[p.range] = p;
-  //     if (p.isInception) {
-  //       let current_page = getCurrentPages()[getCurrentPages().length - 1].route
-  //       if (current_page == 'pages/portfolio/analyzer') {
-  //         util.showSuccess('请求成功完成')
-  //       }
-  //       else {
-  //         return;
-  //       }
-  //       that.visualizeAndProcessData(p, 'inception', true)
-  //       that.computeComparisonMetrics(that.data.timeRange[that.data.currentTimeIndex])
-  //     }
-  //   }
-  //   // function updatePortfolioInCache(){
-  //   //   wx.getStorage({
-  //   //     key: "portfolio",
-  //   //     success: function (res) {
-  //   //       let id = getApp().globalData.selected.id;
-  //   //       if(res.data == undefined){
-  //   //         res.data = {}
-  //   //       }
-  //   //       res.data[id] = {};
-  //   //       res.data[id].ts = that.data.portfolioCache;
-  //   //       res.data[id].lastUpdate = Math.floor(Date.now() / 1000)
-  //   //       wx.setStorage({ key: 'portfolio', data: res.data })
-  //   //       console.log("update portfolio cache success", id);
-  //   //     },
-  //   //     fail: function (res) {
-  //   //       console.log(res);
-  //   //       var data = {}
-  //   //       let id = getApp().globalData.selected.id;
-  //   //       data[id] = {};
-  //   //       data[id].ts = that.data.portfolioCache;
-  //   //       data[id].lastUpdate = Math.floor(Date.now() / 1000)
-  //   //       wx.setStorage({ key: 'portfolio', data: data})
-  //   //       console.log("update portfolio cache success", id);
-  //   //     }
-  //   //   });
-  //   // }
-  //   // function loadDataFromAPI(){
-  //   //   let ct = 0;
-  //   //   date_arr.forEach(function (args, i) {
-  //   //     putils.loadPortfoliofromYF(tickers, benchmark, args,
-  //   //       function (p) {
-  //   //         ct += 1;
-  //   //         p.range = that.data.timeRange[i];
-  //   //         p.isInception = args.isInception;
-  //   //         _callback(p);
-  //   //         that.data.portfolioCache[p.range] = p;
-  //   //         if (ct == date_arr.length) {
-  //   //           updatePortfolioInCache();
-  //   //         }
-  //   //       })
-  //   //   })
-  //   // }
-  // },
 
   quoteRealTimePriceCallback: function (quotes){
     var color_style = getApp().globalData.color_style
@@ -524,7 +392,6 @@ Page({
 
   toggleInfoPopup: function(e){
     let key = parseInt(e.currentTarget.dataset.key)
-    // console.log(key)
     if(key == 0){
       this.data.showInfoPopup = true
       this.data.infoPopupValue = this.data.profile.desp

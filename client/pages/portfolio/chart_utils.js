@@ -168,7 +168,7 @@ class Chart_utils {
           return (val * 100).toFixed(2) + '%';
         }
       })})
-    return drawLineChart(input.dates, series, 'Performance', width, height)
+    return drawLineChart(input.index, series, 'Performance', width, height)
   }
   static createPortfolioLineChart(portfolio, inception, width, height = 300) {
     if (portfolio.holdings.length == 0) {

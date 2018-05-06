@@ -75,25 +75,18 @@ function quoteChangePrecentageForProfile(profile, that) {
       wx.stopPullDownRefresh();
       return;
     }
-    // if(typeof results == 'object'){
-    //   results = [results]
-    // }
     if(!(results instanceof Array)){
       results = [results]
     }
-    results.forEach(function (e) {
-      
+    results.forEach(function (e) {   
       chg_pct += parseFloat(e.realtime_chg_percent)
-      // console.log(e.Name, parseFloat(e.realtime_chg_percent))
     })
-    // console.log(profile.name,chg_pct)
     chg_pct = chg_pct / results.length
     profile.latestChgPct = chg_pct
     DisplayMetrics(profile, '', that.data.marketState)
     Colorify(profile, 'inception')
     wx.stopPullDownRefresh();
     that.showProfileList()
-    // console.log(profile.name, chg_pct)
   })
 }
 
@@ -103,7 +96,7 @@ function loadProfilefromServer(that) {
     url: config.service.db_handler,
     data: { operation: 'R' },
     success(result) {
-      console.log("read ", result)
+      console.log("cloud ", result.data.data)
       result.data.data.forEach(function (loaded) {
         loaded.curr_holds = JSON.parse(loaded.curr_holds)
         DisplayMetrics(loaded, 'inception')
