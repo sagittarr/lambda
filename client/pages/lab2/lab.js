@@ -51,19 +51,19 @@ Page({
     //   }
     // }
     // wx.request(options);
-    // var options = {
-    //   url: config.service.db_handler,
-    //   data: { operation: 'STB', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: 20180201 }, { tickers: ['LRCX', 'AMD'], from: 20180201, to: 20180301 }], inception: '20180102' },
-    //   // data: { operation: 'STB2', productId: 1521986497295, inception: '20180301', mode: 'debug'},
-    //   success(result) {
-    //     console.log("read STB", result)
-    //   },
-    //   fail(error) {
-    //     util.showModel('请求失败', error);
-    //     console.log('request fail', error);
-    //   }
-    // }
-    // wx.request(options);
+    var options = {
+      url: config.service.db_handler,
+      data: { operation: 'STB2', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: -1 }]},
+      // data: { operation: 'STB2', id: 1521986497295, inception: '20180301', mode: 'debug'},
+      success(result) {
+        console.log("read STB2", result)
+      },
+      fail(error) {
+        util.showModel('请求失败', error);
+        console.log('request fail', error);
+      }
+    }
+    wx.request(options);
   },
 
   updateData: function () {

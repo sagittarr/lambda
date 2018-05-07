@@ -11,43 +11,47 @@ var knex = require('knex')({
     database: 'lambda'
   }
 });
-
+var STK = require('../tools/StockData.js')
+var StockData = STK.StockData;
+var StockDataFactory = STK.StockDataFactory;
+var AggregationData = STK.Aggregation;
+var AggregationFactory = STK.AggregationFactory
 module.exports = async (ctx, next) => {
-  await next()
-  console.log(ctx.query)
-  if (ctx.query.operation.toUpperCase() == 'LOAD_PORTFOLIO') {
-    var mode = ctx.query.mode
-    var tickers = JSON.parse(ctx.query.tickers)
-    var inceptionDate = parseInt(ctx.query.inception.replace(/-/g, ''))
-    var id = ctx.query.id
-    var toUpdateDB = ctx.query.toUpdateDB
-    await api.load_historical_data(tickers, inceptionDate).then(function (dataset) {
-      var agg = api.aggregateStockData(dataset)
-      api.computeQuantMetrics(agg)
-      agg.timeRange = api.timeRangeSlice(agg, inceptionDate)
-      if (toUpdateDB) {
-        console.log("updatePortfolioProfile", id)
-        api.updatePortfolioProfile(id, agg.quant)
-      }
-      if(mode && mode.toUpperCase() == "DEBUG"){
-        ctx.state.data = agg
-      }
-      else{
-        var finalData = {}
-        finalData.id = id
-        finalData.ticker = agg.ticker
-        finalData.quant = agg.quant
-        finalData.timeRange = agg.timeRange
-        ctx.state.data = finalData
-      }
-      console.log('final data', ctx.state.data)
-    })
-  }
+    await next()
+    console.log(ctx.query)
+    if (ctx.query.operation.toUpperCase() == 'LOAD_PORTFOLIO') {
+        var mode = ctx.query.mode
+        var tickers = JSON.parse(ctx.query.tickers)
+        var inceptionDate = parseInt(ctx.query.inception.replace(/-/g, ''))
+        var id = ctx.query.id
+        var toUpdateDB = ctx.query.toUpdateDB
+        await api.load_historical_data(tickers).then(function (dataset) {
+            var agg = new AggregationFactory().build(dataset,inceptionDate)
+            agg.computeQuantMetric()
+            agg.timeRange = api.timeRangeSlice(agg, inceptionDate)
+            if (toUpdateDB) {
+                console.log("updatePortfolioProfile", id)
+                api.updatePortfolioProfile(id, agg.quant)
+            }
+            if(mode && mode.toUpperCase() == "DEBUG"){
+                ctx.state.data = agg
+            }
+            else{
+                var finalData = {}
+                finalData.id = id
+                finalData.ticker = agg.ticker
+                finalData.quant = agg.quant
+                finalData.timeRange = agg.timeRange
+                ctx.state.data = finalData
+            }
+            console.log('final data', ctx.state.data)
+        })
+    }
   else if (ctx.query.operation.toUpperCase() == 'STB2') {
-    var productId = JSON.parse(ctx.query.productId)
-    var inceptionDate = ctx.query.inception
-    var mode = ctx.query.mode
-    await api.build_strategy_ts_from_id(productId).then(function (dataset) {
+    // var productId = JSON.parse(ctx.query.productId)
+    // var inceptionDate = ctx.query.inception
+    // var mode = ctx.query.mode
+    await api.handler(ctx.query).then(function (dataset) {
       ctx.state.data = dataset
       console.log('final data', ctx.state.data)
     })

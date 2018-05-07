@@ -1,7 +1,12 @@
 var yahooFinance = require('yahoo-finance');
 var Promise = require('promise')
 var _u = require('underscore');
-var StockData = require('./StockData.js')
+var STK = require('./StockData.js')
+var StockData = STK.StockData;
+var StockDataFactory = STK.StockDataFactory;
+var AggregationData = STK.Aggregation;
+var AggregationFactory = STK.AggregationFactory
+var StrategyBuilder = require('./StrategyBuilder')
 // var Series = require('pandas-js').Series;
 // var DataFrame = require('pandas-js').DataFrame;
 // var DF = require('data-forge');
@@ -16,276 +21,179 @@ var knex = require('knex')({
   }
 });
 var util = require('./Util.js')
-var ss = require('simple-statistics')
+var Calculator = require('./QuantCalculater')
 
-class Calculator {
-  static computeAlphaBeta(ts1, ts2) {
-    var arr = []
-    ts1.map((item, i) => { arr.push([ts1[i], ts2[i]]) })
-    var res = ss.linearRegression(arr)
-    return { alpha: res.b, beta: res.m }
-    // console.log(ss.linearRegression(arr))
-  }
+async function handler(query){
+    // var mode = query.mode
+    var phases = query.phases
+    if(typeof(phases) == typeof("str")){
+        phases = JSON.parse(phases)
+    }
+    // var inceptionDate = parseInt(query.inception.replace(/-/g, ''))
+    var toUpdateDB = query.toUpdateDB
+    var id = query.id
 
-  static computeSharpRatio(ts1, ts2) {
-    return (ss.mean(ts1) - ss.mean(ts2)) / ss.standardDeviation(ts1);
-  }
-
-  static computeMDD(data) {
-    var peak = 0.;
-    var mdd = 1.;
-    data.forEach(function (current, i, a) {
-      if (current > peak) {
-        peak = current;
+    return new Promise(function(resolve, reject){
+      try {
+          if (!phases && !id) {
+              resolve('no Id no Phase')
+          }
+          else if (phases && phases.length > 0) {
+              if(!_u.last(phases).to) {
+                  _u.last(phases).to = -1
+              }
+              console.log(phases)
+              buildStrategyFromPhases(phases).then(function (result) {
+                  resolve(result)
+              })
+          }
+          else if (id) {
+              build_strategy_ts_from_id(id, toUpdateDB).then(function (result) {
+                  resolve(result)
+              })
+          }
+          else {
+              resolve('Error')
+          }
       }
-      // console.log( peak, current, mdd)
-      if (current / peak < mdd) {
-        mdd = current / peak;
+      catch(Err){
+        resolve(Err)
       }
     })
-    return mdd
-  }
 
-  static computeVolatility(returns) {
-    // console.log(portfolio.aggregation.returns.map(Math.log))
-    var N = returns.length;
-    return Math.sqrt(N) * ss.standardDeviation(returns.map(Math.log))
-  }
-}
-function cut_off(aggregation, from, to, offset = 0){
-  var left = aggregation.dateIndex.indexOf(from) + offset
-  var right = aggregation.dateIndex.indexOf(to)
-  var ts = {}
-  ts.dateIndex = aggregation.dateIndex.slice(left, right)
-  ts.dailyPctChange = aggregation.dailyPctChange.slice(left,right)
-  ts.left = left
-  ts.right = right
-  return ts
-}
-function concat_ts(samples){
-  var dailyPct = []
-  var dateIndex = []
-  var phases = []
-  for(var i= 0; i< samples.length; i++){
-    samples[i].dailyPctChange.map(v => { dailyPct.push(v) })
-    samples[i].dateIndex.map(v => { dateIndex.push(v) })
-    phases.push({ from: samples[i].dateIndex[0], to: samples[i].dateIndex[samples[i].dateIndex.length - 1]})
-  }
-  let cumProd = 1.
-  var values = dailyPct.map((pct, i) => {cumProd = cumProd*pct; return cumProd})
-  return {values: values, dateIndex : dateIndex, phases : phases}
 }
 
-async function build_strategy_ts_from_id(productId, debug = false) {
-  var samples = []
-  return new Promise(function (resolve, rej) {
-    knex('phases').select('*').where({ id: productId }).then(function (rows) {
-      if (rows.length == 0) {
-        resolve("no record found");
-      }
-      else {
-        var inputs = []
-        rows.map((row, i) => {
-          row.tickers = JSON.parse(row.holds);
-          row.from = parseInt(row.date);
-          if (i != 0) {
-            rows[i - 1].to = parseInt(row.date);
-          }
-          if (i == rows.length - 1) {
-            //             row.to = 20180420
-            row.to = parseInt(util.yearAgo2Today().to);
-          }
+async function build_strategy_ts_from_id(productId, toUpdateTblDB = false, debug = false) {
+    return new Promise(function (resolve, rej) {
+        knex('phases').select('*').where({ id: productId }).then(function (rows) {
+            if (rows.length == 0) {
+                resolve("no record found");
+            }
+            else {
+                rows.map((row, i) => {
+                    row.tickers = JSON.parse(row.holds);
+                    row.from = parseInt(row.date);
+                    if (i != 0) {
+                        rows[i - 1].to = parseInt(row.date);
+                    }
+                    if (i == rows.length - 1) {
+                      row.to = -1
+                    }
+                })
+                buildStrategyFromPhases(rows).then(function (result) {
+                    if(toUpdateTblDB){
+                        updatePortfolioProfile(productId, result.quant)
+                    }
+                  resolve(result)
+                })
+            }
         })
-        build_strategy_ts(rows).then(function (result) { resolve(result) })
-      }
     })
-  })
 }
 
 // input = [{tickers, from, to}]
-async function build_strategy_ts(phases){
-  var slices = []
-  if(typeof(phases) == typeof("str")){
-    phases = JSON.parse(phases)
-  }
-  phases.map(input => { 
-    if (_u.indexOf(input.tickers, 'SPY') == -1) {
-      input.tickers.push('SPY')
+async function build_strategy_ts(phases, inceptionDate){
+    // var slices = []
+    if(typeof(phases) == typeof("str")){
+        phases = JSON.parse(phases)
     }
-    input.from = parseInt(input.from)
-    input.to = parseInt(input.to)
-  })
-  return new Promise(function (res, rej) {
-    phases.map((input, i) => {
-      load_historical_data(input.tickers).then(function (dataset) {
-        var agg = aggregateStockData(dataset)
-        slices.push(cut_off(agg, input.from, input.to))
-        if (slices.length == phases.length) {
-          var final_ts = concat_ts(slices)
-          res(final_ts)
+    phases.map(input => {
+        if (_u.indexOf(input.tickers, 'SPY') == -1) {
+            input.tickers.push('SPY')
         }
-      })
+        // input.from = parseInt(input.from)
+        // input.to = parseInt(input.to)
     })
-  })
+    return new Promise(function (resolve, rej) {
+      var builder = new StrategyBuilder(phases.length)
+        phases.map((phase, i) => {
+            load_historical_data(phase.tickers).then(function (stocks) {
+                var agg = new AggregationFactory().build(stocks)
+                agg.inceptionDate = inceptionDate
+                builder.addSlice(agg, phase.from, phase.to)
+                if (builder.slices.length == phases.length) {
+                    resolve(builder.build())
+                }
+            })
+        })
+    })
 }
-function applySlice(timeIds, dateIndex, aggValues, comparision, incpetion){
+function SplitTimeRange(timeIds, dateIndex, aggValues, comparision, inception){
   var timeRange = timeIds.map(timeId => {
     var index = util.dateIndexPicker(dateIndex, timeId)
     index = _u.compact(index)
     var dates = index.map(i => { return  dateIndex[i] })
     var values = index.map(i => { return aggValues[i] / aggValues[index[0]] })
     var benchmark = index.map(i => { return comparision[i] / comparision[index[0]] })
-    return { timeId: timeId == incpetion ? 'inception' : timeId, index: dates, values: values, benchmark: benchmark }
+    return { timeId: timeId == inception ? 'inception' : timeId, index: dates, values: values, benchmark: benchmark }
   })
   return timeRange
 }
 
 async function buildStrategyFromPhases(phases){
-  var numOfPhase = phases.length
-  return new Promise(function (resolve, reject) {
-    build_strategy_ts(phases).then(function (dataset) {
-      var finalData = {}
-      loadSingleStock('SPY', phases[0].from, phases[numOfPhase - 1].to).then(function (spy) {
-        finalData.benchmark = spy;
-        finalData.dataset = dataset;
-        var aggValues = dataset.values
-        var timeIds = ['1y', '3m', '30d', '10d', phases[0].from]
-        var timeRange = applySlice(timeIds, dataset.dateIndex, aggValues, spy.values, phases[0].from)
-        finalData.timeRange = timeRange
-        resolve(finalData)
-      })
+    var numOfPhase = phases.length
+    return new Promise(function (resolve, reject) {
+        build_strategy_ts(phases, phases[0].from).then(function (strategyData) {
+            loadSingleStock('SPY', phases[0].from, phases[numOfPhase - 1].to).then(function (spy) {
+                var timeIds = ['1y', '3m', '30d', '10d', phases[0].from]
+                var timeRange = SplitTimeRange(timeIds, strategyData.dateIndex, strategyData.values, spy.values, phases[0].from)
+                strategyData.benchmark = spy
+                strategyData.inceptionDate = phases[0].from
+                strategyData.computeQuantMetric()
+                var result = {}
+                result.benchmark = spy;
+                result.dataset = strategyData
+                result.timeRange = timeRange
+                result.quant = strategyData.quant
+                resolve(result)
+            })
+        })
     })
-  })
 }
+
 async function loadSingleStock(ticker, from, to){
-  var dts = util.yearAgo2Today()
-  var quoateTo = dts.to;
-  var quoteFrom = dts.from
-
-  return new Promise(function(resovle, reject){
-    knex('historical_data').select('*').where({ ticker: ticker }).then(function (rows) {
-      if (rows.length === 0) {
-        var request = { symbol: ticker, from: quoteFrom, to: quoateTo, period: 'd' }
-        quote_historical2(request).then(function (ts) {
-          let last_update = Date.now() / 1000
-          insert_historical(ticker, JSON.stringify(ts), last_update);
-          ts.map(t => { t.date = util.date2Str(new Date(t.date)) })
-          var stockData = processStockData(ts, ticker)
-          stockData.last_update = last_update
-          // stockData.isBenchmark = ticker == 'SPY' ? true : false;
-          resovle(stockData)
-        }
-        )
-      }
-      else {
-        var stockData = processStockData(JSON.parse(rows[0].data), ticker)
-        stockData.last_update = rows[0].last_update
-        // stockData.isBenchmark = ticker == 'SPY' ? true : false;
-        console.log('found records of ', ticker)
-        resovle(stockData)
-      }
+    var dts = util.yearAgo2Today()
+    var quoteTo = dts.to;
+    var quoteFrom = dts.from
+    return new Promise(function(resolve, reject){
+        knex('historical_data').select('*').where({ ticker: ticker }).then(function (rows) {
+            if (rows.length === 0) {
+                var request = { symbol: ticker, from: quoteFrom, to: quoteTo, period: 'd' }
+                quote_historical2(request).then(function (ts) {
+                        let last_update = Date.now() / 1000
+                        insert_historical(ticker, JSON.stringify(ts), last_update);
+                        ts.map(t => { t.date = util.date2Str(new Date(t.date)) })
+                        // var stockData = processStockData(ts, ticker)
+                        var stockData =  new StockDataFactory().build(ts, ticker, last_update)
+                        resolve(stockData)
+                    }
+                )
+            }
+            else {
+                var stockData =  new StockDataFactory().build(JSON.parse(rows[0].data), ticker, rows[0].last_update)
+                console.log('found records of ', ticker)
+                resolve(stockData)
+            }
+        })
     })
-  })
 }
-async function load_historical_data(tickers, inceptionDate, from = undefined) {
-  var dataset = []
-  dataset.inceptionDate = inceptionDate
-  var dts = util.yearAgo2Today()
-  var to = dts.to;
-  if (from == undefined) {
-    from = dts.from
-  }
-  return new Promise(function (res, rej) {
-    tickers.forEach(function (t) {
-      loadSingleStock(t, from, to).then(function (stockData) {
-        stockData.isBenchmark = t == 'SPY' ? true : false;
-        dataset.push(stockData)
-        if (dataset.length == tickers.length) {
-          res(dataset)
-        }
-      })
+async function load_historical_data(tickers, from = undefined) {
+    var stocks = []
+    var dts = util.yearAgo2Today()
+    var to = dts.to;
+    if (!from) {
+        from = dts.from
+    }
+    return new Promise(function (res, rej) {
+        tickers.forEach(function (t) {
+            loadSingleStock(t, from, to).then(function (stockData) {
+                stocks.push(stockData)
+                if (stocks.length == tickers.length) {
+                    res(stocks)
+                }
+            })
+        })
     })
-  })
-}
-
-function computeDailyReturns(stockData) {
-  var returns = [1]
-  for (var i = 1; i < stockData.values.length; i++) {
-    returns.push(stockData.values[i] / stockData.values[i - 1])
-  }
-  return returns;
-};
-
-function processStockData(stock_ts, ticker, benchmarkTicker = 'SPY') {
-    var prices = []
-    var dates = []
-    for (var i = 0; i < stock_ts.length; i++) {
-        prices.push(stock_ts[i]['adjClose'])
-        dates.push(parseInt(stock_ts[i].date.slice(0, 10).replace(/-/g, '')))
-    }
-    prices = prices.reverse()
-    dates = dates.reverse()
-    var stockData =
-        {
-            ticker: ticker,
-            adjClose: prices,
-            dailyPctChange: prices.map((v, i) => { return i > 0 ? v / prices[i - 1] : 1. }),
-            values: prices.map((v, i) =>  v / prices[0] ),
-            valuesWithDate: {},
-            dateIndex: dates,
-            isBenchmark: ticker === benchmarkTicker,
-            show: false
-        }
-
-    var stk = new StockData()
-    stk.ticker = ticker
-    stk.adjClose = prices
-    stk.dailyPctChange = prices.map((v, i) => { return i > 0 ? v / prices[i - 1] : 1 })
-    stk.cumulativeValue = prices.map((v) => v / prices[0])
-    stk.cumulativeValue.map((v, i) => { stk.valuesWithDate[dates[i]] = v; return })
-    stk.isBenchmark = ticker === benchmarkTicker
-    stockData.values.map((v, i) => stockData.valuesWithDate[dates[i]] = v)
-    stockData.dailyPctChange = computeDailyReturns(stockData);
-    return stockData
-}
-
-function aggregateStockData(dataset) {
-    var benchmark;
-    dataset.map(stock=> {if(stock.isBenchmark) benchmark = stock} )
-    dataset.map(stock => {
-        if(!stock.isBenchmark && stock.dateIndex.length<benchmark.dateIndex.length){
-            tmp = []
-            benchmark.dateIndex.map((v, i) => { tmp.push(stock.valuesWithDate[v])})
-            stock.values = tmp
-        }
-    })
-
-    var aggSeries = []
-    for (var i = 0; i < benchmark.dateIndex.length; i++) {
-        let all = []
-        dataset.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
-        all = _u.compact(all)
-        if(all.length == 0){
-            aggSeries.push(1.);
-        }
-        else{
-            let avg = all.reduce((previous, current) => current += previous) / all.length;
-            aggSeries.push(avg);
-        }
-    }
-
-    var aggregation = {
-        ticker: '投资组合',
-        values: aggSeries,
-        dateIndex : dataset[0].dateIndex,
-        dataset : dataset,
-        avgDlyRtn: Math.pow(_u.last(aggSeries), 1. / (aggSeries.length - 1)), //日均
-        dailyPctChange: aggSeries.map((v, i) => { return i > 0 ? v / aggSeries[i - 1] : 1. }),
-        show: true,
-        inceptionDate : dataset.inceptionDate,
-        benchmark: benchmark
-    }
-    return aggregation
 }
 
 function computeQuantMetrics(aggregation){
@@ -308,35 +216,10 @@ function computeQuantMetrics(aggregation){
 
 }
 
-function timeRangeSlice(aggregation, inception_date, benchmark_ticker ='SPY'){
-  // var ts_dataset = {}
-  var timeIds = ['1y', '3m', '30d', '10d', inception_date]
-  var timeRange = applySlice(timeIds, aggregation.dateIndex, aggregation.values, aggregation.benchmark.values, inception_date)
-  return timeRange
-  // finalData.timeRange = timeRange
-
-  // var ranges = time_range.map(timeId => {
-  //   var holdingPct = []
-  //   var index = undefined;
-  //   if (timeId != 'inception') {
-  //     index = util.dateIndexPicker(aggregation.dateIndex, timeId)
-  //   }
-  //   else{
-  //     index = util.dateIndexPicker(aggregation.dateIndex, inception_date)
-  //     // aggregation.dataset.map(stock => { if (!stock.isBenchmark) { 
-  //     //   let totalPct = stock.adjClose[stock.adjClose.length - 1] / stock.adjClose[index[0]]; 
-  //     //   holdingPct.push({ ticker: stock.ticker, value: totalPct}) }})
-  //   }
-  //   var dates = index.map(i => { return aggregation.dateIndex[i] })
-  //   var values = index.map(i => { return aggregation.values[i]/aggregation.values[index[0]] })
-  //   var benchmark = index.map(i => { return aggregation.benchmark.values[i] / aggregation.benchmark.values[index[0]] })
-  //   // var series = [{ ticker: aggregation.ticker, data: values }, { ticker: benchmark_ticker, data: benchmark }]
-  //   return { timeId: timeId, index: dates, values: values, benchmark: benchmark }
-
-
-  //   // return { timeId: timeId, dates: dates, series: series, holdingPct: holdingPct}
-  // })
-  // return ranges
+function timeRangeSlice(aggregation, inception_date, benchmark_ticker ='SPY') {
+    var timeIds = ['1y', '3m', '30d', '10d', inception_date]
+    var timeRange = SplitTimeRange(timeIds, aggregation.dateIndex, aggregation.values, aggregation.benchmark.values, inception_date)
+    return timeRange
 }
 
 function updatePortfolioProfile(id, table) {
@@ -439,9 +322,10 @@ function insert_historical(ticker, data, time_stamp, update_time = null) {
     })
 }
 module.exports = {
+    handler: handler,
   computeQuantMetrics: computeQuantMetrics,
   timeRangeSlice: timeRangeSlice,
-  aggregateStockData: aggregateStockData,
+  // aggregateStockData: aggregateStockData,
   load_historical_data: load_historical_data,
   loadSingleStock: loadSingleStock,
   quote_historical2: quote_historical2,
