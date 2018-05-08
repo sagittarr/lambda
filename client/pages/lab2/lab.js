@@ -53,10 +53,10 @@ Page({
     // wx.request(options);
     var options = {
       url: config.service.db_handler,
-      data: { operation: 'STB2', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: -1 }]},
-      // data: { operation: 'STB2', id: 1521986497295, inception: '20180301', mode: 'debug'},
+      data: { operation: 'LOAD', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: -1 }]},
+      // data: { operation: 'LOAD', id: 1521986497295, inception: '20180301', mode: 'debug'},
       success(result) {
-        console.log("read STB2", result)
+        console.log("read LOAD", result)
       },
       fail(error) {
         util.showModel('请求失败', error);

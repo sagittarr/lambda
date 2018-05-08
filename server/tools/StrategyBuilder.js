@@ -2,27 +2,28 @@ var STK = require('./StockData')
 function CutOff(aggregation, from, to, offset = 0){
     var left = aggregation.dateIndex.indexOf(from)
     var right = aggregation.dateIndex.indexOf(to) + offset
-    var ts = {}
+    var slice = {}
     if(to == undefined){
-        ts.dateIndex = aggregation.dateIndex.slice(left)
-        ts.dailyPctChange = aggregation.dailyPctChange.slice(left)
+        slice.dateIndex = aggregation.dateIndex.slice(left)
+        slice.dailyPctChange = aggregation.dailyPctChange.slice(left)
     }
     else{
-        ts.dateIndex = aggregation.dateIndex.slice(left, right)
-        ts.dailyPctChange = aggregation.dailyPctChange.slice(left,right)
+        slice.dateIndex = aggregation.dateIndex.slice(left, right)
+        slice.dailyPctChange = aggregation.dailyPctChange.slice(left,right)
     }
-    ts.left = left
-    ts.right = right
-    return ts
+    slice.tickers = aggregation.dataset.map(stock=>stock.ticker)
+    slice.left = left
+    slice.right = right
+    return slice
 }
-function concat_ts(samples){
+function concat_ts(slices){
     var dailyPct = []
     var dateIndex = []
     var phaseInfo = []
-    for(var i= 0; i< samples.length; i++){
-        samples[i].dailyPctChange.map(v => { dailyPct.push(v) })
-        samples[i].dateIndex.map(v => { dateIndex.push(v) })
-        phaseInfo.push({ from: samples[i].dateIndex[0], to: samples[i].dateIndex[samples[i].dateIndex.length - 1]})
+    for(var i= 0; i< slices.length; i++){
+        slices[i].dailyPctChange.map(v => { dailyPct.push(v) })
+        slices[i].dateIndex.map(v => { dateIndex.push(v) })
+        phaseInfo.push({ tickers: slices[i].tickers, from: slices[i].dateIndex[0], to: slices[i].dateIndex[slices[i].dateIndex.length - 1]})
     }
 
     // var values = dailyPct.map((pct, i) => {cumProd = cumProd*pct; return cumProd})

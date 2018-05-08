@@ -93,12 +93,12 @@ AggregationFactory.prototype.build = function(stocks, inceptionDate=undefined){
     }
     var aggregation = new Aggregation('Portfolio')
     aggregation.values = aggSeries
-    aggregation.dateIndex = benchmark.dateIndex
+    aggregation.dateIndex = stocks[0].dateIndex
     aggregation.dataset = stocks
     aggregation.avgDlyRtn = Math.pow(_.last(aggSeries), 1. / (aggSeries.length - 1))
     aggregation.dailyPctChange = aggSeries.map((v, i) => { return i > 0 ? v / aggSeries[i - 1] : 1. })
     if(inceptionDate){
-        aggregation.inceptionDate = inceptionDate
+        aggregation.inceptionDate = parseInt(inceptionDate)
     }
     aggregation.benchmark = benchmark
     return aggregation

@@ -5,7 +5,7 @@
   <view class="zan-popup__container popup-example--center" style="width:50%;  border-radius: 5px;">
     <view class="zan-btns" style="flex-direction: column; text-align:center">
       <text class=" T5 S8">{{currentPick.name}}</text>
-      <!-- <button class="weui-btn" type="default" bindtap="onPublish" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>发布</button>   -->
+       <button class="weui-btn" type="default" bindtap="onPublish" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>发布</button>   
       <!-- <button class="weui-btn" type="default" bindtap="onUpdate" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>更新</button>   -->
       <button class="weui-btn" type="default" bindtap="onEditClick" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>编辑</button>
       <button class="weui-btn" type="default" bindtap="onDeleteClick" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>删除</button>

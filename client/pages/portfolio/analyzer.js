@@ -102,21 +102,46 @@ Page({
     _tickers.push('SPY')
     console.log(_tickers, profile.inception, profile.id)
 
+    // var options = {
+    //   url: config.service.db_handler,
+    //   data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception.toString(), id: profile.id.toString(), toUpdateDB: profile.isLocal != true},
+    //   success(result) {
+    //     console.log("read LOAD_PORTFOLIO", result)
+    //     // result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts.timeId] = ts})
+
+    //     result.data.data.timeRange.map(ts => {
+    //       if (ts == null) return;
+    //       ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark}]
+    //       that.data.timeSeriesData[ts.timeId] = ts
+
+    //     })
+    //     lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
+    //     if (profile.isLocal == true){
+    //       that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
+    //     }
+    //   },
+    //   fail(error) {
+    //     util.showModel('请求失败', error);
+    //     console.log('request fail', error);
+    //   }
+    // }
+    // if (profile.isLocal == true){
+    //   profile.p
+    // }
+    console.log(profile.phases)
     var options = {
       url: config.service.db_handler,
-      data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception.toString(), id: profile.id.toString(), toUpdateDB: profile.isLocal != true},
+      data: profile.isLocal === true ? { operation: 'LOAD', phases: profile.phases } : { operation: 'LOAD', id: profile.id, mode: 'debug'},
       success(result) {
-        console.log("read LOAD_PORTFOLIO", result)
-        // result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts.timeId] = ts})
-
+        console.log("read LOAD", result)
         result.data.data.timeRange.map(ts => {
           if (ts == null) return;
-          ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark}]
+          ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark }]
           that.data.timeSeriesData[ts.timeId] = ts
-
         })
+        profile.curr_holds = result.data.data.dataset.phaseInfo[result.data.data.dataset.phaseInfo.length-1].tickers
         lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
-        if (profile.isLocal == true){
+        if (profile.isLocal == true) {
           that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
         }
       },
@@ -125,7 +150,6 @@ Page({
         console.log('request fail', error);
       }
     }
-
     // var options = {
     //   url: config.service.db_handler,
     //   data: { operation: 'STB', phases: profile.phases, inception: profile.inception },

@@ -99,7 +99,7 @@ Page({
       var that = this
       let profile = getApp().globalData.selected
       let toSave ={}
-      let newDate = this.data.date.replace('-', '').replace('-', '')
+      let newDate = parseInt(this.data.date.replace('-', '').replace('-', ''))
       let lambda_key = getApp().globalData.lambda_key
       if (data == undefined) {
         data = {}
@@ -111,7 +111,7 @@ Page({
         toSave.ratiosTable = {}
         let stocks = that.data.stockList
         let tickers = stocks.map(stock => stock.ticker)
-        toSave.phases = [{ phaseId: 1, 'stocks': stocks, 'tickers': tickers, from: toSave.inception, to: null}]
+        toSave.phases = [{ phaseId: 1, 'stocks': stocks, 'tickers': tickers, from: parseInt(toSave.inception), to: -1}]
       }
       else{
         toSave.id = profile.id
@@ -123,7 +123,7 @@ Page({
         toSave.phases[num-1].to = newDate
         let stocks = that.data.stockList
         let tickers = stocks.map(stock => stock.ticker)
-        toSave.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: null } )
+        toSave.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: -1 } )
       }
       
       toSave.name = info.name

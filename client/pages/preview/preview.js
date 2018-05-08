@@ -83,8 +83,8 @@ Page({
       var options = {
         url: config.service.db_handler,
         data: {
-          operation: 'IN',
-          portfolio: getApp().globalData.selected
+          operation: 'NEW',
+          profile: getApp().globalData.selected
         },
         success(result) {
           console.log('Insert profile in cloud: result =  ', result)
