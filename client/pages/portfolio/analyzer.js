@@ -97,10 +97,8 @@ Page({
     console.log("selected", profile);
     this.setData({ 'profile': profile })
     // this.loadStrategyPhasesFromServer(getApp().globalData.selected.inception, 'SPY')
-    var tickers = profile.curr_holds
-    var _tickers = tickers
-    _tickers.push('SPY')
-    console.log(_tickers, profile.inception, profile.id)
+    // var tickers = profile.curr_holds.map(stock=>stock.ticker)
+    // console.log(tickers)
 
     // var options = {
     //   url: config.service.db_handler,
@@ -128,7 +126,8 @@ Page({
     // if (profile.isLocal == true){
     //   profile.p
     // }
-    console.log(profile.phases)
+    console.log('phases',profile.phases)
+    // profile.tickers = profile.curr_holds.map(stock => stock.ticker)
     var options = {
       url: config.service.db_handler,
       data: profile.isLocal === true ? { operation: 'LOAD', phases: profile.phases } : { operation: 'LOAD', id: profile.id, mode: 'debug'},
@@ -139,7 +138,8 @@ Page({
           ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark }]
           that.data.timeSeriesData[ts.timeId] = ts
         })
-        profile.curr_holds = result.data.data.dataset.phaseInfo[result.data.data.dataset.phaseInfo.length-1].tickers
+        // profile.curr_holds = result.data.data.dataset.phaseInfo[result.data.data.dataset.phaseInfo.length-1].tickers
+        
         lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
         if (profile.isLocal == true) {
           that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
@@ -150,6 +150,13 @@ Page({
         console.log('request fail', error);
       }
     }
+
+    putils.realtime_price(profile.tickers, function (results) {
+      if (!Array.isArray(results)) {
+        results = [results]
+      }
+      that.quoteRealTimePriceCallback(results)
+    })
     // var options = {
     //   url: config.service.db_handler,
     //   data: { operation: 'STB', phases: profile.phases, inception: profile.inception },
@@ -178,12 +185,7 @@ Page({
 
     // this.loadPortfolioDatafromYH(tickers, 'SPY', getApp().globalData.selected.inception)
 
-    putils.realtime_price(tickers, function (results) {
-      if (!Array.isArray(results)) {
-        results = [results]
-      }
-      that.quoteRealTimePriceCallback(results)
-    })
+
   },
 
   onShareAppMessage: function () {

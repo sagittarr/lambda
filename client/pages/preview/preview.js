@@ -20,10 +20,13 @@ Page({
       desp_value: profile.desp,
       inception: profile.inception,
       date_tip: this.data.update_date_tip,
-      stockList: profile.tickers
+      stockList: profile.curr_holds
     })
     // this.setData({ stockList: getApp().globalData.stocksForCreateOrModify })
+
     console.log(this.data.stockList)
+    console.log(profile)
+    
   },
 
   /**
@@ -79,26 +82,28 @@ Page({
       delta: 1
     })
   },
-  onPublish: function(){
-      var options = {
-        url: config.service.db_handler,
-        data: {
-          operation: 'NEW',
-          profile: getApp().globalData.selected
-        },
-        success(result) {
-          console.log('Insert profile in cloud: result =  ', result)
-          wx.navigateBack({
-            delta: 2
-          })
-          util.showSuccess('publish')
-        },
-        fail(error) {
-          // util.showModel('请求失败', error);
-          console.log('onPublish request fail', error);
-        }
+  onPublish: function () {
+    var profile = getApp().globalData.selected
+    profile.visible = 1
+    var options = {
+      url: config.service.db_handler,
+      data: {
+        operation: 'NEW',
+        profile: profile
+      },
+      success(result) {
+        console.log('Insert profile in cloud: result =  ', result)
+        wx.navigateBack({
+          delta: 2
+        })
+        util.showSuccess('publish')
+      },
+      fail(error) {
+        // util.showModel('请求失败', error);
+        console.log('onPublish request fail', error);
       }
-      // send request
-      wx.request(options);
     }
+    // send request
+    wx.request(options);
+  }
 })

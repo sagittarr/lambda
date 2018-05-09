@@ -51,19 +51,19 @@ Page({
     //   }
     // }
     // wx.request(options);
-    var options = {
-      url: config.service.db_handler,
-      data: { operation: 'LOAD', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: -1 }]},
-      // data: { operation: 'LOAD', id: 1521986497295, inception: '20180301', mode: 'debug'},
-      success(result) {
-        console.log("read LOAD", result)
-      },
-      fail(error) {
-        util.showModel('请求失败', error);
-        console.log('request fail', error);
-      }
-    }
-    wx.request(options);
+    // var options = {
+    //   url: config.service.db_handler,
+    //   data: { operation: 'LOAD', phases: [{ tickers: ['BABA', 'NVDA'], from: 20180102, to: -1 }]},
+    //   // data: { operation: 'LOAD', id: 1521986497295, inception: '20180301', mode: 'debug'},
+    //   success(result) {
+    //     console.log("read LOAD", result)
+    //   },
+    //   fail(error) {
+    //     util.showModel('请求失败', error);
+    //     console.log('request fail', error);
+    //   }
+    // }
+    // wx.request(options);
   },
 
   updateData: function () {
@@ -168,6 +168,7 @@ Page({
 
   onEditClick: function (e) {
     getApp().globalData.selected = this.data.currentPick
+    console.log(this.data.currentPick)
     getApp().globalData.useExistingProfile = true
     wx.navigateTo({
       url: '../search/search'

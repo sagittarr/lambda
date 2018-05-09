@@ -65,22 +65,22 @@ async function handler(query){
 
 async function build_strategy_ts_from_id(productId, toUpdateTblDB = false, debug = false) {
     return new Promise(function (resolve, rej) {
-        knex('phases').select('*').where({ id: productId }).then(function (rows) {
+      knex('portfolio_metadata').select('*').where({ id: productId }).then(function (rows) {
             if (rows.length == 0) {
                 resolve("no record found");
             }
             else {
-                rows.map((row, i) => {
-                    row.tickers = JSON.parse(row.holds);
-                    row.from = parseInt(row.date);
+              var phases = JSON.parse(rows[0].phases)            
+              phases.map((row, i) => {
                     if (i != 0) {
-                        rows[i - 1].to = parseInt(row.date);
+                      phases[i - 1].to = parseInt(row.from);
                     }
-                    if (i == rows.length - 1) {
+                    if (i == phases.length - 1) {
                       row.to = -1
                     }
                 })
-                buildStrategyFromPhases(rows).then(function (result) {
+              // console.log(phases)
+              buildStrategyFromPhases(phases).then(function (result) {
                     if(toUpdateTblDB){
                         updateRatiosTable(productId, result.quant)
                     }
@@ -227,13 +227,25 @@ function updateRatiosTable(id, table) {
     knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table) }).then(function (result) { console.log(result) })
   }
 }
-async function updateProfile(profile){
-    var profile = JSON.parse(profile)
-    knex('portfolio_metadata').where('id', '=', profile.id).update({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable) }).then(function(data){
-        console.log(data);
-        knex('phases').insert({ phase_id: profile.newPhaseId, id: profile.id, date: profile.inception, holds: JSON.stringify(profile.curr_holds)})
-        ctx.state.data = data
-    })
+function insertNewPhase(newPhase, id){
+  knex('phases').insert({ phase_id: newPhase.phaseId, id: id, date: newPhase.from.toString(), holds: JSON.stringify(newPhase.tickers) }).then(function (result) { console.log('update phases', result) })
+}
+async function createNewProfile(profile, response) {
+  // var newPhase = _u.last(profile.phases)
+  // insertNewPhase(newPhase, profile.id)
+  knex('portfolio_metadata').insert({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), visible: 1 , phases: JSON.stringify(profile.phases)}).then(function (data) {
+    console.log(data);
+    response.data = data
+  })
+}
+async function updateProfile(profile, response) {
+  // var profile = JSON.parse(profile)
+  // var newPhase = _u.last(profile.phases)
+  // insertNewPhase(newPhase, profile.id)
+  knex('portfolio_metadata').where('id', '=', profile.id).update({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), phases: JSON.stringify(profile.phases) }).then(function (data) {
+    console.log(data);
+    response.data = data
+  })
 }
 
 async function read_historical(ticker){
@@ -344,6 +356,7 @@ module.exports = {
     updatePortfolioProfile: updateRatiosTable,
     buildStrategyFromPhases: buildStrategyFromPhases,
     updateProfile:updateProfile,
+    createNewProfile: createNewProfile,
     retryer: retryer
     // handle_historical_request: handle_historical_request,
     // historical_callback: historical_callback

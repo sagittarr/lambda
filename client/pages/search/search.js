@@ -15,8 +15,9 @@ Page({
   onLoad:function (){
     if (getApp().globalData.useExistingProfile){
       var profile = getApp().globalData.selected
+      console.log(profile.curr_holds)
       this.setData(
-        { stockList: profile.tickers}
+        { stockList: profile.curr_holds}
       )
     }
   },
@@ -29,14 +30,14 @@ Page({
         })
     },
 
-    onShareAppMessage: function () {
-        return {
-            title: '搜索',
-            desc: `${getApp().globalData.shareDesc}`,
-            // path: `/pages/search/search`
-            path: `/pages/kanpan/kanpan?page=search`
-        }
-    },
+    // onShareAppMessage: function () {
+    //     return {
+    //         title: '搜索',
+    //         desc: `${getApp().globalData.shareDesc}`,
+    //         // path: `/pages/search/search`
+    //         path: `/pages/kanpan/kanpan?page=search`
+    //     }
+    // },
 
     onSearchBarClearEvent: function (e) {
         var that = this
@@ -52,7 +53,7 @@ Page({
         this.setData({ searchItem: e.detail.value})
         // var that = this
         var input = this.data.searchItem
-        console.log(input)
+        console.log('search item',input)
 
         var options = {
           url: config.service.ticker_search,

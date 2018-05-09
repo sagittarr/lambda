@@ -378,11 +378,14 @@ class PortfolioUtils {
       tickers = tickers.join(',')
     }
     tickers = tickers.slice(0, tickers.length)
+    // console.log(tickers)
     var options = {
       url: config.service.realtime_price,
       data: { tickers: tickers },
       success(result) {
         if (result.data.data.query){
+          if (result.data.data.query.results===null) console.log('t',tickers)
+          // console.log('q',result.data.data.query.results.quote)
           callback(result.data.data.query.results.quote)                  
         }
         else{

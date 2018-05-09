@@ -1,6 +1,7 @@
 const fs = require('fs');
 var api  = require('../tools/API.js');
 var util = require('../tools/Util.js')
+var _u = require('underscore');
 var knex = require('knex')({
     client: 'mysql',
     connection: {
@@ -81,14 +82,19 @@ module.exports = async (ctx, next) => {
     }
     else if(ctx.query.operation.toUpperCase() === 'NEW'){
         var profile = JSON.parse(ctx.query.profile)
-        await knex('portfolio_metadata').insert({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable) }).then(function(data){
-            console.log(data);
-            knex('phases').insert({ phase_id: 1, id: profile.id, date: profile.inception, holds: JSON.stringify(profile.curr_holds)})
-            ctx.state.data = data
-        })
+        await api.createNewProfile(profile,ctx.state)
+        // await knex('portfolio_metadata').insert({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), visible: 1 }).then(function(data){
+        //     // console.log(data);
+
+        //     ctx.state.data = data
+        // })
+        // // var profile = JSON.parse(profile)
+        // var newPhase = _u.last(profile.phases)
+        // knex('phases').insert({ phase_id: newPhase.phaseId, id: profile.id, date: newPhase.from.toString(), holds: JSON.stringify(newPhase.tickers) }).then(function (result) { console.log('update phases', result) })
     }
     else if(ctx.query.operation.toUpperCase() === 'UPDATE'){
-        api.updateProfile(ctx.query.profile)
+        var profile = JSON.parse(ctx.query.profile)
+        await api.updateProfile(profile, ctx.state)
     }
     // else if (ctx.query.operation.toUpperCase() === 'W'){
     //   var portfolio = JSON.parse(ctx.query.portfolio)

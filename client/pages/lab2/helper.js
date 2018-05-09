@@ -69,7 +69,18 @@ function quoteMarketIndex (that, marketIndex) {
 }
 
 function quoteChangePrecentageForProfile(profile, that) {
-  putils.realtime_price(profile.curr_holds, function (results) {
+  let tickers
+  if(profile.isLocal){
+    tickers = profile.tickers
+  }
+  else{
+    if (profile.curr_holds && profile.curr_holds[0] && typeof(profile.curr_holds[0]) === typeof("str"))
+      tickers = profile.curr_holds
+    else{
+      tickers = profile.curr_holds.map(stock=>stock.ticker)
+    }
+  }
+  putils.realtime_price(tickers, function (results) {
     var chg_pct = 0
     if (results == undefined) {
       wx.stopPullDownRefresh();
@@ -98,7 +109,11 @@ function loadProfilefromServer(that) {
     success(result) {
       console.log("cloud ", result.data.data)
       result.data.data.forEach(function (loaded) {
-        loaded.curr_holds = JSON.parse(loaded.curr_holds)
+        let phases = JSON.parse(loaded.phases)
+        if (phases) {
+          loaded.curr_holds = phases[phases.length - 1].stocks
+          loaded.tickers = phases[phases.length - 1].tickers
+        }
         DisplayMetrics(loaded, 'inception')
         Colorify(loaded, 'inception')
       })
@@ -133,10 +148,6 @@ function loadProfilefromStorage(that) {
       var list = []
       Object.keys(data).forEach(function (key, i, a) {
         var profile = data[key]
-        profile.curr_holds = []
-        profile.tickers.forEach(function (e) {
-          profile.curr_holds.push(e.ticker)
-        })
         DisplayMetrics(profile, 'inception')
         Colorify(profile, 'inception')
         list.push(profile);

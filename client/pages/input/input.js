@@ -104,13 +104,15 @@ Page({
       if (data == undefined) {
         data = {}
       }
+      let stocks
+      let tickers
       if (!profile || !profile.id){
         var n = new Date().getTime();
         toSave.id = n.toString()
         toSave.inception = newDate
         toSave.ratiosTable = {}
-        let stocks = that.data.stockList
-        let tickers = stocks.map(stock => stock.ticker)
+        stocks = that.data.stockList
+        tickers = stocks.map(stock => stock.ticker)
         toSave.phases = [{ phaseId: 1, 'stocks': stocks, 'tickers': tickers, from: parseInt(toSave.inception), to: -1}]
       }
       else{
@@ -121,16 +123,18 @@ Page({
         let num = toSave.phases.length
         console.log(toSave.phases, num) 
         toSave.phases[num-1].to = newDate
-        let stocks = that.data.stockList
-        let tickers = stocks.map(stock => stock.ticker)
+        stocks = that.data.stockList
+        tickers = stocks.map(stock => stock.ticker)
         toSave.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: -1 } )
       }
-      
+      console.log('stk',stocks)
+      toSave.tickers = tickers
       toSave.name = info.name
       toSave.desp = info.desp
       toSave.last_update = newDate,
       toSave.isLocal = true
-      toSave.tickers = that.data.stockList
+      toSave.curr_holds = stocks
+      
       data[toSave.id] = toSave
       wx.setStorage({
         key: lambda_key,
@@ -148,6 +152,7 @@ Page({
       var info = e.detail.value;
       var lambda_key = getApp().globalData.lambda_key
       let profile = getApp().globalData.selected
+      console.log('profile', profile)
       let date = this.data.date.replace('-', '').replace('-', '')
       if (info.name.length == 0) {
         this.showTopTips("Name is empty")
@@ -157,15 +162,48 @@ Page({
         this.showTopTips("Description is empty")
         return
       }
-      wx.getStorage({
-        key: lambda_key,
-        success: function (res) {
-          that.storeProfile(info,res.data)
-        },
-        fail: function(res){
-          console.log(lambda_key, ' not found')
-          that.storeProfile(info)
+      if(!profile || profile.isLocal){
+        wx.getStorage({
+          key: lambda_key,
+          success: function (res) {
+            that.storeProfile(info, res.data)
+          },
+          fail: function (res) {
+            console.log(lambda_key, ' not found')
+            that.storeProfile(info)
+          }
+        });
+      }
+      else{
+        let newDate = parseInt(this.data.date.replace('-', '').replace('-', ''))
+        profile.phases = JSON.parse(profile.phases)
+        let num = profile.phases.length
+        profile.phases[num - 1].to = newDate
+        let stocks = that.data.stockList
+        let tickers = stocks.map(stock => stock.ticker)
+        profile.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: -1 })
+        // profile.visible = 1
+        var options = {
+          url: config.service.db_handler,
+          data: {
+            operation: 'UPDATE',
+            profile: profile
+          },
+          success(result) {
+            console.log('Update profile in cloud: result =  ', result)
+            wx.navigateBack({
+              delta: 2
+            })
+            util.showSuccess('Update')
+          },
+          fail(error) {
+            // util.showModel('请求失败', error);
+            console.log('Update request fail', error);
+          }
         }
-      });
+        // send request
+        wx.request(options);
+      }
+
     },
 });
