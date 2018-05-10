@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="722b7472-90db-49d1-8755-d4a9cca0e551" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/client/pages/input/input.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/input/input.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/pages/portfolio/analyzer.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/portfolio/analyzer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/preview/preview.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/preview/preview.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/db_handler.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/db_handler.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/tools/API.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/tools/API.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/tools/StockData.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/tools/StockData.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/tools/StrategyBuilder.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/tools/StrategyBuilder.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/tools/Util.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/tools/Util.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -27,17 +24,17 @@
       <file leaf-file-name="StockData.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/tools/StockData.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" column="22" lean-forward="true" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
+            <state relative-caret-position="300">
+              <caret line="107" column="28" selection-start-line="107" selection-start-column="19" selection-end-line="107" selection-end-column="28" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StrategyBuilder.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="StrategyBuilder.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/tools/StrategyBuilder.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="52" column="1" lean-forward="true" selection-start-line="52" selection-start-column="1" selection-end-line="52" selection-end-column="1" />
+            <state relative-caret-position="969">
+              <caret line="51" column="18" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -63,17 +60,26 @@
       <file leaf-file-name="db_handler.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/controllers/db_handler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="268">
-              <caret line="81" column="57" lean-forward="true" selection-start-line="81" selection-start-column="57" selection-end-line="81" selection-end-column="57" />
+            <state relative-caret-position="743">
+              <caret line="82" column="57" selection-start-line="82" selection-start-column="57" selection-end-line="82" selection-end-column="57" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="API.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="API.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/tools/API.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-150">
-              <caret line="206" column="79" selection-start-line="206" selection-start-column="66" selection-end-line="206" selection-end-column="79" />
+            <state relative-caret-position="2205">
+              <caret line="348" selection-start-line="348" selection-end-line="348" selection-end-column="48" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Util.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/tools/Util.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1385">
+              <caret line="84" column="63" selection-start-line="84" selection-start-column="63" selection-end-line="84" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -82,7 +88,7 @@
         <entry file="file://$PROJECT_DIR$/client/pages/input/input.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="152">
-              <caret line="77" column="6" lean-forward="true" selection-start-line="77" selection-start-column="6" selection-end-line="77" selection-end-column="6" />
+              <caret line="77" column="6" selection-start-line="77" selection-start-column="6" selection-end-line="77" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -103,8 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>valuesWithDate</find>
-      <find>stockDAta</find>
       <find>processStockData</find>
       <find>stockData</find>
       <find>processS</find>
@@ -124,15 +128,17 @@
       <find>Calculator</find>
       <find>computeQuantMetrics</find>
       <find>StrategyBuilder</find>
-      <find>timeRangeSlice</find>
-      <find>SplitTimeRange</find>
       <find>loadSingleStock</find>
       <find>parseInt</find>
       <find>addSlice</find>
       <find>buildStrategyFromPhases</find>
       <find>update</find>
       <find>updatePortfolioProfile</find>
+      <find>timeRangeSlice</find>
       <find>updateRatiosTable</find>
+      <find>SplitTimeRange</find>
+      <find>dateIndex</find>
+      <find>benchmark</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -143,11 +149,12 @@
       <list>
         <option value="$PROJECT_DIR$/server/test/test.js" />
         <option value="$PROJECT_DIR$/server/tools/QuantCalculater.js" />
-        <option value="$PROJECT_DIR$/server/tools/StrategyBuilder.js" />
-        <option value="$PROJECT_DIR$/server/tools/API.js" />
         <option value="$PROJECT_DIR$/server/controllers/db_handler.js" />
         <option value="$PROJECT_DIR$/client/pages/input/input.js" />
+        <option value="$PROJECT_DIR$/server/tools/Util.js" />
+        <option value="$PROJECT_DIR$/server/tools/StrategyBuilder.js" />
         <option value="$PROJECT_DIR$/server/tools/StockData.js" />
+        <option value="$PROJECT_DIR$/server/tools/API.js" />
       </list>
     </option>
   </component>
@@ -202,13 +209,6 @@
             <path>
               <item name="lambda" type="b2602c69:ProjectViewProjectNode" />
               <item name="lambda" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="pages" type="462c0819:PsiDirectoryNode" />
-              <item name="input" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="lambda" type="b2602c69:ProjectViewProjectNode" />
-              <item name="lambda" type="462c0819:PsiDirectoryNode" />
               <item name="server" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -249,26 +249,26 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Node.js.StrategyBuilder.js">
+  <component name="RunManager" selected="Node.js.Util.js">
     <configuration name="QuantCalculater.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="QuantCalculater.js" working-dir="$PROJECT_DIR$/server/tools" />
-    <configuration name="StockData.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="StockData.js" working-dir="$PROJECT_DIR$/server/tools" />
     <configuration name="StrategyBuilder.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="StrategyBuilder.js" working-dir="$PROJECT_DIR$/server/tools" />
+    <configuration name="Util.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="Util.js" working-dir="$PROJECT_DIR$/server/tools" />
     <configuration name="db_handler.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="db_handler.js" working-dir="$PROJECT_DIR$/server/controllers" />
     <configuration name="test.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" nameIsGenerated="true" path-to-js-file="test.js" working-dir="$PROJECT_DIR$/server/test" />
     <list>
-      <item itemvalue="Node.js.StockData.js" />
       <item itemvalue="Node.js.test.js" />
       <item itemvalue="Node.js.db_handler.js" />
       <item itemvalue="Node.js.QuantCalculater.js" />
       <item itemvalue="Node.js.StrategyBuilder.js" />
+      <item itemvalue="Node.js.Util.js" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Node.js.Util.js" />
         <item itemvalue="Node.js.StrategyBuilder.js" />
         <item itemvalue="Node.js.QuantCalculater.js" />
         <item itemvalue="Node.js.db_handler.js" />
         <item itemvalue="Node.js.test.js" />
-        <item itemvalue="Node.js.StockData.js" />
       </list>
     </recent_temporary>
   </component>
@@ -282,22 +282,22 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1525655167866</updated>
-      <workItem from="1525655169202" duration="33114000" />
+      <workItem from="1525655169202" duration="38435000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33114000" />
+    <option name="totallyTimeSpent" value="38435000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="775" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24277908" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24277908" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2205438" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2205438" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" />
@@ -317,11 +317,11 @@
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.24959871" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.24277908" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.24872231" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.2205438" />
       <window_info anchor="bottom" id="Message" order="4" />
       <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="1" />
@@ -351,17 +351,41 @@
         <state relative-caret-position="-54" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/test/test.js">
+    <entry file="file://$PROJECT_DIR$/client/pages/lab2/lab.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/pages/input/input.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="47" />
+        <state relative-caret-position="152">
+          <caret line="77" column="6" selection-start-line="77" selection-start-column="6" selection-end-line="77" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server/controllers/db_handler.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="81" column="57" lean-forward="true" selection-start-line="81" selection-start-column="57" selection-end-line="81" selection-end-column="57" />
+        <state relative-caret-position="743">
+          <caret line="82" column="57" selection-start-line="82" selection-start-column="57" selection-end-line="82" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/tools/Util.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1385">
+          <caret line="84" column="63" selection-start-line="84" selection-start-column="63" selection-end-line="84" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/tools/StockData.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="107" column="28" selection-start-line="107" selection-start-column="19" selection-end-line="107" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/tools/StrategyBuilder.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="969">
+          <caret line="51" column="18" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="18" />
         </state>
       </provider>
     </entry>
@@ -372,34 +396,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/pages/lab2/lab.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/pages/input/input.js">
+    <entry file="file://$PROJECT_DIR$/server/test/test.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="77" column="6" lean-forward="true" selection-start-line="77" selection-start-column="6" selection-end-line="77" selection-end-column="6" />
+        <state relative-caret-position="38">
+          <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server/tools/API.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-150">
-          <caret line="206" column="79" selection-start-line="206" selection-start-column="66" selection-end-line="206" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/tools/StockData.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="22" lean-forward="true" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/tools/StrategyBuilder.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="52" column="1" lean-forward="true" selection-start-line="52" selection-start-column="1" selection-end-line="52" selection-end-column="1" />
+        <state relative-caret-position="2205">
+          <caret line="348" selection-start-line="348" selection-end-line="348" selection-end-column="48" />
         </state>
       </provider>
     </entry>

@@ -16,7 +16,7 @@ function CutOff(aggregation, from, to, offset = 0){
     slice.right = right
     return slice
 }
-function concat_ts(slices){
+function combine(slices){
     var dailyPct = []
     var dateIndex = []
     var phaseInfo = []
@@ -49,7 +49,7 @@ StrategyBuilder.prototype.addSlice = function (aggregation, from, to){
     }
 }
 StrategyBuilder.prototype.build =  function () {
-    return concat_ts(this.slices)
+    return combine(this.slices)
 }
 function Phase(){
     this.from

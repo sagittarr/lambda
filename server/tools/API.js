@@ -92,23 +92,21 @@ async function build_strategy_ts_from_id(productId, toUpdateTblDB = false, debug
 }
 
 // input = [{tickers, from, to}]
-async function build_strategy_ts(phases, inceptionDate){
+async function build_strategy_ts(phases, spy, inceptionDate){
     // var slices = []
     if(typeof(phases) == typeof("str")){
         phases = JSON.parse(phases)
     }
-    phases.map(input => {
-        if (_u.indexOf(input.tickers, 'SPY') == -1) {
-            input.tickers.push('SPY')
-        }
-        // input.from = parseInt(input.from)
-        // input.to = parseInt(input.to)
-    })
+    // phases.map(input => {
+    //     if (_u.indexOf(input.tickers, 'SPY') == -1) {
+    //         input.tickers.push('SPY')
+    //     }
+    // })
     return new Promise(function (resolve, rej) {
       var builder = new StrategyBuilder(phases.length)
         phases.map((phase, i) => {
             load_historical_data(phase.tickers).then(function (stocks) {
-                var agg = new AggregationFactory().build(stocks)
+                var agg = new AggregationFactory().build(stocks, spy)
                 agg.inceptionDate = inceptionDate
                 builder.addSlice(agg, phase.from, phase.to)
                 if (builder.slices.length == phases.length) {
@@ -119,22 +117,27 @@ async function build_strategy_ts(phases, inceptionDate){
     })
 }
 function SplitTimeRange(timeIds, dateIndex, aggValues, comparision, inception){
-  var timeRange = timeIds.map(timeId => {
-    var index = util.dateIndexPicker(dateIndex, timeId)
-    index = _u.compact(index)
-    var dates = index.map(i => { return  dateIndex[i] })
-    var values = index.map(i => { return aggValues[i] / aggValues[index[0]] })
-    var benchmark = index.map(i => { return comparision[i] / comparision[index[0]] })
-    return { timeId: timeId == inception ? 'inception' : timeId, index: dates, values: values, benchmark: benchmark }
-  })
-  return timeRange
+    var timeRange = timeIds.map(timeId => {
+        var index = util.dateIndexPicker(dateIndex, timeId)
+        // if(index && index[0] == 0){
+        //     index = [0].concat(_u.compact(index)) // compact remove 0 undefined and null false
+        // }
+        // else{
+        //     index = _u.compact(index)
+        // }
+        var dates = index.map(i => { return  dateIndex[i] })
+        var values = index.map(i => { return aggValues[i] / aggValues[index[0]] })
+        var benchmark = index.map(i => { return comparision[i] / comparision[index[0]] })
+        return { timeId: timeId == inception ? 'inception' : timeId, index: dates, values: values, benchmark: benchmark }
+    })
+    return timeRange
 }
 
 async function buildStrategyFromPhases(phases){
     var numOfPhase = phases.length
     return new Promise(function (resolve, reject) {
-        build_strategy_ts(phases, phases[0].from).then(function (strategyData) {
-            loadSingleStock('SPY', phases[0].from, phases[numOfPhase - 1].to).then(function (spy) {
+        loadSingleStock('SPY', phases[0].from, phases[numOfPhase - 1].to).then(function (spy) {
+            build_strategy_ts(phases, spy, phases[0].from).then(function (strategyData) {
                 var timeIds = ['1y', '3m', '30d', '10d', phases[0].from]
                 var timeRange = SplitTimeRange(timeIds, strategyData.dateIndex, strategyData.values, spy.values, phases[0].from)
                 strategyData.benchmark = spy
@@ -343,18 +346,18 @@ function insert_historical(ticker, data, time_stamp, update_time = null) {
 }
 module.exports = {
     handler: handler,
-    computeQuantMetrics: computeQuantMetrics,
+    // computeQuantMetrics: computeQuantMetrics,
     timeRangeSlice: timeRangeSlice,
     // aggregateStockData: aggregateStockData,
     load_historical_data: load_historical_data,
-    loadSingleStock: loadSingleStock,
+    // loadSingleStock: loadSingleStock,
     quote_historical2: quote_historical2,
     insert_historical: insert_historical,
     read_historical: read_historical,
-    build_strategy_ts: build_strategy_ts,
-    build_strategy_ts_from_id: build_strategy_ts_from_id,
+    // build_strategy_ts: build_strategy_ts,
+    // build_strategy_ts_from_id: build_strategy_ts_from_id,
     updatePortfolioProfile: updateRatiosTable,
-    buildStrategyFromPhases: buildStrategyFromPhases,
+    // buildStrategyFromPhases: buildStrategyFromPhases,
     updateProfile:updateProfile,
     createNewProfile: createNewProfile,
     retryer: retryer

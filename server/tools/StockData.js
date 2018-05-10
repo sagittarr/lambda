@@ -42,18 +42,22 @@ function Aggregation(name){
     this.avgDlyRtn
     this.dailyPctChange = []
     this.inceptionDate = ''
-    this.benchmark = undefined
+    // this.benchmark = undefined
     this.phaseInfo = undefined //optional
     this.quant = {}
 }
 Aggregation.prototype.computeQuantMetric = function(){
-    var ab = Calculator.computeAlphaBeta(this.dailyPctChange, this.benchmark.dailyPctChange)
-    var sharp = Calculator.computeSharpRatio(this.dailyPctChange, this.benchmark.dailyPctChange)
+    // var ab = Calculator.computeAlphaBeta(this.dailyPctChange, this.benchmark.dailyPctChange)
+    // var sharp = Calculator.computeSharpRatio(this.dailyPctChange, this.benchmark.dailyPctChange)
     var mdd = Calculator.computeMDD(this.values)
     var voli = Calculator.computeVolatility(this.dailyPctChange)
     let totalReturn = (this.values[this.values.length - 1] / this.values[0]) - 1
     let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (this.dateIndex.length - 1)) - 1
-    this.quant = { '1y': { alpha: ab.alpha, beta: ab.beta, sharp: sharp, mdd: mdd, voli: voli, totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: this.dateIndex.length}}
+    this.quant = { '1y': {
+        // alpha: ab.alpha,
+        //     beta: ab.beta,
+        //     sharp: sharp,
+            mdd: mdd, voli: voli, totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: this.dateIndex.length}}
     var incpIndex = _.indexOf(this.dateIndex, this.inceptionDate, true)
     if(incpIndex!=-1){
         let totalReturn = _.last(this.values) / this.values[incpIndex] - 1
@@ -67,21 +71,22 @@ Aggregation.prototype.computeQuantMetric = function(){
 
 function AggregationFactory(){}
 
-AggregationFactory.prototype.build = function(stocks, inceptionDate=undefined){
-    var benchmark;
-    stocks.map(stock=> {if(stock.isBenchmark) benchmark = stock} )
+AggregationFactory.prototype.build = function(stocks, spy, inceptionDate=undefined){
+    // var benchmark = [];
+    // stocks.map(stock=> {if(stock.isBenchmark) benchmark = stock} )
     stocks.map(stock => {
-        if(!stock.isBenchmark && stock.dateIndex.length<benchmark.dateIndex.length){
+        if(stock.dateIndex.length<spy.dateIndex.length){
             let tmp = []
-            benchmark.dateIndex.map(v => { tmp.push(stock.valuesWithDate[v])})
+            spy.dateIndex.map(v => { tmp.push(stock.valuesWithDate[v])})
             stock.values = tmp
         }
     })
 
     var aggSeries = []
-    for (var i = 0; i < benchmark.dateIndex.length; i++) {
+    for (var i = 0; i < spy.dateIndex.length; i++) {
         let all = []
-        stocks.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
+        // stocks.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
+        stocks.map(stock => { all.push(stock.values[i])})
         all = _.compact(all)
         if(all.length == 0){
             aggSeries.push(1.);
@@ -93,14 +98,14 @@ AggregationFactory.prototype.build = function(stocks, inceptionDate=undefined){
     }
     var aggregation = new Aggregation('Portfolio')
     aggregation.values = aggSeries
-    aggregation.dateIndex = stocks[0].dateIndex
+    aggregation.dateIndex = spy.dateIndex
     aggregation.dataset = stocks
     aggregation.avgDlyRtn = Math.pow(_.last(aggSeries), 1. / (aggSeries.length - 1))
     aggregation.dailyPctChange = aggSeries.map((v, i) => { return i > 0 ? v / aggSeries[i - 1] : 1. })
     if(inceptionDate){
         aggregation.inceptionDate = parseInt(inceptionDate)
     }
-    aggregation.benchmark = benchmark
+    // aggregation.benchmark = benchmark
     return aggregation
 }
 module.exports = {

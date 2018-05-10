@@ -130,7 +130,7 @@ Page({
     // profile.tickers = profile.curr_holds.map(stock => stock.ticker)
     var options = {
       url: config.service.db_handler,
-      data: profile.isLocal === true ? { operation: 'LOAD', phases: profile.phases } : { operation: 'LOAD', id: profile.id, mode: 'debug'},
+      data: profile.isLocal === true ? { operation: 'LOAD', phases: profile.phases } : { operation: 'LOAD', id: profile.id, mode: 'debug', toUpdateDB: true},
       success(result) {
         console.log("read LOAD", result)
         result.data.data.timeRange.map(ts => {
