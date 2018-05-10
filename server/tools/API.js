@@ -116,9 +116,11 @@ async function build_strategy_ts(phases, spy, inceptionDate){
         })
     })
 }
-function SplitTimeRange(timeIds, dateIndex, aggValues, comparision, inception){
+function SplitTimeRange(timeIds, dateIndex, aggValues, spy, inception){
     var timeRange = timeIds.map(timeId => {
         var index = util.dateIndexPicker(dateIndex, timeId)
+        var start = spy.dateIndex.indexOf(dateIndex[0])
+        var spyValues = spy.values.slice(start)
         // if(index && index[0] == 0){
         //     index = [0].concat(_u.compact(index)) // compact remove 0 undefined and null false
         // }
@@ -127,8 +129,9 @@ function SplitTimeRange(timeIds, dateIndex, aggValues, comparision, inception){
         // }
         var dates = index.map(i => { return  dateIndex[i] })
         var values = index.map(i => { return aggValues[i] / aggValues[index[0]] })
-        var benchmark = index.map(i => { return comparision[i] / comparision[index[0]] })
-        return { timeId: timeId == inception ? 'inception' : timeId, index: dates, values: values, benchmark: benchmark }
+        var benchmark = index.map(i => { return spyValues[i] / spyValues[index[0]] })
+            // , firstIndex: index[0], first:comparision[index[0]], firstDate: dates[0], last: comparision[_u.last(index)], idx: index
+        return { timeId: timeId == inception ? 'inception' : timeId, index: dates, values: values, benchmark: benchmark, spyValues: spyValues}
     })
     return timeRange
 }
@@ -139,7 +142,7 @@ async function buildStrategyFromPhases(phases){
         loadSingleStock('SPY', phases[0].from, phases[numOfPhase - 1].to).then(function (spy) {
             build_strategy_ts(phases, spy, phases[0].from).then(function (strategyData) {
                 var timeIds = ['1y', '3m', '30d', '10d', phases[0].from]
-                var timeRange = SplitTimeRange(timeIds, strategyData.dateIndex, strategyData.values, spy.values, phases[0].from)
+                var timeRange = SplitTimeRange(timeIds, strategyData.dateIndex, strategyData.values, spy, phases[0].from)
                 strategyData.benchmark = spy
                 strategyData.inceptionDate = phases[0].from
                 strategyData.computeQuantMetric()
@@ -219,11 +222,11 @@ function computeQuantMetrics(aggregation){
 
 }
 
-function timeRangeSlice(aggregation, inception_date, benchmark_ticker ='SPY') {
-    var timeIds = ['1y', '3m', '30d', '10d', inception_date]
-    var timeRange = SplitTimeRange(timeIds, aggregation.dateIndex, aggregation.values, aggregation.benchmark.values, inception_date)
-    return timeRange
-}
+// function timeRangeSlice(aggregation, inception_date, benchmark_ticker ='SPY') {
+//     var timeIds = ['1y', '3m', '30d', '10d', inception_date]
+//     var timeRange = SplitTimeRange(timeIds, aggregation.dateIndex, aggregation.values, aggregation.benchmark.values, inception_date)
+//     return timeRange
+// }
 
 function updateRatiosTable(id, table) {
   if (id) {
@@ -347,7 +350,7 @@ function insert_historical(ticker, data, time_stamp, update_time = null) {
 module.exports = {
     handler: handler,
     // computeQuantMetrics: computeQuantMetrics,
-    timeRangeSlice: timeRangeSlice,
+    // timeRangeSlice: timeRangeSlice,
     // aggregateStockData: aggregateStockData,
     load_historical_data: load_historical_data,
     // loadSingleStock: loadSingleStock,

@@ -113,6 +113,7 @@ function loadProfilefromServer(that) {
         if (phases) {
           loaded.curr_holds = phases[phases.length - 1].stocks
           loaded.tickers = phases[phases.length - 1].tickers
+          loaded.isLocal = false
         }
         DisplayMetrics(loaded, 'inception')
         Colorify(loaded, 'inception')

@@ -126,7 +126,7 @@ Page({
     // if (profile.isLocal == true){
     //   profile.p
     // }
-    console.log('phases',profile.phases)
+    // console.log('phases',profile.phases)
     // profile.tickers = profile.curr_holds.map(stock => stock.ticker)
     var options = {
       url: config.service.db_handler,

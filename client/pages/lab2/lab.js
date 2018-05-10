@@ -168,13 +168,22 @@ Page({
 
   onEditClick: function (e) {
     getApp().globalData.selected = this.data.currentPick
+    getApp().globalData.editing = true
     console.log(this.data.currentPick)
     getApp().globalData.useExistingProfile = true
     wx.navigateTo({
       url: '../search/search'
     })
   },
-
+  onUpdateClick: function (e) {
+    getApp().globalData.selected = this.data.currentPick
+    getApp().globalData.editing = false
+    console.log(this.data.currentPick)
+    getApp().globalData.useExistingProfile = true
+    wx.navigateTo({
+      url: '../search/search'
+    })
+  },
   onPublish: function (e) {
     getApp().globalData.selected = this.data.currentPick
     // getApp().globalData.useExistingProfile = true
