@@ -8,7 +8,7 @@
        <button class="weui-btn" type="default" bindtap="onPublish" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>发布</button>   
        <button class="weui-btn" type="default" bindtap="onUpdateClick" wx:if="{{activeIndex <= 1}}" style='background-color: wheat; width:100%;'>更新</button>   
       <button class="weui-btn" type="default" bindtap="onEditClick" wx:if="{{activeIndex <= 1}}" style='background-color: wheat; width:100%;'>编辑</button>
-      <button class="weui-btn" type="default" bindtap="onDeleteClick" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>删除</button>
+      <button class="weui-btn" type="default" bindtap="onDeleteClick" wx:if="{{activeIndex <= 1}}" style='background-color: wheat; width:100%;'>删除</button>
       <button class="weui-btn" type="default" bindtap="togglePopup" style='width:100%;'>返回</button>
     </view>
   </view>

@@ -222,32 +222,35 @@ function computeQuantMetrics(aggregation){
 
 }
 
-// function timeRangeSlice(aggregation, inception_date, benchmark_ticker ='SPY') {
-//     var timeIds = ['1y', '3m', '30d', '10d', inception_date]
-//     var timeRange = SplitTimeRange(timeIds, aggregation.dateIndex, aggregation.values, aggregation.benchmark.values, inception_date)
-//     return timeRange
-// }
-
 function updateRatiosTable(id, table) {
   if (id) {
     knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table) }).then(function (result) { console.log(result) })
   }
 }
-function insertNewPhase(newPhase, id){
-  knex('phases').insert({ phase_id: newPhase.phaseId, id: id, date: newPhase.from.toString(), holds: JSON.stringify(newPhase.tickers) }).then(function (result) { console.log('update phases', result) })
+// function insertNewPhase(newPhase, id){
+//   knex('phases').insert({ phase_id: newPhase.phaseId, id: id, date: newPhase.from.toString(), holds: JSON.stringify(newPhase.tickers) }).then(function (result) { console.log('update phases', result) })
+// }
+
+async function deleteProfile(profile, response) {
+    knex('portfolio_metadata')
+        .where({ id: profile.id })
+        .del().then(function(res){response.data =res})
 }
 async function createNewProfile(profile, response) {
-  // var newPhase = _u.last(profile.phases)
-  // insertNewPhase(newPhase, profile.id)
-  knex('portfolio_metadata').insert({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), visible: 1 , phases: JSON.stringify(profile.phases)}).then(function (data) {
-    console.log(data);
-    response.data = data
-  })
+    knex('portfolio_metadata').select('*').where({ id: profile.id }).then(function (rows) {
+        if(rows.length >0){
+            response.data = 'profile existing'
+        }
+        else{
+            knex('portfolio_metadata').insert({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), visible: 1 , phases: JSON.stringify(profile.phases)}).then(function (data) {
+                console.log(data);
+            })
+            response.data = 'creation success'
+        }
+    })
 }
+
 async function updateProfile(profile, response) {
-  // var profile = JSON.parse(profile)
-  // var newPhase = _u.last(profile.phases)
-  // insertNewPhase(newPhase, profile.id)
   knex('portfolio_metadata').where('id', '=', profile.id).update({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), phases: JSON.stringify(profile.phases) }).then(function (data) {
     console.log(data);
     response.data = data
@@ -363,7 +366,8 @@ module.exports = {
     // buildStrategyFromPhases: buildStrategyFromPhases,
     updateProfile:updateProfile,
     createNewProfile: createNewProfile,
-    retryer: retryer
+    retryer: retryer,
+    deleteProfile:deleteProfile
     // handle_historical_request: handle_historical_request,
     // historical_callback: historical_callback
 };

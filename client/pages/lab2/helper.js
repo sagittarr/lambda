@@ -257,7 +257,21 @@ function Colorify(profile, timeKey) {
     }
   }
 }
-
+function DeleteCloudProfile(profile, that) {
+  var options = {
+    url: config.service.db_handler,
+    data: { operation: 'DEL', profile : profile },
+    success(result) {
+      console.log("cloud ", result.data.data)
+      util.showSuccess('数据请求完成')
+    },
+    fail(error) {
+      util.showModel('请求失败', error);
+      console.log('request fail', error);
+    }
+  }
+  wx.request(options);
+}
 function DeleteLocalProfile(profile, that){
   var lambda_key = getApp().globalData.lambda_key
   wx.getStorage({
@@ -286,6 +300,6 @@ module.exports = {
   quoteChangePrecentageForProfile: quoteChangePrecentageForProfile,
   loadProfilefromServer: loadProfilefromServer,
   loadProfilefromStorage: loadProfilefromStorage,
-  // loadStrategyPhasesFromServer: loadStrategyPhasesFromServer,
+  DeleteCloudProfile: DeleteCloudProfile,
   DeleteLocalProfile: DeleteLocalProfile
   };

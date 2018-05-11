@@ -155,7 +155,12 @@ Page({
   },
 
   deleteProfile: function () {
-    helper.DeleteLocalProfile(this.data.currentPick, this)
+    if(this.data.currentPick.isLocal){
+      helper.DeleteLocalProfile(this.data.currentPick, this)
+    }
+    else{
+      helper.DeleteCloudProfile(this.data.currentPick, this)
+    }
     this.setData({ currentPick: undefined })
     this.setData({ showOperationPopup: false })
   },
