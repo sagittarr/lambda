@@ -91,17 +91,10 @@ async function build_strategy_ts_from_id(productId, toUpdateTblDB = false, debug
     })
 }
 
-// input = [{tickers, from, to}]
 async function build_strategy_ts(phases, spy, inceptionDate){
-    // var slices = []
     if(typeof(phases) == typeof("str")){
         phases = JSON.parse(phases)
     }
-    // phases.map(input => {
-    //     if (_u.indexOf(input.tickers, 'SPY') == -1) {
-    //         input.tickers.push('SPY')
-    //     }
-    // })
     return new Promise(function (resolve, rej) {
       var builder = new StrategyBuilder(phases.length)
         phases.map((phase, i) => {
@@ -121,12 +114,6 @@ function SplitTimeRange(timeIds, dateIndex, aggValues, spy, inception){
         var index = util.dateIndexPicker(dateIndex, timeId)
         var start = spy.dateIndex.indexOf(dateIndex[0])
         var spyValues = spy.values.slice(start)
-        // if(index && index[0] == 0){
-        //     index = [0].concat(_u.compact(index)) // compact remove 0 undefined and null false
-        // }
-        // else{
-        //     index = _u.compact(index)
-        // }
         var dates = index.map(i => { return  dateIndex[i] })
         var values = index.map(i => { return aggValues[i] / aggValues[index[0]] })
         var benchmark = index.map(i => { return spyValues[i] / spyValues[index[0]] })

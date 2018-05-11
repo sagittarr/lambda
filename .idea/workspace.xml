@@ -2,11 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="722b7472-90db-49d1-8755-d4a9cca0e551" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/lab2/helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/helper.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/db_handler.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/db_handler.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/tools/API.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/tools/API.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -57,20 +52,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="db_handler.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="db_handler.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/controllers/db_handler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="25" column="53" lean-forward="true" selection-start-line="25" selection-start-column="53" selection-end-line="25" selection-end-column="53" />
+            <state relative-caret-position="-152">
+              <caret line="14" selection-start-line="14" selection-end-line="18" selection-end-column="50" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="API.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="API.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/tools/API.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="364" column="46" lean-forward="true" selection-start-line="364" selection-start-column="46" selection-end-line="364" selection-end-column="46" />
+            <state relative-caret-position="132">
+              <caret line="6" column="38" lean-forward="true" selection-start-line="6" selection-start-column="38" selection-end-line="6" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -153,8 +148,8 @@
         <option value="$PROJECT_DIR$/server/tools/StrategyBuilder.js" />
         <option value="$PROJECT_DIR$/server/tools/StockData.js" />
         <option value="$PROJECT_DIR$/server/tools/Util.js" />
-        <option value="$PROJECT_DIR$/server/tools/API.js" />
         <option value="$PROJECT_DIR$/server/controllers/db_handler.js" />
+        <option value="$PROJECT_DIR$/server/tools/API.js" />
       </list>
     </option>
   </component>
@@ -176,7 +171,7 @@
       <path value="$PROJECT_DIR$/server/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="14" />
     <option name="y" value="29" />
     <option name="width" value="1890" />
@@ -243,16 +238,15 @@
       <updated>1525655167866</updated>
       <workItem from="1525655169202" duration="38499000" />
       <workItem from="1525943327002" duration="4255000" />
-      <workItem from="1526004071148" duration="2004000" />
+      <workItem from="1526004071148" duration="3012000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44758000" />
+    <option name="totallyTimeSpent" value="45766000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1477" height="797" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24277908" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -472,17 +466,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/tools/API.js">
+    <entry file="file://$PROJECT_DIR$/server/controllers/db_handler.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="364" column="46" lean-forward="true" selection-start-line="364" selection-start-column="46" selection-end-line="364" selection-end-column="46" />
+        <state relative-caret-position="-152">
+          <caret line="14" selection-start-line="14" selection-end-line="18" selection-end-column="50" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/db_handler.js">
+    <entry file="file://$PROJECT_DIR$/server/tools/API.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="25" column="53" lean-forward="true" selection-start-line="25" selection-start-column="53" selection-end-line="25" selection-end-column="53" />
+        <state relative-caret-position="132">
+          <caret line="6" column="38" lean-forward="true" selection-start-line="6" selection-start-column="38" selection-end-line="6" selection-end-column="38" />
         </state>
       </provider>
     </entry>

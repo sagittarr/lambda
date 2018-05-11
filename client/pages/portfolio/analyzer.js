@@ -81,7 +81,7 @@ Page({
   onLoad: function (e) {
     // this.windowWidth = 375;
     var that = this;
-    
+
     try {
       var res = wx.getSystemInfoSync();
       this.windowWidth = res.windowWidth;
@@ -96,41 +96,9 @@ Page({
     }
     console.log("selected", profile);
     this.setData({ 'profile': profile })
-    // this.loadStrategyPhasesFromServer(getApp().globalData.selected.inception, 'SPY')
-    // var tickers = profile.curr_holds.map(stock=>stock.ticker)
-    // console.log(tickers)
-
-    // var options = {
-    //   url: config.service.db_handler,
-    //   data: { operation: 'LOAD_PORTFOLIO', tickers: _tickers, inception: profile.inception.toString(), id: profile.id.toString(), toUpdateDB: profile.isLocal != true},
-    //   success(result) {
-    //     console.log("read LOAD_PORTFOLIO", result)
-    //     // result.data.data.timeRange.map(ts => { if(ts == null) return; that.data.timeSeriesData[ts.timeId] = ts})
-
-    //     result.data.data.timeRange.map(ts => {
-    //       if (ts == null) return;
-    //       ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark}]
-    //       that.data.timeSeriesData[ts.timeId] = ts
-
-    //     })
-    //     lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
-    //     if (profile.isLocal == true){
-    //       that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
-    //     }
-    //   },
-    //   fail(error) {
-    //     util.showModel('请求失败', error);
-    //     console.log('request fail', error);
-    //   }
-    // }
-    // if (profile.isLocal == true){
-    //   profile.p
-    // }
-    // console.log('phases',profile.phases)
-    // profile.tickers = profile.curr_holds.map(stock => stock.ticker)
     var options = {
       url: config.service.db_handler,
-      data: profile.isLocal === true ? { operation: 'LOAD', phases: profile.phases } : { operation: 'LOAD', id: profile.id, mode: 'debug', toUpdateDB: true},
+      data: profile.isLocal === true ? { operation: 'LOAD', phases: profile.phases } : { operation: 'LOAD', id: profile.id, mode: 'debug', toUpdateDB: true },
       success(result) {
         console.log("read LOAD", result)
         result.data.data.timeRange.map(ts => {
@@ -138,11 +106,9 @@ Page({
           ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark }]
           that.data.timeSeriesData[ts.timeId] = ts
         })
-        // profile.curr_holds = result.data.data.dataset.phaseInfo[result.data.data.dataset.phaseInfo.length-1].tickers
-        
         lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
         if (profile.isLocal == true) {
-          that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
+          that.syncDataToLocalStorage(profile.id, result.data.data.quant)
         }
       },
       fail(error) {
@@ -157,35 +123,7 @@ Page({
       }
       that.quoteRealTimePriceCallback(results)
     })
-    // var options = {
-    //   url: config.service.db_handler,
-    //   data: { operation: 'STB', phases: profile.phases, inception: profile.inception },
-    //   // data: { operation: 'STB2', productId: 1521986497295, inception: '20180301', mode: 'debug'},
-    //   success(result) {
-    //     console.log("read STB", result)
-    //     result.data.data.timeRange.map(ts => {
-    //       if (ts == null) return;
-    //       ts.index = ts.index.map(i=> i?i.toString(): '')
-    //       ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark }]
-    //       that.data.timeSeriesData[ts.timeId] = ts
-
-    //     })
-    //     lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
-    //     // if (profile.isLocal == true){
-    //     //   that.syncDataToLocalStorage(result.data.data.id, result.data.data.quant)
-    //     // }
-    //   },
-    //   fail(error) {
-    //     util.showModel('请求失败', error);
-    //     console.log('request fail', error);
-    //   }
-    // }
     wx.request(options);
-
-
-    // this.loadPortfolioDatafromYH(tickers, 'SPY', getApp().globalData.selected.inception)
-
-
   },
 
   onShareAppMessage: function () {
@@ -219,6 +157,7 @@ Page({
   },
 
   syncDataToLocalStorage(id, table){
+    console.log(id, table)
     var lambda_key = getApp().globalData.lambda_key
     var that = this
     wx.getStorage({
