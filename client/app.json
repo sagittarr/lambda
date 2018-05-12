@@ -5,7 +5,8 @@
     "pages/about/about",
     "pages/search/search",
     "pages/input/input",
-    "pages/preview/preview"
+    "pages/preview/preview",
+    "pages/stock/stock"
   ],
   "window": {
     "navigationBarTitleText": "掌控美股",
@@ -27,7 +28,13 @@
           "iconPath": "images/lambda.png",
           "selectedIconPath": "images/lambda-active.png",
           "text": "关于掌控"
-        }
+        },
+                {
+                  "pagePath": "pages/stock/stock",
+                  "iconPath": "images/lambda.png",
+                  "selectedIconPath": "images/lambda-active.png",
+                  "text": "lab"
+                }
       ]
     }
 }

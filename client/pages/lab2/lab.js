@@ -117,6 +117,9 @@ Page({
     // && item.id
     if (item.name) {
       getApp().globalData.selected = e.currentTarget.dataset.item;
+      wx.navigateTo({
+        url: "../portfolio/analyzer"
+      })
     }
   },
 

@@ -114,6 +114,8 @@ function loadProfilefromServer(that) {
           loaded.curr_holds = phases[phases.length - 1].stocks
           loaded.tickers = phases[phases.length - 1].tickers
           loaded.isLocal = false
+          loaded.phases = phases
+          loaded.numOfUpdates = loaded.phases.length - 1
         }
         DisplayMetrics(loaded, 'inception')
         Colorify(loaded, 'inception')
@@ -149,6 +151,10 @@ function loadProfilefromStorage(that) {
       var list = []
       Object.keys(data).forEach(function (key, i, a) {
         var profile = data[key]
+        if (typeof (profile.phases) === typeof ("str")) {
+          profile.phases = JSON.parse(profile.phases)
+        }
+        profile.numOfUpdates = profile.phases.length - 1
         DisplayMetrics(profile, 'inception')
         Colorify(profile, 'inception')
         list.push(profile);
