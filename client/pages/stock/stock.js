@@ -3,6 +3,7 @@ var KLineView = require('../common/KLineView/KLineView.js')
 var NewsItem = require('NewsItem.js')
 // var fundview = require('../common/FundView/FundView.js');
 var Quotation = require('../../models/Quotation.js')
+var qetQuotation = require('../../parsers/quote_parser.js')
 
 // var optionalUtil = require('../../utils/optionalUtil.js')
 // var Util = require('../../utils/util.js')
@@ -55,6 +56,7 @@ Page({
         this.timerId = -1             // 循环请求id
 
         console.log('stock page onLoad ', this.data.goodsId)
+
         // fundview.init(this);
         // fundview.show(this);
         // fundview.setJLValue(this);
@@ -131,7 +133,13 @@ Page({
     getQuotationValue: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-
+        qetQuotation('TSLA', function(quotation){
+            console.log(quotation)
+            that.setData({ quotation: quotation })
+                if (callback != null && typeof (callback) == 'function') {
+                    callback()
+                }
+        })
         // Api.stock.getQuotation({
         //     id: that.data.goodsId
         // }).then(function (results) {
