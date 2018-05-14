@@ -37,7 +37,7 @@ Page({
         });
       }
     });
-
+    putils.callAPI('', 'IEX')
     // this.updateData()
     // var options = {
     //   url: config.service.db_handler,

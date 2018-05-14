@@ -293,7 +293,7 @@ class PortfolioUtils {
     })
   };
 
-  static getHistoricalData(tickers, dateArgs, callback) {
+  static getHistoricalDataFromYHOO(tickers, dateArgs, callback) {
     var options1 = {
       url: config.service.stockHistoryUrl,
       data: { source: 'YHOO', symbols: tickers, from: dateArgs.startDate, to: dateArgs.endDate, period: dateArgs.freq.toLowerCase() },
@@ -307,6 +307,21 @@ class PortfolioUtils {
 
   }
 
+  static callAPI(apiUrl, source, callback){
+      var options1 = {
+          url: config.service.stockHistoryUrl,
+          data: { source: source, apiUrl : apiUrl },
+          success(result) {
+              // util.showSuccess('请求成功完成')
+              // callback(result.data.data)
+              console.log(result)
+          }
+      }
+      // util.showBusy('请求中...');
+      wx.request(options1);
+  }
+
+
   static loadPortfoliofromYF(tickers, benchmark, dateArgs, callback) {
     var that = this;
     var portfolio = {
@@ -318,7 +333,7 @@ class PortfolioUtils {
     var _tickers = []
     _tickers = _tickers.concat(tickers)
     _tickers.push(benchmark)
-    PortfolioUtils.getHistoricalData(_tickers, dateArgs, function (data) {
+    PortfolioUtils.getHistoricalDataFromYHOO(_tickers, dateArgs, function (data) {
       buildPortfolio(data, portfolio, dateArgs, benchmark);
       // apply_cutoff(portfolio, cutoff)
       callback(portfolio)

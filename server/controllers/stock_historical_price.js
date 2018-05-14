@@ -1,4 +1,5 @@
 var yahooFinance = require('yahoo-finance');
+const axios = require('axios');
 function parseURLArg(url) {
   var urlapi = require('url');
   var parameters = urlapi.parse(url);
@@ -28,11 +29,24 @@ function compositeAlphaVantageURL(ticker, freq) {
   return "https://www.alphavantage.co/query?function=" + tsFreq +"&symbol=" + ticker + "&apikey=" + alphaVantageKey;
 };
 module.exports = async  (ctx, next) => {
-  if (ctx.query.source == 'AlphaV') {
-    var args = parseURLArg(ctx.request.url);
-    console.log(args)
-    ctx.redirect(compositeAlphaVantageURL(args.ticker, args.freq))
-  }
+    if (ctx.query.source === 'AlphaV') {
+        var args = parseURLArg(ctx.request.url);
+        console.log(args)
+        ctx.redirect(compositeAlphaVantageURL(args.ticker, args.freq))
+    }
+    else if (ctx.query.source === 'IEX'){
+        // var args = parseURLArg(ctx.request.url);
+        // args.apiUrl = args.apiUrl.replace(/%3A/g, ':').replace(/%2F/g,'/')
+        // console.log(args)
+
+        await axios.get('https://api.iextrading.com/1.0/stock/aapl/chart/1d')
+            .then(function(response){
+                ctx.state.data = response.data
+                console.log(response.data); // ex.: { user: 'Your User'}
+                console.log(response.status); // ex.: 200
+            });
+        // ctx.redirect( 'https://api.iextrading.com/1.0/stock/aapl/chart/1d')
+    }
   else if(ctx.query.source = 'YHOO'){
     console.log(JSON.parse(ctx.query.symbols))
     // await yahooFinance.historical({
@@ -62,4 +76,17 @@ module.exports = async  (ctx, next) => {
 }
 
 
+
+// https.get('https://api.iextrading.com/1.0/stock/aapl/chart/1d', (res) => {
+//     console.log('statusCode:', res.statusCode);
+//     // console.log('headers:', res.headers);
+//     // console.log(res.data)
+//     res.on('data', (d) => {
+//         console.log(d)
+//         // process.stdout.write(d);
+//     });
+//
+// }).on('error', (e) => {
+//     console.error(e);
+// });
 
