@@ -10,6 +10,7 @@ var lineChart = null;
 var radarChart = null;
 var pieChart = null;
 var ringChart = null;
+var stockNumberChart = null;
 const lang = require('../../language.js')
 const keywords = lang.CH
 
@@ -202,13 +203,20 @@ Page({
     },
 
     touchHandler: function (e) {
-        if (null != lineChart)
+        if (null != lineChart){
+          console.log(e)
         // lineChart.scrollStart(e);
             lineChart.showToolTip(e, {
                 format: function (item, category) {
                     return category + ' ' + item.name + ':' + item.data
                 }
             });
+            // radarChart.showToolTip(e, {
+            //   format: function (item, category) {
+            //     return category + ' ' + item.name + ':' + item.data
+            //   }
+            // });
+        }
     },
 
     moveHandler: function (e) {
@@ -264,11 +272,14 @@ Page({
     },
 
     onMetricSelectorClick: function (e) {
+      var profile = getApp().globalData.selected;
         let index = e.currentTarget.dataset.index
         this.setData({
             metricsIndex: index
         })
-        radarChart = chart_utils.createRadarChart(this.data.portfolio, this.windowWidth);
+        // radarChart = chart_utils.createRadarChart(this.data.portfolio, this.windowWidth);
+        stockNumberChart = chart_utils.createColumnChart(profile.phases, this.windowWidth)
+
     },
 
     onPeriodSelectorClick: function (e) {

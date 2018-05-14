@@ -1993,7 +1993,7 @@ Charts.prototype.getCurrentDataIndex = function (e) {
 Charts.prototype.showToolTip = function (e) {
     var option = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    if (this.opts.type === 'line' || this.opts.type === 'area') {
+    if (this.opts.type === 'line' || this.opts.type === 'area' ) {
         var index = this.getCurrentDataIndex(e);
         var currentOffset = this.scrollOption.currentOffset;
 

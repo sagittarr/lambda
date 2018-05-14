@@ -1,4 +1,5 @@
 var wxCharts = require('../../utils/wxcharts-lambda.js');
+// var wx_chart = require('../../utils/wx-chart.min.js')
 
 
 function drawLineChart(categories, series, title, width, height) {
@@ -31,7 +32,69 @@ function drawLineChart(categories, series, title, width, height) {
   });
 }
 class Chart_utils {
-
+  static createColumnChart(phases, windowWidth, height = 200, canvasId = 'stockNumberChart') {
+    // phases, 
+    var categories = []
+    var totalStocks = []
+    var newStocks = []
+    phases.map((phase, i) => {
+      categories.push(phase.from);
+      if (i == 0) {
+        totalStocks.push(phase.tickers.length)
+        newStocks.push(phase.tickers.length)
+      }
+      else {
+        let _new = 0
+        phase.tickers.map(ticker => {
+          if (!phases[i - 1].tickers.includes(ticker)) {
+            _new += 1
+          }
+        })
+        totalStocks.push(phase.tickers.length)
+        newStocks.push(_new)
+      }
+    })
+      var columnChart = new wxCharts({
+        canvasId: canvasId,
+        type: 'column',
+        animation: true,
+        categories: categories,
+        series: [{
+          name: '入选个股总数',
+          data: totalStocks,
+          // format: function (val, name) {
+          //   return val.toFixed(2) + '万';
+          // }
+        },
+        {
+          name: '新入选个股数',
+          data: newStocks,
+          // format: function (val, name) {
+          //   return val.toFixed(2) + '万';
+          // }
+        }
+        ],
+        yAxis: {
+          // format: function (val) {
+          //   return Math.round(val);
+          // },
+          title: '入选个股数',
+          min: 0
+        },
+        xAxis: {
+          disableGrid: false,
+          type: 'calibration'
+        },
+        // extra: {
+        //   column: {
+        //     width: 15
+        //   }
+        // },
+        width: windowWidth,
+        height: height
+      });
+      return columnChart
+    }
   static createRingChart(asset, portfolio, title, width, height = 300) {
     var _sectors = {}
     var series = [];
@@ -157,6 +220,7 @@ class Chart_utils {
     ]
     return drawLineChart(strategy.dates, series, 'Performance', width, height)
   }
+
   static createPortfolioLineChart2(input, width, height = 300) {
     var series = [];
     input.series.map(s => {
@@ -170,6 +234,7 @@ class Chart_utils {
       })})
     return drawLineChart(input.index, series, 'Performance', width, height)
   }
+
   static createPortfolioLineChart(portfolio, inception, width, height = 300) {
     if (portfolio.holdings.length == 0) {
       return;
