@@ -16,4 +16,17 @@ function quoteYahooFinance(ticker, modules, callback)
     }
     wx.request(options1);
 }
-module.exports.quoteYahooFinance = quoteYahooFinance
+
+function callIEXFinance(apiUrl, source, callback){
+    var options = {
+        url: config.service.stockHistoryUrl,
+        data: { source: source, apiUrl : apiUrl },
+        success(result) {
+            // console.log(result)
+            callback(result.data.data)
+        }
+    }
+    // util.showBusy('请求中...');
+    wx.request(options);
+}
+module.exports = {quoteYahooFinance : quoteYahooFinance, callIEXFinance: callIEXFinance}

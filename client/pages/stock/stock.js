@@ -3,7 +3,7 @@ var KLineView = require('../common/KLineView/KLineView.js')
 var NewsItem = require('NewsItem.js')
 // var fundview = require('../common/FundView/FundView.js');
 var Quotation = require('../../models/Quotation.js')
-var qetQuotation = require('../../parsers/quote_parser.js')
+var parser = require('../../parsers/quote_parser.js')
 
 // var optionalUtil = require('../../utils/optionalUtil.js')
 // var Util = require('../../utils/util.js')
@@ -133,7 +133,7 @@ Page({
     getQuotationValue: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        qetQuotation('TSLA', function(quotation){
+        parser.getQuotation('TSLA', function(quotation){
             console.log(quotation)
             that.setData({ quotation: quotation })
                 if (callback != null && typeof (callback) == 'function') {
@@ -162,7 +162,14 @@ Page({
     getMinuteData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
+        parser.getMinuteData('TSLA',function(minutes){
+            if (callback != null && typeof (callback) == 'function') {
+                callback()
+            }
+            console.log(minutes)
+            that.kLineView.drawMiniteCanvas(minutes, getCanvasId(that.data.quotePeriod))
 
+        })
         // Api.stock.getMinutes({
         //     id: that.data.goodsId,
         //     date: 0,
