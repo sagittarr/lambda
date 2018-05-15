@@ -22,7 +22,6 @@ function callIEXFinance(apiUrl, source, callback){
         url: config.service.stockHistoryUrl,
         data: { source: source, apiUrl : apiUrl },
         success(result) {
-            // console.log(result)
             callback(result.data.data)
         }
     }

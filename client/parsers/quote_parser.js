@@ -1,6 +1,7 @@
 var api = require('../api/data_api.js')
 var Quotation = require('../models/Quotation.js')
 var MinuteData = require('../models/MinuteData.js')
+var KlineData = require('../models/KLineData.js')
 function getQuotation(ticker, callback){
   api.quoteYahooFinance(ticker, ['summaryDetail','price'],function(quote){
         // console.log(quote)
@@ -49,6 +50,17 @@ function getMinuteData(ticker, callback, source = 'IEX'){
       callback({ close: preClose * 1000, goods_id: 10000, market_date: parseInt(iexChartData[0].date), minutes: minutes })
     })
   })
-
 }
-module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData}
+
+function getKlineData(ticker, callback, source= 'IEX'){
+    api.callIEXFinance('https://api.iextrading.com/1.0/stock/aapl/chart/1y', source, function (iexChartData) {
+        // console.log('kline', iexChartData)
+        var kline = []
+        iexChartData.map(data=>{
+            var klineData = new KlineData(parseInt(data.date.replace(/-/g,'')), parseFloat(data.open), parseFloat(data.high), parseFloat(data.low), parseFloat(data.close), parseFloat(data.vwap),undefined,undefined,parseFloat(data.volume),parseFloat(data.close),parseFloat(data.volume) )
+            kline.push(klineData)
+        })
+        callback(kline)
+    })
+}
+module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData}

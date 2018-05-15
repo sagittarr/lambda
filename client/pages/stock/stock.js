@@ -192,7 +192,9 @@ Page({
     getKlineData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-
+        parser.getKlineData('AAPL',function(klineData){
+            console.log(klineData)
+        })
         // Api.stock.getKLines({
         //     id: that.data.goodsId,
         //     begin: 0,
