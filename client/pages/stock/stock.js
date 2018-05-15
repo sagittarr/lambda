@@ -166,7 +166,8 @@ Page({
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }
-            console.log(minutes)
+            console.log('stock minute result ', minutes)
+            console.log('canvas id ' + getCanvasId(that.data.quotePeriod))
             that.kLineView.drawMiniteCanvas(minutes, getCanvasId(that.data.quotePeriod))
 
         })

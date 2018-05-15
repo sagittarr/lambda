@@ -36,9 +36,15 @@ function getMinuteData(ticker, callback, source = 'IEX'){
         // console.log(quote)
         var minutes = []
         quote.map(minute=>{
-            minutes.push(new MinuteData(parseInt(minute.minute.replace(':', '')), parseInt(minute.close)*10, parseInt(minute.average)*10, parseInt(minute.volume), parseInt(minute.volume)))
+          minutes.push(new MinuteData(parseInt(minute.minute.replace(':', '')), parseFloat(minute.close)*1000, parseFloat(minute.average)*1000, parseInt(minute.volume), parseInt(minute.volume)))
+          if (isNaN(parseFloat(minute.close))){
+            console.log(minutes[minutes.length - 1])
+            var time = minutes[minutes.length - 1].time
+            minutes[minutes.length - 1] = minutes[minutes.length - 2]
+            minutes[minutes.length - 1].time = time
+          }
         })
-        callback({close:1800, goods_id: 0, market_date:20180514, minutes: minutes})
+        callback({close:188000, goods_id: 10000, market_date:20180514, minutes: minutes})
         // console.log(minutes)
     })
 }
