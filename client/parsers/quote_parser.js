@@ -18,7 +18,7 @@ function getQuotation(ticker, callback){
             NaN,
             quoteDetail.volume,
             NaN,
-            quoteDetail.marketCap,
+            (parseInt(quoteDetail.marketCap / 1000000)).toString()+'M',
             NaN,
             NaN,
             NaN,
@@ -32,20 +32,23 @@ function getQuotation(ticker, callback){
 }
 
 function getMinuteData(ticker, callback, source = 'IEX'){
-    api.callIEXFinance('', source, function(quote){
-        // console.log(quote)
-        var minutes = []
-        quote.map(minute=>{
-          minutes.push(new MinuteData(parseInt(minute.minute.replace(':', '')), parseFloat(minute.close)*1000, parseFloat(minute.average)*1000, parseInt(minute.volume), parseInt(minute.volume)))
-          if (isNaN(parseFloat(minute.close))){
-            console.log(minutes[minutes.length - 1])
-            var time = minutes[minutes.length - 1].time
-            minutes[minutes.length - 1] = minutes[minutes.length - 2]
-            minutes[minutes.length - 1].time = time
-          }
-        })
-        callback({close:188000, goods_id: 10000, market_date:20180514, minutes: minutes})
-        // console.log(minutes)
+  api.callIEXFinance('https://api.iextrading.com/1.0/stock/aapl/quote', source, function (iexQuote) {
+    api.callIEXFinance('https://api.iextrading.com/1.0/stock/aapl/chart/1d', source, function (iexChartData) {
+      // console.log(iexChartData)
+      var minutes = []
+      var preClose = iexQuote.previousClose
+      // console.log(iexQuote)
+      iexChartData.map(minute => {
+        minutes.push(new MinuteData(parseInt(minute.minute.replace(':', '')), parseFloat(minute.close) * 1000, parseFloat(minute.average) * 1000, parseInt(minute.volume), parseInt(minute.volume)))
+        if (isNaN(parseFloat(minute.close))) {
+          var time = minutes[minutes.length - 1].time
+          minutes[minutes.length - 1] = minutes[minutes.length - 2]
+          minutes[minutes.length - 1].time = time
+        }
+      })
+      callback({ close: preClose * 1000, goods_id: 10000, market_date: parseInt(iexChartData[0].date), minutes: minutes })
     })
+  })
+
 }
 module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData}

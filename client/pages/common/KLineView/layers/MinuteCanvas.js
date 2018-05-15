@@ -23,7 +23,7 @@ function MinuteCanvas() {
 	this.chartView = null
 	this.mXAxisLayer = null
 
-	this.canvasWidth = 375    // 画布宽度，单位rpx
+	this.canvasWidth = 750    // 画布宽度，单位rpx
 	this.canvasHeight = 412    // 画布高度，单位rpx
 
 	this.mClose = 0    // 昨收价
@@ -34,19 +34,18 @@ MinuteCanvas.prototype.initLayers = function () {
 	if (this.mIsInit == false) {
 
 		var that = this
-		var widthPerRpx = 0.5 
-    //draw.getLengthByRpx(1)
-		console.log('width per ' + widthPerRpx)
+		var widthPerRpx = draw.getLengthByRpx(1)
+		// console.log('width per ' + widthPerRpx)
 
 		this.lineLayer = new LineLayer()
-    this.lineLayer.setMaxCount(MINTUES)
+    	this.lineLayer.setMaxCount(MINTUES)
 		this.lineLayer.setStrokeWidth(widthPerRpx)    // 分时线宽度
 		this.lineLayer.setColor('#379be9')            // 分时线颜色
 		this.lineLayer.setShowShadow(true)
 		this.lineLayer.setShadowColor('rgba(231, 241, 253, 0.5)')
 
 		this.avgLayer = new LineLayer()
-    this.avgLayer.setMaxCount(MINTUES)
+    	this.avgLayer.setMaxCount(MINTUES)
 		this.avgLayer.setStrokeWidth(widthPerRpx)               // 均线宽度
 		this.avgLayer.setColor('#fbb040')
 
@@ -87,7 +86,7 @@ MinuteCanvas.prototype.initLayers = function () {
 
 		this.columnarLayer = new ColumnarLayer()
 		this.columnarLayer.setColumnarWidth(0.8)
-    this.columnarLayer.setMaxCount(MINTUES)
+		this.columnarLayer.setMaxCount(MINTUES)
 		this.columnarLayer.setOnDrawCallback(function (context, pos) {
 			// console.log('pos: ' + pos)
 			var color = '#e64340'
@@ -115,11 +114,9 @@ MinuteCanvas.prototype.initLayers = function () {
 		this.mXAxisLayer.addValue("15:00");
 		this.mXAxisLayer.setLengthPerRpx(widthPerRpx)
 
-		var width = 375
-    // draw.getLengthByRpx(this.canvasWidth)
-		var height = 206
-    // draw.getLengthByRpx(this.canvasHeight)
-		console.log('width: ' + width + ', height: ' + height)
+		var width = draw.getLengthByRpx(this.canvasWidth)
+		var height = draw.getLengthByRpx(this.canvasHeight)
+		// console.log('width: ' + width + ', height: ' + height)
 		this.chartView = new ChartView(0, 0, width * 1.0, height * 1.0)
 		this.chartView.addLayer(this.groupLayer)
 		this.chartView.addLayer(this.bottomGroupLayer)
@@ -144,7 +141,7 @@ MinuteCanvas.prototype.addValues = function (obj) {
 	if (this.mIsInit && obj != null) {
 		var values = obj.minutes
 		this.mClose = obj.close / 1000.0
-		console.log('addValues ----> close ', this.mClose)
+		// console.log('addValues ----> close ', this.mClose)
 
 		this.lineLayer.clear()
 		this.avgLayer.clear()
@@ -175,7 +172,7 @@ MinuteCanvas.prototype.addValue = function (value) {
 			this.lineLayer.setValue(pos, price)
 			this.avgLayer.setValue(pos, avg)
 			this.columnarLayer.setValue(pos, new ColumnarAtom(0, 0, 0, column))
-			console.log('pos: ' + pos + ', price: ' + price)
+			// console.log('pos: ' + pos + ', price: ' + price)
 		} else if (pos > this.lineLayer.getValueCount()) {
 			var lastPrice = this.lineLayer.getLastValue()
 			var lastAvg = this.lineLayer.getLastValue()
@@ -193,7 +190,7 @@ MinuteCanvas.prototype.addValue = function (value) {
 			this.lineLayer.setValue(pos, price)
 			this.avgLayer.setValue(pos, avg)
 			this.columnarLayer.setValue(pos, new ColumnarAtom(0, 0, 0, column))
-			console.log('pos: ' + pos + ', price: ' + price)
+			// console.log('pos: ' + pos + ', price: ' + price)
 		}
 	}
 }
@@ -234,7 +231,7 @@ MinuteCanvas.prototype.calculate = function () {
 	this.priceLayer.setMaxValue(maxValue)
 	this.rightAxisLayer.setMaxValue(zdf)
 	this.rightAxisLayer.setMinValue(-zdf)
-	console.log('minute canvas min: ' + minValue + ', max: ' + maxValue + ', zdf' + zdf + ', -zdf: ' + -zdf)
+	// console.log('minute canvas min: ' + minValue + ', max: ' + maxValue + ', zdf' + zdf + ', -zdf: ' + -zdf)
 	this.columnarLayer.calMinAndMaxValue()
 }
 

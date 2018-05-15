@@ -29,6 +29,12 @@ App({
   onLaunch: function () {
     qcloud.setLoginUrl(config.service.loginUrl)
     this.globalData.color_style = this.globalData.color_style_1
-
+      var that = this
+      wx.getSystemInfo({
+          success: function (res) {
+              that.globalData.screenWidth = res.windowWidth
+              console.log(that.globalData.screenWidth)
+          }
+      });
   }
 })

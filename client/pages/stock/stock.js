@@ -133,8 +133,8 @@ Page({
     getQuotationValue: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getQuotation('TSLA', function(quotation){
-            console.log(quotation)
+        parser.getQuotation('AAPL', function(quotation){
+            // console.log(quotation)
             that.setData({ quotation: quotation })
                 if (callback != null && typeof (callback) == 'function') {
                     callback()
@@ -162,7 +162,7 @@ Page({
     getMinuteData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getMinuteData('TSLA',function(minutes){
+        parser.getMinuteData('AAPL',function(minutes){
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }

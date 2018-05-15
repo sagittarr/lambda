@@ -28,7 +28,7 @@ Page({
 
   onLoad: function () {
     var that = this;
-    console.log(Math.floor(Date.now() / 1000));
+    // console.log(Math.floor(Date.now() / 1000));
     wx.getSystemInfo({
       success: function (res) {
         that.setData({
@@ -37,7 +37,7 @@ Page({
         });
       }
     });
-    putils.callAPI('', 'IEX')
+    // putils.callAPI('', 'IEX')
     // this.updateData()
     // var options = {
     //   url: config.service.db_handler,
