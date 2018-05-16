@@ -1,45 +1,3 @@
-const formatTime = date => {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  const second = date.getSeconds()
-
-  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
-}
-
-const formatNumber = n => {
-  n = n.toString()
-  return n[1] ? n : '0' + n
-}
-
-
-// 显示繁忙提示
-var showBusy = text => wx.showToast({
-    title: text,
-    icon: 'loading',
-    duration: 10000
-})
-
-// 显示成功提示
-var showSuccess = text => wx.showToast({
-    title: text,
-    icon: 'success',
-    duration: 1000
-})
-
-// 显示失败提示
-var showModel = (title, content) => {
-    wx.hideToast();
-
-    wx.showModal({
-        title,
-        content: JSON.stringify(content),
-        showCancel: false
-    })
-}
-
 
 var Color = require('../models/Color.js')
 
@@ -116,8 +74,8 @@ function formatDateY_M_D_HHmm(orgDate, separator) {
 }
 
 /**
- * 保留两位小数
- */
+* 保留两位小数
+*/
 function formatPrice(value) {
     if (!value) {
         return '--'
@@ -128,8 +86,8 @@ function formatPrice(value) {
 }
 
 /**
- * 保留两位小数
- */
+* 保留两位小数
+*/
 function formatZd(value) {
     if (!value) {
         return '--'
@@ -462,11 +420,5 @@ module.exports = {
     //formatKanPanTime: formatKanPanTime,
     //formatDateHHMM: formatDateHHMM,
     getCurrentGoodsClassType: getCurrentGoodsClassType,
-    formatDateY_M_D_HHmm: formatDateY_M_D_HHmm,
-    formatTime : formatTime,
-    showBusy: showBusy,
-    showSuccess : showSuccess,
-    showModel : showModel
+    formatDateY_M_D_HHmm: formatDateY_M_D_HHmm
 }
-
-// module.exports = { }

@@ -1,4 +1,6 @@
 var yahooFinance = require('yahoo-finance');
+var _ = require('underscore');
+var api = require('../tools/API.js')
 const axios = require('axios');
 function parseURLArg(url) {
     var urlapi = require('url');
@@ -28,6 +30,7 @@ function compositeAlphaVantageURL(ticker, freq) {
     }
     return "https://www.alphavantage.co/query?function=" + tsFreq +"&symbol=" + ticker + "&apikey=" + alphaVantageKey;
 };
+
 module.exports = async (ctx, next) => {
     if (ctx.query.source === 'AlphaV') {
         var args = parseURLArg(ctx.request.url)
@@ -36,9 +39,12 @@ module.exports = async (ctx, next) => {
     } else if (ctx.query.source === 'IEX') {
         var args = parseURLArg(ctx.request.url)
         args.apiUrl = args.apiUrl.replace(/%3A/g, ':').replace(/%2F/g,'/')
+        console.log(args.freq,args.apiUrl)
         await axios.get(args.apiUrl)
             .then(function(response){
-                ctx.state.data = response.data
+                console.log(response)
+                ctx.state.data = api.convertHistoricalData(response.data, args.freq)
+                console.log(ctx.state.data, args.freq,args.apiUrl)
                 // console.log(response.data); // ex.: { user: 'Your User'}
                 // console.log(response.status); // ex.: 200
             });
@@ -63,3 +69,68 @@ module.exports = async (ctx, next) => {
         ctx.state.data = 'unexpected source'
     }
 }
+// function convertIEXData(iexArr){
+//     var open = iexArr[0].open
+//     var date = iexArr[0].date
+//     var close = _.last(iexArr).close
+//     var highArr = []
+//     var lowArr = []
+//     var volumeArr = []
+//     iexArr.map(day=>{highArr.push(day.high); lowArr.push(day.low); volumeArr.push(day.volume)})
+//     return {date: date, open : open, high: _.max(highArr), low: _.min(lowArr), close: close, volume : volumeArr.reduce((a, b) => a + b, 0)}
+// }
+// function convertHistoricalData(dlyData, freq){
+//     if(freq === 'W'){
+//         var weeklyData = []
+//         for(var i = 0; i<dlyData.length; i+=5){
+//             var fiveDays = dlyData.slice(i,i+5)
+//             weeklyData.push(convertIEXData(fiveDays))
+//         }
+//         return weeklyData
+//     }
+//     else if(freq ==='M'){
+//         var monthlyData = []
+//         var i = 1
+//         var currMonth = dlyData[0].date.replace(/-/g,'').slice(4,6)
+//         var dayArr = [dlyData[0]]
+//         while(i < dlyData.length){
+//             var month = dlyData[i].date.replace(/-/g,'').slice(4,6)
+//             if( month != currMonth){
+//                 currMonth = month
+//                 monthlyData.push(convertIEXData(dayArr))
+//                 dayArr = []
+//             }
+//             dayArr.push(response.data[i])
+//             i+=1
+//         }
+//         return monthlyData
+//     }
+//     else{
+//         return dlyData
+//     }
+// }
+// axios.get('https://api.iextrading.com/1.0/stock/aapl/chart/5y')
+//     .then(function(response){
+//         var weeklyData = []
+//         for(var i = 0; i<response.data.length; i+=5){
+//             var fiveDays = response.data.slice(i,i+5)
+//             weeklyData.push(convertIEXData(fiveDays))
+//         }
+//         console.log(weeklyData.length)
+//         var monthlyData = []
+//         var i = 1
+//         var currMonth = response.data[0].date.replace(/-/g,'').slice(4,6)
+//         var dayArr = [response.data[0]]
+//         while(i < response.data.length){
+//             var month = response.data[i].date.replace(/-/g,'').slice(4,6)
+//             if( month != currMonth){
+//                 currMonth = month
+//                 // console.log(dayArr.length, dayArr[0], _.last(dayArr))
+//                 monthlyData.push(convertIEXData(dayArr))
+//                 dayArr = []
+//             }
+//             dayArr.push(response.data[i])
+//             i+=1
+//         }
+//         console.log(monthlyData)
+//     });

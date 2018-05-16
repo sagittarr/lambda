@@ -307,19 +307,19 @@ class PortfolioUtils {
 
   }
 
-  static callAPI(apiUrl, source, callback){
-      var options1 = {
-          url: config.service.stockHistoryUrl,
-          data: { source: source, apiUrl : apiUrl },
-          success(result) {
-              // util.showSuccess('请求成功完成')
-              // callback(result.data.data)
-              console.log(result)
-          }
-      }
-      // util.showBusy('请求中...');
-      wx.request(options1);
-  }
+  // static callAPI(apiUrl, source, callback){
+  //     var options1 = {
+  //         url: config.service.stockHistoryUrl,
+  //         data: { source: source, apiUrl : apiUrl },
+  //         success(result) {
+  //             // util.showSuccess('请求成功完成')
+  //             // callback(result.data.data)
+  //             console.log(result)
+  //         }
+  //     }
+  //     // util.showBusy('请求中...');
+  //     wx.request(options1);
+  // }
 
 
   static loadPortfoliofromYF(tickers, benchmark, dateArgs, callback) {

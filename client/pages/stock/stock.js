@@ -162,13 +162,13 @@ Page({
     getMinuteData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getMinuteData('AAPL',function(minutes){
+        parser.getMinuteData('AAPL',getIEXHistoricalDataOption(that.data.quotePeriod),function(minutes){
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }
             console.log('stock minute result ', minutes)
             console.log('canvas id ' + getCanvasId(that.data.quotePeriod))
-            that.kLineView.drawMiniteCanvas(minutes, getCanvasId(that.data.quotePeriod))
+            that.kLineView.drawMinuteCanvas(minutes, getCanvasId(that.data.quotePeriod))
 
         })
         // Api.stock.getMinutes({
@@ -182,7 +182,7 @@ Page({
         //     }
         //     // console.log('stock minute result ', results)
         //     // console.log('canvas id ' + getCanvasId(that.data.quotePeriod))
-        //     that.kLineView.drawMiniteCanvas(results, getCanvasId(that.data.quotePeriod))
+        //     that.kLineView.drawMinuteCanvas(results, getCanvasId(that.data.quotePeriod))
         // }, function (res) {
         //     console.log("------fail----", res)
         //     wx.hideNavigationBarLoading()
@@ -192,8 +192,13 @@ Page({
     getKlineData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getKlineData('AAPL',function(klineData){
+        parser.getKlineData('AMZN', getIEXHistoricalDataOption(that.data.quotePeriod), function(klineData){
             console.log(klineData)
+            if (callback != null && typeof (callback) == 'function') {
+                callback()
+            }
+            // console.log('stock kline result ', results)
+            that.kLineView.drawKLineCanvas(klineData, getCanvasId(that.data.quotePeriod), that.data.quotePeriod)
         })
         // Api.stock.getKLines({
         //     id: that.data.goodsId,
@@ -423,7 +428,27 @@ Page({
         // })
     }
 })
+function getIEXHistoricalDataOption(period) {
+    switch (period) {
+        case 1:
+            return {range: '1d', freq: ''};
+            break;
+        case 100:
+            return {range: '1y', freq: ''};
+            break;
+        case 101:
+            return {range: '2y', freq: 'W'};
+            break;
+        case 102:
+            return {range: '5y', freq : 'M'};
+            break;
+        case 60:
+            return {range: '1d', freq: ''};
+            break;
+    }
 
+    return ;
+}
 function getCanvasId(period) {
     switch (period) {
         case 1:

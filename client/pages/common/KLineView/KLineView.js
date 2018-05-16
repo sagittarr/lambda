@@ -37,7 +37,7 @@ function KLineView() {
         return result;
     }
 
-    this.drawMiniteCanvas = function(array, canvasId) {
+    this.drawMinuteCanvas = function(array, canvasId) {
         var canvas = new MinuteCanvas()
         canvas.addValues(array)
         canvas.invalidate('' + canvasId)

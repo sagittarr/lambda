@@ -236,9 +236,9 @@ KLineCanvas.prototype.addValue = function(value) {
 }
 
 // 计算最大最小值
-KLineCanvas.prototype.calculate = function() {
+KLineCanvas.prototype.calculate = function(baseWidth=10) {
 	// 添加value之后，需要重新设置maxCount，以确定startPos位置
-	var baseWidth = draw.getLengthByRpx(10)    // K线中1个K线和它相邻的1个space的宽度和
+	var baseWidth = draw.getLengthByRpx(baseWidth)    // K线中1个K线和它相邻的1个space的宽度和
 	var columnCount = Math.floor(this.windowWidth / baseWidth)    // K线个数
 	this.kLineLayer.setMaxCount(columnCount);
 	this.ma5Layer.setMaxCount(columnCount);
@@ -271,6 +271,7 @@ KLineCanvas.prototype.calculate = function() {
     if (atomFirst != null && atomLast != null) {
         dateFirst = atomFirst.mTag;
         dateLast = atomLast.mTag;
+        console.log(dateFirst, dateLast)
     }
 	
     
@@ -303,7 +304,7 @@ KLineCanvas.prototype.calculate = function() {
 // 分时布局开始绘制
 KLineCanvas.prototype.invalidate = function(id) {
 	if (this.mIsInit == true) {
-		this.calculate()
+		this.calculate(8)
 
 		const context = wx.createCanvasContext(id)
 		this.chartView.onDraw(context)

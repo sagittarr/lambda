@@ -1,7 +1,6 @@
-// const fs = require('fs');
 var api  = require('../tools/API.js');
 // var util = require('../tools/Util.js')
-// var _u = require('underscore');
+var _ = require('underscore');
 var knex = require('knex')({
     client: 'mysql',
     connection: {
@@ -12,11 +11,7 @@ var knex = require('knex')({
         database: 'lambda'
     }
 });
-// var STK = require('../tools/StockData.js')
-// var StockData = STK.StockData;
-// var StockDataFactory = STK.StockDataFactory;
-// var AggregationData = STK.Aggregation;
-// var AggregationFactory = STK.AggregationFactory
+// console.log(_.last([1,2,3],2))
 module.exports = async (ctx, next) => {
     await next()
     console.log(ctx.query)
@@ -24,12 +19,30 @@ module.exports = async (ctx, next) => {
         await api.handler(ctx.query).then(function (dataset) {
             ctx.state.data = dataset
             console.log('final data', ctx.state.data)
-        })
+        }).catch(function(err){ctx.state.data = err; console.error(err)})
     }
     else if (ctx.query.operation.toUpperCase() === 'R'){
         await knex('portfolio_metadata').select('*').where({ visible: true }).then(function (data) {
             ctx.state.data = data
-        });
+        }).catch(function(err){ctx.state.data = err; console.error(err)});
+    }
+    else if(ctx.query.operation.toUpperCase() === 'READ_HISTORY'){
+        console.log(ctx.query)
+        if(ctx.query.option){
+            ctx.query.option = JSON.parse(ctx.query.option)
+        }
+        await api.smartLoadStockHistory(ctx.query.ticker, 'iex').then(function (history) {
+            if(typeof(history) === typeof('str')){
+                history = JSON.parse(history)
+            }
+            console.log(typeof(history))
+            if(ctx.query.option.freq==='W' || ctx.query.option.freq==='M'){
+                ctx.state.data = api.convertHistoricalData(history, ctx.query.option.freq)
+            }
+            else{
+                ctx.state.data = _.last(history, 150)
+            }
+        }).catch(function(err){ctx.state.data = err; console.error(err)})
     }
     else if(ctx.query.operation.toUpperCase() === 'NEW'){
         var profile = JSON.parse(ctx.query.profile)
