@@ -17,10 +17,10 @@ function quoteYahooFinance(ticker, modules, callback)
     wx.request(options1);
 }
 
-function callIEXFinance(apiUrl, source, freq, callback){
+function callIEXFinance(apiUrl, freq, callback){
     var options = {
         url: config.service.stockHistoryUrl,
-        data: { source: source, apiUrl : apiUrl, freq: freq },
+        data: { source: 'IEX', apiUrl : apiUrl, freq: freq },
         success(result) {
             callback(result.data.data)
         }

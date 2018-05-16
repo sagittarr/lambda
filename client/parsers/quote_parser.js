@@ -34,24 +34,31 @@ function getQuotation(ticker, callback){
 }
 
 function getMinuteData(ticker, option, callback, source = 'IEX'){
-  api.callIEXFinance('https://api.iextrading.com/1.0/stock/aapl/quote', source, '', function (iexQuote) {
-    api.callIEXFinance('https://api.iextrading.com/1.0/stock/aapl/chart/'+option.range, source, option.freq, function (iexChartData) {
-      console.log(iexChartData)
-
-      var minutes = []
-      var preClose = iexQuote.previousClose
-      // console.log(iexQuote)
-      iexChartData.map(minute => {
-        minutes.push(new MinuteData(parseInt(minute.minute.replace(':', '')), parseFloat(minute.close) * 1000, parseFloat(minute.average) * 1000, parseInt(minute.volume), parseInt(minute.volume)))
-        if (isNaN(parseFloat(minute.close))) {
-          var time = minutes[minutes.length - 1].time
-          minutes[minutes.length - 1] = minutes[minutes.length - 2]
-          minutes[minutes.length - 1].time = time
+    let iexQuote
+    let iexChartData
+    function handle(){
+        if(iexQuote && iexChartData){
+            var minutes = []
+            var preClose = iexQuote.previousClose
+            iexChartData.map(minute => {
+                minutes.push(new MinuteData(parseInt(minute.minute.replace(':', '')), parseFloat(minute.close) * 1000, parseFloat(minute.average) * 1000, parseInt(minute.volume), parseInt(minute.volume)))
+                if (isNaN(parseFloat(minute.close))) {
+                    var time = minutes[minutes.length - 1].time
+                    minutes[minutes.length - 1] = minutes[minutes.length - 2]
+                    minutes[minutes.length - 1].time = time
+                }
+            })
+            callback({ close: preClose * 1000, goods_id: 10000, market_date: parseInt(iexChartData[0].date), minutes: minutes })
         }
-      })
-      callback({ close: preClose * 1000, goods_id: 10000, market_date: parseInt(iexChartData[0].date), minutes: minutes })
+    }
+    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/quote', '', function (_iexQuote) {
+        iexQuote = _iexQuote
+        handle()
     })
-  })
+    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, option.freq, function (_iexChartData) {
+        iexChartData = _iexChartData
+        handle()
+    })
 }
 
 function getKlineData(ticker, option, callback, source= 'IEX'){
