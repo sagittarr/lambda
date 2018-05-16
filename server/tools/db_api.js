@@ -9,9 +9,7 @@ var StockDataFactory = STK.StockDataFactory;
 var AggregationData = STK.Aggregation;
 var AggregationFactory = STK.AggregationFactory
 var StrategyBuilder = require('./StrategyBuilder')
-// var Series = require('pandas-js').Series;
-// var DataFrame = require('pandas-js').DataFrame;
-// var DF = require('data-forge');
+
 var knex = require('knex')({
     client: 'mysql',
     connection: {
@@ -23,7 +21,7 @@ var knex = require('knex')({
     }
 });
 var util = require('./Util.js')
-var Calculator = require('./QuantCalculater')
+// var Calculator = require('./QuantCalculater')
 
 async function handler(query){
     // var mode = query.mode
@@ -49,7 +47,7 @@ async function handler(query){
                 }).catch(function(err){reject(err)})
             }
             else if (id) {
-                build_strategy_ts_from_id(id, toUpdateDB).then(function (result) {
+                buildStrategyFromId(id, toUpdateDB).then(function (result) {
                     resolve(result)
                 }).catch(function (err) {
                     reject(err)
@@ -59,13 +57,13 @@ async function handler(query){
                 resolve('Error')
             }
         }
-        catch(Err){
-            reject(Err)
+        catch(err){
+            reject(err)
         }
     })
 }
 
-async function build_strategy_ts_from_id(productId, toUpdateTblDB = false, debug = false) {
+async function buildStrategyFromId (productId, toUpdateTblDB = false, debug = false) {
     return new Promise(function (resolve, reject) {
         knex('portfolio_metadata').select('*').where({ id: productId }).then(function (rows) {
             if (rows.length == 0) {
@@ -95,7 +93,7 @@ async function build_strategy_ts_from_id(productId, toUpdateTblDB = false, debug
     })
 }
 
-async function build_strategy_ts(phases, spy, inceptionDate){
+async function buildStrategy(phases, spy, inceptionDate){
     if(typeof(phases) == typeof("str")){
         phases = JSON.parse(phases)
     }
@@ -128,10 +126,9 @@ function SplitTimeRange(timeIds, dateIndex, aggValues, spy, inception){
 }
 
 async function buildStrategyFromPhases(phases){
-    var numOfPhase = phases.length
     return new Promise(function (resolve, reject) {
         loadSingleStockData('SPY', 'yahoo').then(function (spy) {
-            build_strategy_ts(phases, spy, phases[0].from).then(function (strategyData) {
+            buildStrategy(phases, spy, phases[0].from).then(function (strategyData) {
                 var timeIds = ['1y', '3m', '30d', '10d', phases[0].from]
                 var timeRange = SplitTimeRange(timeIds, strategyData.dateIndex, strategyData.values, spy, phases[0].from)
                 strategyData.benchmark = spy
@@ -210,34 +207,31 @@ async function loadMultipleStockData(tickers) {
     })
 }
 
-function computeQuantMetrics(aggregation){
-    var ab = Calculator.computeAlphaBeta(aggregation.dailyPctChange, aggregation.benchmark.dailyPctChange)
-    var sharp = Calculator.computeSharpRatio(aggregation.dailyPctChange, aggregation.benchmark.dailyPctChange)
-    var mdd = Calculator.computeMDD(aggregation.values)
-    var voli = Calculator.computeVolatility(aggregation.dailyPctChange)
-    let totalReturn = (aggregation.values[aggregation.values.length - 1] / aggregation.values[0]) - 1
-    let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (aggregation.dateIndex.length - 1)) - 1
-    aggregation.quant = { '1y': { alpha: ab.alpha, beta: ab.beta, sharp: sharp, mdd: mdd, voli: voli, totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: aggregation.dateIndex.length}}
-    var incpIndex = _u.indexOf(aggregation.dateIndex, aggregation.inceptionDate, true)
-    if(incpIndex!=-1){
-        let totalReturn = _u.last(aggregation.values) / aggregation.values[incpIndex] - 1
-        let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (aggregation.dateIndex.length - incpIndex - 1)) - 1
-        aggregation.quant['inception'] = { totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: aggregation.dateIndex.length - incpIndex}
-    }
-    else{
-        aggregation.quant['inception'] = [aggregation.inceptionDate, aggregation.dateIndex]
-    }
-
-}
+// function computeQuantMetrics(aggregation){
+//     var ab = Calculator.computeAlphaBeta(aggregation.dailyPctChange, aggregation.benchmark.dailyPctChange)
+//     var sharp = Calculator.computeSharpRatio(aggregation.dailyPctChange, aggregation.benchmark.dailyPctChange)
+//     var mdd = Calculator.computeMDD(aggregation.values)
+//     var voli = Calculator.computeVolatility(aggregation.dailyPctChange)
+//     let totalReturn = (aggregation.values[aggregation.values.length - 1] / aggregation.values[0]) - 1
+//     let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (aggregation.dateIndex.length - 1)) - 1
+//     aggregation.quant = { '1y': { alpha: ab.alpha, beta: ab.beta, sharp: sharp, mdd: mdd, voli: voli, totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: aggregation.dateIndex.length}}
+//     var incpIndex = _u.indexOf(aggregation.dateIndex, aggregation.inceptionDate, true)
+//     if(incpIndex!=-1){
+//         let totalReturn = _u.last(aggregation.values) / aggregation.values[incpIndex] - 1
+//         let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (aggregation.dateIndex.length - incpIndex - 1)) - 1
+//         aggregation.quant['inception'] = { totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: aggregation.dateIndex.length - incpIndex}
+//     }
+//     else{
+//         aggregation.quant['inception'] = [aggregation.inceptionDate, aggregation.dateIndex]
+//     }
+//
+// }
 
 function updateRatiosTable(id, table) {
   if (id) {
     knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table) }).then(function (result) { console.log(result) })
   }
 }
-// function insertNewPhase(newPhase, id){
-//   knex('phases').insert({ phase_id: newPhase.phaseId, id: id, date: newPhase.from.toString(), holds: JSON.stringify(newPhase.tickers) }).then(function (result) { console.log('update phases', result) })
-// }
 
 async function deleteProfile(profile, response) {
     knex('portfolio_metadata')
@@ -284,7 +278,7 @@ async function readHistoricalFromDB(ticker, source){
 
 }
 
-async function retryer(retries, info, call){
+async function reTryer(retries, info, call){
   var i = 0;
   var success = false;
   while(i<retries){
@@ -332,46 +326,22 @@ async function getHistoricalDataFromYahoo(request) {
     });
 }
 
-
-// function quote_historical(request, callback){
-//   yahooFinance.historical({
-//     symbol: request.symbol,
-//     from: request.from,
-//     to: request.to,
-//     period: request.period,
-//     // period: 'd'  // 'd' (daily), 'w' (weekly), 'm' (monthly), 'v' (dividends only)
-//   }, function (err, quotes) {
-//     if (err) {
-//       console.err(err)
-//       return
-//     }
-//     console.log(quotes)
-//     callback(quotes)
-//   });
-// }
-
-
-
 function insert_historical(ticker, data, time_stamp, source, update_time = null) {
-  // knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp }).then(function (data) {
-  //   console.log('insert data',ticker)  });
-
-  knex('historical_data').select()
-    .where({'ticker': ticker, 'source' : source})
-    .then(function (rows) {
-      if (rows.length === 0) {
-        // no matching records found
-        console.log('try insert', ticker)
-        return knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp, update_time: new Date().toISOString() ,  source: source})
-      } else {
-        console.log('try update', ticker)
-        knex('historical_data').where('ticker', ticker).update({ data: data, last_update: time_stamp, update_time: new Date().toISOString() , source: source}).then(function (result) { console.log(result) })
-      }
-    })
-    .catch(function (ex) {
-      console.error(ex)
-      // you can find errors here.
-    })
+    knex('historical_data').select()
+        .where({'ticker': ticker, 'source' : source})
+        .then(function (rows) {
+            if (rows.length === 0) {
+                // no matching records found
+                console.log('try insert', ticker)
+                return knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp, update_time: new Date().toISOString() ,  source: source})
+            } else {
+                console.log('try update', ticker)
+                knex('historical_data').where('ticker', ticker).update({ data: data, last_update: time_stamp, update_time: new Date().toISOString() , source: source}).then(function (result) { console.log(result) })
+            }
+        })
+        .catch(function (ex) {
+            console.error(ex)
+        })
 }
 
 function convertIEXData(iexArr){
@@ -416,21 +386,13 @@ function convertHistoricalData(dlyData, freq){
 }
 module.exports = {
     handler: handler,
-    // computeQuantMetrics: computeQuantMetrics,
-    // timeRangeSlice: timeRangeSlice,
-    // aggregateStockData: aggregateStockData,
-    // load_historical_data: loadMultipleStockData,
     smartLoadStockHistory: smartLoadStockHistory,
     getHistoricalDataFromYahoo: getHistoricalDataFromYahoo,
     insert_historical: insert_historical,
     read_historical: readHistoricalFromDB,
-    // build_strategy_ts: build_strategy_ts,
-    // build_strategy_ts_from_id: build_strategy_ts_from_id,
-    updatePortfolioProfile: updateRatiosTable,
-    // buildStrategyFromPhases: buildStrategyFromPhases,
     updateProfile:updateProfile,
     createNewProfile: createNewProfile,
-    retryer: retryer,
+    retryer: reTryer,
     deleteProfile:deleteProfile,
     convertHistoricalData:convertHistoricalData
 };

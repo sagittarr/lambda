@@ -9,7 +9,7 @@ var cron = require('node-cron');
 const axios = require('axios')
 
 var util = require('./tools/Util.js')
-var api = require('./tools/API.js')
+var api = require('./tools/db_api.js')
 function sleep(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }

@@ -1,6 +1,6 @@
 var yahooFinance = require('yahoo-finance');
 var _ = require('underscore');
-var api = require('../tools/API.js')
+var api = require('../tools/db_api.js')
 const axios = require('axios');
 function parseURLArg(url) {
     var urlapi = require('url');
@@ -45,10 +45,7 @@ module.exports = async (ctx, next) => {
                 console.log(response)
                 ctx.state.data = api.convertHistoricalData(response.data, args.freq)
                 console.log(ctx.state.data, args.freq,args.apiUrl)
-                // console.log(response.data); // ex.: { user: 'Your User'}
-                // console.log(response.status); // ex.: 200
             });
-        // ctx.redirect( 'https://api.iextrading.com/1.0/stock/aapl/chart/1d')
     } else if (ctx.query.source === 'YHOO') {
         console.log(JSON.parse(ctx.query.symbols))
         await yahooFinance.historical({

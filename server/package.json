@@ -11,6 +11,7 @@
     "author": "Jason",
     "license": "MIT",
     "dependencies": {
+        "async": "^2.6.0",
         "axios": "^0.15.3",
         "bhttp": "1.2.4",
         "bluebird": "3.5.1",

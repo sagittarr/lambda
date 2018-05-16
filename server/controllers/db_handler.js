@@ -1,5 +1,4 @@
-var api  = require('../tools/API.js');
-// var util = require('../tools/Util.js')
+var api  = require('../tools/db_api.js');
 var _ = require('underscore');
 var knex = require('knex')({
     client: 'mysql',
@@ -27,7 +26,6 @@ module.exports = async (ctx, next) => {
         }).catch(function(err){ctx.state.data = err; console.error(err)});
     }
     else if(ctx.query.operation.toUpperCase() === 'READ_HISTORY'){
-        console.log(ctx.query)
         if(ctx.query.option){
             ctx.query.option = JSON.parse(ctx.query.option)
         }
@@ -35,7 +33,6 @@ module.exports = async (ctx, next) => {
             if(typeof(history) === typeof('str')){
                 history = JSON.parse(history)
             }
-            console.log(typeof(history))
             if(ctx.query.option.freq==='W' || ctx.query.option.freq==='M'){
                 ctx.state.data = api.convertHistoricalData(history, ctx.query.option.freq)
             }
