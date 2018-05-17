@@ -406,8 +406,9 @@ function getCurrentGoodsClassType(goodsId) {
 }
 
 // 跳转到股票详情
-function gotoStockPage(ticker) {
-  var url = '/pages/stock/stock?ticker=' + ticker
+function gotoStockPage(ticker, companyName) {
+  var url = '/pages/stock/stock?ticker=' + ticker+'&companyName='+companyName
+    console.log(url)
     // if (isBK(goodsId) || isZS(goodsId)) {
     //     url = `/pages/bk/bk?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
     // } else if (isAG(goodsId)) {
@@ -458,9 +459,7 @@ module.exports = {
     isBK: isBK,
     isZS: isZS,
     isJiJin: isJiJin,
-    gotoStockPage
-  : gotoStockPage
-  ,
+    gotoStockPage: gotoStockPage,
     //formatKanPanTime: formatKanPanTime,
     //formatDateHHMM: formatDateHHMM,
     getCurrentGoodsClassType: getCurrentGoodsClassType,

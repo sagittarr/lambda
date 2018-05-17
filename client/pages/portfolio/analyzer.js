@@ -371,8 +371,8 @@ Page({
 
     onItemClickEvent: function (e) {
       var data = e.currentTarget.dataset
-      console.log(data)
-      util.gotoStockPage(data.item.ticker)
+      console.log(data.item)
+      util.gotoStockPage(data.item.ticker, data.item.name)
     }
 
 });

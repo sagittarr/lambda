@@ -2,7 +2,7 @@ var KLineView = require('../common/KLineView/KLineView.js')
 var NewsItem = require('NewsItem.js')
 var Quotation = require('../../models/Quotation.js')
 var parser = require('../../parsers/quote_parser.js')
-
+const util = require('../../utils/util.js')
 Page({
 
     data: {
@@ -11,6 +11,7 @@ Page({
         // ticker: '--',
         // goodsName: '青岛啤酒',
         ticker: '--',
+        companyName: '--',
         quotationColor: '#eb333b',
         currentTimeIndex: 0,
         currentInfoIndex: 0,
@@ -38,12 +39,13 @@ Page({
             this.setData({
                 // ticker: parseInt(option.id),
                 // goodsName: option.name,
-                ticker: option.ticker
+                ticker: option.ticker,
+                companyName: option.companyName
             })
         }
 
         wx.setNavigationBarTitle({
-            title: `(${this.data.ticker})`
+            title: `${this.data.ticker}(${this.data.companyName})`
         })
 
         initData(this)
@@ -55,7 +57,7 @@ Page({
         // fundview.init(this);
         // fundview.show(this);
         // fundview.setJLValue(this);
-
+        util.showBusy('请求中...');
         this.getData()
     },
 
@@ -83,11 +85,12 @@ Page({
             title: `(${code})`,
             desc: `${getApp().globalData.shareDesc}`,
             // path: `/pages/stock/stock?id=${id}&name=${name}&code=${code}`
-            path: `/pages/kanpan/kanpan?id=${id}&code=${code}&page=stock`
+            path: `/pages/kanpan/kanpan?code=${code}&page=stock`
         }
     },
 
     onPullDownRefresh: function (event) {
+      util.showBusy('请求中...');
         this.getData()
     },
 
@@ -116,6 +119,7 @@ Page({
         // 请求走势，请求哪个走势，在getQuotationTrend中判断
         this.getQuotationTrend(function () {
             wx.hideNavigationBarLoading()
+            util.showSuccess('请求成功');
             wx.stopPullDownRefresh()
         })
         // 请求个股资讯，具体是否请求，在getNews中判断
@@ -128,40 +132,24 @@ Page({
     getQuotationValue: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getQuotation('AAPL', function(quotation = new Quotation()){
+        parser.getQuotation(that.data.ticker, function(quotation = new Quotation()){
             let sign = quotation.zdf>0?'+':''
             quotation.zdf = sign + (quotation.zdf*100).toFixed(2).toString() + '%'
             quotation.zd = sign + quotation.zd.toFixed(2).toString()
             quotation.high = quotation.high.toFixed(2)
             quotation.low = quotation.low.toFixed(2)
+            quotation.price  = quotation.price.toFixed(2)
             that.setData({ quotation: quotation })
                 if (callback != null && typeof (callback) == 'function') {
                     callback()
                 }
         })
-        // Api.stock.getQuotation({
-        //     id: that.data.ticker
-        // }).then(function (results) {
-        //     if (callback != null && typeof (callback) == 'function') {
-        //         callback()
-        //     }
-        //     // console.log('stock quotation value result ', results)
-        //     if (results != null) {
-        //         that.setData({ quotation: results })
-        //         fundview.setJLValue(that);
-        //     }
-        // }, function (res) {
-        //     console.log("------fail----", res)
-        //     if (callback != null && typeof (callback) == 'function') {
-        //         callback()
-        //     }
-        // })
     },
 
     getMinuteData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getMinuteData('AAPL',getIEXHistoricalDataOption(that.data.quotePeriod),function(minutes){
+        parser.getMinuteData(that.data.ticker, getIEXHistoricalDataOption(that.data.quotePeriod),function(minutes){
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }
@@ -170,28 +158,12 @@ Page({
             that.kLineView.drawMinuteCanvas(minutes, getCanvasId(that.data.quotePeriod))
 
         })
-        // Api.stock.getMinutes({
-        //     id: that.data.ticker,
-        //     date: 0,
-        //     time: 0,
-        //     mmp: false,
-        // }).then(function (results) {
-        //     if (callback != null && typeof (callback) == 'function') {
-        //         callback()
-        //     }
-        //     // console.log('stock minute result ', results)
-        //     // console.log('canvas id ' + getCanvasId(that.data.quotePeriod))
-        //     that.kLineView.drawMinuteCanvas(results, getCanvasId(that.data.quotePeriod))
-        // }, function (res) {
-        //     console.log("------fail----", res)
-        //     wx.hideNavigationBarLoading()
-        // })
     },
 
     getKlineData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getKlineData('AMZN', getIEXHistoricalDataOption(that.data.quotePeriod), function(klineData){
+        parser.getKlineData(that.data.ticker, getIEXHistoricalDataOption(that.data.quotePeriod), function(klineData){
             console.log(klineData)
             if (callback != null && typeof (callback) == 'function') {
                 callback()
@@ -199,23 +171,6 @@ Page({
             // console.log('stock kline result ', results)
             that.kLineView.drawKLineCanvas(klineData, getCanvasId(that.data.quotePeriod), that.data.quotePeriod)
         })
-        // Api.stock.getKLines({
-        //     id: that.data.ticker,
-        //     begin: 0,
-        //     size: 200,
-        //     period: that.data.quotePeriod,
-        //     time: 0,
-        //     ma: 7
-        // }).then(function (results) {
-        //     if (callback != null && typeof (callback) == 'function') {
-        //         callback()
-        //     }
-        //     // console.log('stock kline result ', results)
-        //     that.kLineView.drawKLineCanvas(results, getCanvasId(that.data.quotePeriod), that.data.quotePeriod)
-        // }, function (res) {
-        //     console.log("------fail----", res)
-        //     wx.hideNavigationBarLoading()
-        // })
     },
 
     // 获取行情走势
