@@ -1,4 +1,5 @@
 var STK = require('./StockData')
+const _ = require('underscore')
 function CutOff(aggregation, from, to, offset = 0){
     var left = aggregation.dateIndex.indexOf(from)
     var right = aggregation.dateIndex.indexOf(to) + offset
@@ -12,6 +13,8 @@ function CutOff(aggregation, from, to, offset = 0){
         slice.dailyPctChange = aggregation.dailyPctChange.slice(left,right)
     }
     slice.tickers = aggregation.dataset.map(stock=>stock.ticker)
+    // slice.dataset = aggregation.dataset
+    slice.debugInfo = aggregation.debugInfo
     slice.left = left
     slice.right = right
     return slice
@@ -33,6 +36,7 @@ function combine(slices){
     let cumProd = 1
     result.values = dailyPct.map(pct => {cumProd = cumProd*pct; return cumProd})
     result.phaseInfo = phaseInfo
+    result.debugInfo = _.last(slices).debugInfo
     return result
 }
 

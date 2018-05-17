@@ -8,7 +8,7 @@ function SearchItem(name, goodsId) {
     this.goodsId = goodsId
     this.code = Util.formateNumber(goodsId % 1000000, 6)
 
-    // console.log("===========name, coee", name, goodsId, this.code)
+    // console.log("===========name, coee", name, ticker, this.code)
 
     if (Util.isZS(goodsId)) {
         this.type = "指数"
@@ -24,7 +24,7 @@ function SearchItem(name, goodsId) {
         }
     }
 
-    this.setOptional(optionalUtil.isOptional(this.goodsId))
+    this.setOptional(optionalUtil.isOptional(this.ticker))
 }
 
 SearchItem.prototype.setOptional = function (optional) {

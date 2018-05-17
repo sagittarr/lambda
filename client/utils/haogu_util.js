@@ -371,7 +371,7 @@ function gotoQuote(goodsId, goodsName, goodsCode) {
     } else if (isAG(goodsId)) {
         url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
     } else {
-        // url = `/pages/fund/fund?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
+        // url = `/pages/fund/fund?id=${ticker}&name=${goodsName}&code=${goodsCode}`
         url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
     }
     wx.navigateTo({

@@ -14,27 +14,21 @@
     "navigationBarBackgroundColor": "#3b3a37",
     "navigationBarTextStyle": "white"
   },
-    "tabBar": {
-      "selectedColor": "#ee7600",
-      "list": [
-        {
-          "pagePath": "pages/lab2/lab",
-          "iconPath": "images/list.png",
-          "selectedIconPath": "images/list-active.png",
-          "text": "策略选股"
-        },
-        {
-          "pagePath": "pages/about/about",
-          "iconPath": "images/lambda.png",
-          "selectedIconPath": "images/lambda-active.png",
-          "text": "关于掌控"
-        },
-                {
-                  "pagePath": "pages/stock/stock",
-                  "iconPath": "images/lambda.png",
-                  "selectedIconPath": "images/lambda-active.png",
-                  "text": "lab"
-                }
-      ]
-    }
+  "tabBar": {
+    "selectedColor": "#ee7600",
+    "list": [
+      {
+        "pagePath": "pages/lab2/lab",
+        "iconPath": "images/list.png",
+        "selectedIconPath": "images/list-active.png",
+        "text": "策略选股"
+      },
+      {
+        "pagePath": "pages/about/about",
+        "iconPath": "images/lambda.png",
+        "selectedIconPath": "images/lambda-active.png",
+        "text": "关于掌控"
+      }
+    ]
+  }
 }

@@ -96,7 +96,7 @@ function updateDatabinding(that) {
 }
 
 function requestFundData(that) {
-    var goodsId = that.data.goodsId
+    var goodsId = that.data.ticker
     console.log('fund reqest id ', goodsId)
 
     return stockreq.requestFundData({

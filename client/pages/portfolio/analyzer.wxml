@@ -114,7 +114,7 @@
         </view>
         <view id="section_list" style="top:{{bkArr.length>0?'415rpx':'175rpx'}}">
           <block wx:for="{{holdings}}" wx:key="id">
-            <template is="StockCell" data="{{data:item}}" />
+            <template is="StockCell" data="{{data:item}}"/>
           </block>
         </view>
       </view>

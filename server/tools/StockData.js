@@ -42,7 +42,7 @@ function Aggregation(name){
     this.avgDlyRtn
     this.dailyPctChange = []
     this.inceptionDate = ''
-    // this.benchmark = undefined
+    this.debugInfo = []
     this.phaseInfo = undefined //optional
     this.quant = {}
 }
@@ -82,26 +82,35 @@ AggregationFactory.prototype.build = function(stocks, spy, inceptionDate=undefin
         }
     })
 
-    var aggSeries = []
+    var cumvalues = []
     for (var i = 0; i < spy.dateIndex.length; i++) {
         let all = []
         // stocks.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
         stocks.map(stock => { all.push(stock.values[i])})
+        // var info = [all.length]
         all = _.compact(all)
+        // info.push(all.length)
         if(all.length == 0){
-            aggSeries.push(1.);
+            if(cumvalues.length>0){
+                cumvalues.push(_.last(cumvalues));
+            }
+            else{
+                cumvalues.push(1.);
+            }
         }
         else{
             let avg = all.reduce((previous, current) => current += previous) / all.length;
-            aggSeries.push(avg);
+            cumvalues.push(avg);
         }
     }
     var aggregation = new Aggregation('Portfolio')
-    aggregation.values = aggSeries
+    aggregation.values = cumvalues
     aggregation.dateIndex = spy.dateIndex
     aggregation.dataset = stocks
-    aggregation.avgDlyRtn = Math.pow(_.last(aggSeries), 1. / (aggSeries.length - 1))
-    aggregation.dailyPctChange = aggSeries.map((v, i) => { return i > 0 ? v / aggSeries[i - 1] : 1. })
+    aggregation.avgDlyRtn = Math.pow(_.last(cumvalues), 1. / (cumvalues.length - 1))
+    aggregation.dailyPctChange = cumvalues.map((v, i) => { return i > 0 ? v / cumvalues[i - 1] : 1. })
+    // info = [_.last(cumvalues, 2)]
+    // aggregation.debugInfo = info
     if(inceptionDate){
         aggregation.inceptionDate = parseInt(inceptionDate)
     }

@@ -1,21 +1,16 @@
-// var Api = require("../../api/api.js")
 var KLineView = require('../common/KLineView/KLineView.js')
 var NewsItem = require('NewsItem.js')
-// var fundview = require('../common/FundView/FundView.js');
 var Quotation = require('../../models/Quotation.js')
 var parser = require('../../parsers/quote_parser.js')
-
-// var optionalUtil = require('../../utils/optionalUtil.js')
-// var Util = require('../../utils/util.js')
 
 Page({
 
     data: {
         // 个股头部数据
         quotation: {},
-        goodsId: 600600,
-        goodsName: '青岛啤酒',
-        goodsCode: '600600',
+        // ticker: '--',
+        // goodsName: '青岛啤酒',
+        ticker: '--',
         quotationColor: '#eb333b',
         currentTimeIndex: 0,
         currentInfoIndex: 0,
@@ -39,23 +34,23 @@ Page({
     },
 
     onLoad: function (option) {
-        if (option.hasOwnProperty('id') && option.hasOwnProperty('name') && option.hasOwnProperty('code')) {
+        if (option.hasOwnProperty('ticker')) {
             this.setData({
-                goodsId: parseInt(option.id),
-                goodsName: option.name,
-                goodsCode: option.code
+                // ticker: parseInt(option.id),
+                // goodsName: option.name,
+                ticker: option.ticker
             })
         }
 
         wx.setNavigationBarTitle({
-            title: `${this.data.goodsName} (${this.data.goodsCode})`
+            title: `(${this.data.ticker})`
         })
 
         initData(this)
         this.kLineView = new KLineView()
         this.timerId = -1             // 循环请求id
 
-        console.log('stock page onLoad ', this.data.goodsId)
+        console.log('stock page onLoad ', this.data.ticker)
 
         // fundview.init(this);
         // fundview.show(this);
@@ -80,15 +75,15 @@ Page({
 
     onShareAppMessage: function () {
         var that = this
-        var id = that.data.goodsId
-        var name = that.data.goodsName
-        var code = that.data.goodsCode
+        // var id = that.data.ticker
+        // var name = that.data.goodsName
+        var code = that.data.ticker
 
         return {
-            title: `${name} (${code})`,
+            title: `(${code})`,
             desc: `${getApp().globalData.shareDesc}`,
             // path: `/pages/stock/stock?id=${id}&name=${name}&code=${code}`
-            path: `/pages/kanpan/kanpan?id=${id}&name=${name}&code=${code}&page=stock`
+            path: `/pages/kanpan/kanpan?id=${id}&code=${code}&page=stock`
         }
     },
 
@@ -133,15 +128,19 @@ Page({
     getQuotationValue: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getQuotation('AAPL', function(quotation){
-            // console.log(quotation)
+        parser.getQuotation('AAPL', function(quotation = new Quotation()){
+            let sign = quotation.zdf>0?'+':''
+            quotation.zdf = sign + (quotation.zdf*100).toFixed(2).toString() + '%'
+            quotation.zd = sign + quotation.zd.toFixed(2).toString()
+            quotation.high = quotation.high.toFixed(2)
+            quotation.low = quotation.low.toFixed(2)
             that.setData({ quotation: quotation })
                 if (callback != null && typeof (callback) == 'function') {
                     callback()
                 }
         })
         // Api.stock.getQuotation({
-        //     id: that.data.goodsId
+        //     id: that.data.ticker
         // }).then(function (results) {
         //     if (callback != null && typeof (callback) == 'function') {
         //         callback()
@@ -172,7 +171,7 @@ Page({
 
         })
         // Api.stock.getMinutes({
-        //     id: that.data.goodsId,
+        //     id: that.data.ticker,
         //     date: 0,
         //     time: 0,
         //     mmp: false,
@@ -201,7 +200,7 @@ Page({
             that.kLineView.drawKLineCanvas(klineData, getCanvasId(that.data.quotePeriod), that.data.quotePeriod)
         })
         // Api.stock.getKLines({
-        //     id: that.data.goodsId,
+        //     id: that.data.ticker,
         //     begin: 0,
         //     size: 200,
         //     period: that.data.quotePeriod,
@@ -238,7 +237,7 @@ Page({
         var that = this
 
         // Api.stock.getNews({
-        //     id: that.data.goodsId + '',
+        //     id: that.data.ticker + '',
         //     cls: that.data.infoCls
         // }).then(function (results) {
         //     // console.log('stock news result ', results)
@@ -364,7 +363,7 @@ Page({
         var that = this
 
         // Api.stock.commitOptionals({
-        //     goodsId: that.data.goodsId
+        //     ticker: that.data.ticker
         // }).then(function (res) {
         //     console.log("添加自选股", res)
         //     if (res == 0 || res == '0') {
@@ -422,7 +421,7 @@ Page({
 
     // 查询股票是否在自选股中中
     isCurrentGoodsInZxgList: function() {
-        // var isIn = optionalUtil.isOptional(this.data.goodsId)
+        // var isIn = optionalUtil.isOptional(this.data.ticker)
         // this.setData({
         //     isAddToZxg: isIn
         // })
@@ -473,7 +472,7 @@ function getCanvasId(period) {
 
 function initData(that) {
     // 初始化数据显示
-    // Quotation(price, zd, zdf, open, high, low, hsl, syl, sjl, cjl, jl, zz, cje, lb, ltsz, date, time, color, goodsId)
+    // Quotation(price, zd, zdf, open, high, low, hsl, syl, sjl, cjl, jl, zz, cje, lb, ltsz, date, time, color, ticker)
     // var quota = new Quotation('--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
     var quota = new Quotation('1', '2', '3', '4', '5', '6', '7', '8', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
     that.setData({

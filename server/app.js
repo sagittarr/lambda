@@ -26,32 +26,55 @@ app.use(router.routes())
 // 启动程序，监听端口
 app.listen(config.port, () => debug(`listening on port ${config.port}`))
 
-cron.schedule('4,26,55 9 * * *', function () {
-  api.read_historical(null, null).then( function (rows) {
-    console.log('number of rows', rows.length)
-    rows.forEach(function (row) {
-      // sleep(10000).then(function () {
-        // console.log('sleep', new Date().toISOString())
-      api.retryer(5, row.ticker, function () {
-        return new Promise(function (resolve, reject) {
-          fromTo = util.yearAgo2Today()
-          var request = { ticker: row.ticker, from: fromTo.from, to: fromTo.to, freq: 'd' }
-          api.getHistoricalDataFromYahoo(request).then(function (ts) {
-            if (!ts || ts.length == 0) {
-              resolve(false)
-            }
-            else {
-              api.insert_historical(row.ticker, JSON.stringify(ts), Date.now() / 1000, 'yahoo');
-              console.log('updated', row.ticker, ts.length, new Date().toISOString(), 'yahoo')
-              resolve(true)
-            }
-          })
-        });
-      })
+cron.schedule('1 13 * * *', function () {
+    api.read_historical(null, null).then( function (rows) {
+        console.log('number of rows', rows.length)
+        rows.forEach(function (row) {
+            // sleep(10000).then(function () {
+            // console.log('sleep', new Date().toISOString())
+            let request = {ticker: row.ticker, source: 'iex', range: '5y', freq: 'd'}
+            api.getHistoricalDataFromIEX(request).then(function(ts){
+                let lastUpdate = Date.now() / 1000
+                api.insert_historical(row.ticker, JSON.stringify(ts), lastUpdate, 'iex');
+                sleep(50)
+            })
+            api.retryer(5, row.ticker, function () {
+                return new Promise(function (resolve, reject) {
+                    fromTo = util.yearAgo2Today()
+                    var request = { ticker: row.ticker, from: fromTo.from, to: fromTo.to, freq: 'd' }
+                    api.getHistoricalDataFromYahoo(request).then(function (ts) {
+                        if (!ts || ts.length == 0) {
+                            resolve(false)
+                        }
+                        else {
+                            api.insert_historical(row.ticker, JSON.stringify(ts), Date.now() / 1000, 'yahoo');
+                            console.log('updated', row.ticker, ts.length, new Date().toISOString(), 'yahoo')
+                            resolve(true)
+                        }
+                    })
+                });
+            })
+        })
     })
-  })
 });
 
+
+// api.retryer(5, 'NVDA', function () {
+//     return new Promise(function (resolve, reject) {
+//         let fromTo = util.yearAgo2Today()
+//         var request = { ticker: 'NVDA', from: fromTo.from, to: fromTo.to, freq: 'd' }
+//         api.getHistoricalDataFromYahoo(request).then(function (ts) {
+//             if (!ts || ts.length == 0) {
+//                 resolve(false)
+//             }
+//             else {
+//                 api.insert_historical('NVDA', JSON.stringify(ts), Date.now() / 1000, 'yahoo');
+//                 console.log('updated', 'NVDA', ts.length, new Date().toISOString(), 'yahoo')
+//                 resolve(true)
+//             }
+//         })
+//     });
+// })
 // axios.get('https://api.iextrading.com/1.0/stock/aapl/chart/5y').then(function(response){
 //     var data = response.data
 //     api.insert_historical('AAPL', JSON.stringify(data), Date.now() / 1000, 'iex')

@@ -406,16 +406,16 @@ function getCurrentGoodsClassType(goodsId) {
 }
 
 // 跳转到股票详情
-function gotoQuote(goodsId, goodsName, goodsCode) {
-    var url = ''
-    if (isBK(goodsId) || isZS(goodsId)) {
-        url = `/pages/bk/bk?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
-    } else if (isAG(goodsId)) {
-        url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
-    } else {
-        // url = `/pages/fund/fund?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
-        url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
-    }
+function gotoStockPage(ticker) {
+  var url = '/pages/stock/stock?ticker=' + ticker
+    // if (isBK(goodsId) || isZS(goodsId)) {
+    //     url = `/pages/bk/bk?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
+    // } else if (isAG(goodsId)) {
+    //     url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
+    // } else {
+    //     // url = `/pages/fund/fund?id=${ticker}&name=${goodsName}&code=${goodsCode}`
+    //     url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
+    // }
     wx.navigateTo({
         url: url
     })
@@ -458,7 +458,9 @@ module.exports = {
     isBK: isBK,
     isZS: isZS,
     isJiJin: isJiJin,
-    gotoQuote: gotoQuote,
+    gotoStockPage
+  : gotoStockPage
+  ,
     //formatKanPanTime: formatKanPanTime,
     //formatDateHHMM: formatDateHHMM,
     getCurrentGoodsClassType: getCurrentGoodsClassType,

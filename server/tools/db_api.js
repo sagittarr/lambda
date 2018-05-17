@@ -262,7 +262,8 @@ async function updateProfile(profile, response) {
 async function readHistoricalFromDB(ticker, source){
     return new Promise(function (resolve, reject) {
         if (ticker == null) {
-            knex('historical_data').select('*').then(function (data) {
+            // knex('historical_data').select('*')
+            knex('historical_data').distinct('ticker').select().then(function (data) {
                 console.log('read all from db', data);
                 resolve(data)
             });
@@ -310,7 +311,7 @@ async function getHistoricalDataFromIEX(request) {
 async function getHistoricalDataFromYahoo(request) {
     return new Promise(function (resolve, reject) {
         yahooFinance.historical({
-            symbol: request.symbol,
+            symbol: request.ticker,
             from: request.from,
             to: request.to,
             period: request.freq
@@ -388,6 +389,7 @@ module.exports = {
     handler: handler,
     smartLoadStockHistory: smartLoadStockHistory,
     getHistoricalDataFromYahoo: getHistoricalDataFromYahoo,
+    getHistoricalDataFromIEX: getHistoricalDataFromIEX,
     insert_historical: insert_historical,
     read_historical: readHistoricalFromDB,
     updateProfile:updateProfile,
