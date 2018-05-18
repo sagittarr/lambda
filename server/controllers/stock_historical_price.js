@@ -37,10 +37,10 @@ module.exports = async (ctx, next) => {
         console.log(args)
         ctx.redirect(compositeAlphaVantageURL(args.ticker, args.freq))
     } else if (ctx.query.source === 'IEX') {
-        var args = parseURLArg(ctx.request.url)
-        args.apiUrl = args.apiUrl.replace(/%3A/g, ':').replace(/%2F/g,'/')
-        console.log(args.apiUrl)
-        await axios.get(args.apiUrl)
+        // var args = parseURLArg(ctx.request.url)
+        var apiUrl = decodeURIComponent(ctx.query.apiUrl)
+        console.log(apiUrl)
+        await axios.get(apiUrl)
             .then(function(response){
                 console.log(response.data)
                 if(ctx.query.convertKLineChart === true){
@@ -142,6 +142,7 @@ module.exports = async (ctx, next) => {
 //         console.log(response.data)
 //     });
 
-var uri = 'https://mozilla.org/?x=шеллы';
-var encoded = encodeURI('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + ['AAPL','NVDA'].join(',') +'&types='+ 'quote');
-console.log(encoded)
+// var uri = 'https://mozilla.org/?x=шеллы';
+// var encoded = encodeURIComponent('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + ['AAPL','NVDA'].join(',') +'&types='+ 'quote');
+// console.log(encoded)
+// console.log(decodeURIComponent(encoded))

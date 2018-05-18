@@ -20,7 +20,7 @@ function quoteYahooFinance(ticker, modules, callback)
 function callIEXFinance(apiUrl, arg, callback){
     var options = {
         url: config.service.stockHistoryUrl,
-        data: { source: 'IEX', apiUrl : apiUrl, convertKLineChart: arg.convertKLineChart, convertFreq: arg.convertFreq },
+        data: { source: 'IEX', apiUrl :  encodeURIComponent(apiUrl), convertKLineChart: arg.convertKLineChart, convertFreq: arg.convertFreq },
         success(result) {
             if(result.data.code !=0){
                 console.error(apiUrl,arg, result.data.error)

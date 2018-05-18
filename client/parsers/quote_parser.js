@@ -3,8 +3,9 @@ var Quotation = require('../models/Quotation.js')
 var MinuteData = require('../models/MinuteData.js')
 var KlineData = require('../models/KLineData.js')
 const config = require('../config')
+
 function getQuotation(ticker, callback){
-  api.quoteYahooFinance(ticker, ['summaryDetail','price'],function(quote){
+    api.quoteYahooFinance(ticker, ['summaryDetail','price'],function(quote){
         // console.log(quote)
         var quotePrice = quote.price
         var quoteDetail = quote.summaryDetail
@@ -28,16 +29,18 @@ function getQuotation(ticker, callback){
             quotePrice.regularMarketTime,
             'brown',
             ticker
-            )
+        )
         callback(result)
     })
 }
+
 function getBatchDataFromIEX(tickers, quote, callback){
     var url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols=' + tickers.join(',') +'&types='+ quote
-    api.callIEXFinance(url, {}, function (batch) {
-        console.log(batch)
+    api.callIEXFinance(url, {}, function (batchResult) {
+        callback(batchResult)
     })
 }
+
 function getMinuteData(ticker, option, callback, source = 'IEX'){
     let iexQuote
     let iexChartData
@@ -75,36 +78,25 @@ function getMinuteData(ticker, option, callback, source = 'IEX'){
 
 function getKlineData(ticker, option, callback, source= 'IEX'){
     // if(option.range === '5y'){
-      console.log(option)
-        var options = {
-          url: config.service.db_handler,
-          data: { operation: 'READ_HISTORY', ticker: ticker, source : 'iex', option: option },
-          success(result) {
+    console.log(option)
+    var options = {
+        url: config.service.db_handler,
+        data: { operation: 'READ_HISTORY', ticker: ticker, source : 'iex', option: option },
+        success(result) {
             console.log("read LOAD", result.data.data)
-              var kline = []
-              result.data.data.map(data=>{
-                  var klineData = new KlineData(parseInt(data.date.replace(/-/g,'')), parseFloat(data.open)*1000, parseFloat(data.high)*1000, parseFloat(data.low)*1000, parseFloat(data.close)*1000, parseFloat(data.vwap)*1000,undefined,undefined,parseFloat(data.volume),parseFloat(data.close)*1000,parseFloat(data.volume) )
-                  kline.push(klineData)
-              })
-              callback(kline)
-          },
-          fail(error) {
+            var kline = []
+            result.data.data.map(data=>{
+                var klineData = new KlineData(parseInt(data.date.replace(/-/g,'')), parseFloat(data.open)*1000, parseFloat(data.high)*1000, parseFloat(data.low)*1000, parseFloat(data.close)*1000, parseFloat(data.vwap)*1000,undefined,undefined,parseFloat(data.volume),parseFloat(data.close)*1000,parseFloat(data.volume) )
+                kline.push(klineData)
+            })
+            callback(kline)
+        },
+        fail(error) {
             util.showModel('请求失败', error);
             console.log('request fail', error);
-          }
         }
-        wx.request(options);
-        return
-    // }
-    // api.callIEXFinance('https://api.iextrading.com/1.0/stock/aapl/chart/'+option.range, source, option.freq, function (iexChartData) {
-    //     console.log('kline', iexChartData)
-    //     console.log(option)
-    //     var kline = []
-    //     iexChartData.map(data=>{
-    //         var klineData = new KlineData(parseInt(data.date.replace(/-/g,'')), parseFloat(data.open)*1000, parseFloat(data.high)*1000, parseFloat(data.low)*1000, parseFloat(data.close)*1000, parseFloat(data.vwap)*1000,undefined,undefined,parseFloat(data.volume),parseFloat(data.close)*1000,parseFloat(data.volume) )
-    //         kline.push(klineData)
-    //     })
-    //     callback(kline)
-    // })
+    }
+    wx.request(options);
+    return
 }
 module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData, getBatchDataFromIEX : getBatchDataFromIEX}
