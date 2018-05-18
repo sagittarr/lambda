@@ -99,7 +99,7 @@
                 </view>
                 <view class="minor_cell_placeholder" style=" margin-left:10px">
                 <view class=" T2 S1">累计天数</view>
-                  <view class=" T2 S1">10</view>
+                  <view class=" T2 S1">{{item.numOfDays}}</view>
                 </view>
                  <view class="minor_cell_placeholder" style=" margin-left:10px">
                 <view class=" T2 S1">持股更新</view>

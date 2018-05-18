@@ -33,6 +33,7 @@ function combine(slices){
     var result = new STK.Aggregation('Strategy')
     result.dateIndex = dateIndex
     result.dailyPctChange = dailyPct
+    result.numOfDays = dailyPct.length
     let cumProd = 1
     result.values = dailyPct.map(pct => {cumProd = cumProd*pct; return cumProd})
     result.phaseInfo = phaseInfo

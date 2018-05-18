@@ -82,7 +82,7 @@ async function buildStrategyFromId (productId, toUpdateTblDB = false, debug = fa
                 // console.log(phases)
                 buildStrategyFromPhases(phases).then(function (result) {
                     if(toUpdateTblDB){
-                        updateRatiosTable(productId, result.quant)
+                        updateProfileCalculationData(productId, result.quant, result.dataset.numOfDays)
                     }
                     resolve(result)
                 }).catch(function (err) {
@@ -227,11 +227,7 @@ async function loadMultipleStockData(tickers) {
 //
 // }
 
-function updateRatiosTable(id, table) {
-  if (id) {
-    knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table) }).then(function (result) { console.log(result) })
-  }
-}
+
 
 async function deleteProfile(profile, response) {
     knex('portfolio_metadata')
@@ -252,6 +248,12 @@ async function createNewProfile(profile, response) {
     })
 }
 
+function updateProfileCalculationData(id, table, numOfDays) {
+    if (id) {
+        console.log('updating profile calculation data')
+        knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table) , numOfDays : numOfDays}).then(function (result) { console.log(result) })
+    }
+}
 async function updateProfile(profile, response) {
   knex('portfolio_metadata').where('id', '=', profile.id).update({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), phases: JSON.stringify(profile.phases) }).then(function (data) {
     console.log(data);

@@ -5,11 +5,11 @@ const api = new YahooFinanceAPI({
 });
 
 module.exports = async (ctx, next) => {
-  function call(v) {
-    console.log(v)
-    ctx.state.data= v;
-  }
-  var tickers = ctx.query.tickers
-  console.log(tickers)
-  await api.getRealtimeQuotes(tickers).then(data => call(data)).catch(err => ctx.state.data = err);
+    function call(v) {
+        console.log(v)
+        ctx.state.data= v;
+    }
+    var tickers = ctx.query.tickers
+    console.log(tickers)
+    await api.getRealtimeQuotes(tickers).then(data => call(data)).catch(err => ctx.state.data = err);
 }

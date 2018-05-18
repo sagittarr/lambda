@@ -94,8 +94,9 @@ Page({
                     that.data.timeSeriesData[ts.timeId] = ts
                 })
                 lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
+                profile.numOfDays = result.data.data.dataset.numOfDays
                 if (profile.isLocal == true) {
-                    that.syncDataToLocalStorage(profile.id, result.data.data.quant)
+                    that.syncDataToLocalStorage(profile.id, result.data.data.quant, profile.numOfDays)
                 }
             },
             fail(error) {
@@ -118,7 +119,7 @@ Page({
         return {
             title: '投资组合分析',
             desc: that.data.profile.name,
-            path: '/page/portfolio/analyzer'
+            path: '/pages/portfolio/analyzer'
         }
     },
     computeComparisonMetrics: function (range){
@@ -143,7 +144,7 @@ Page({
         return metrics
     },
 
-    syncDataToLocalStorage(id, table){
+    syncDataToLocalStorage(id, table, numOfDays){
         console.log(id, table)
         var lambda_key = getApp().globalData.lambda_key
         var that = this
@@ -152,6 +153,7 @@ Page({
             success: function (res) {
                 if (res.data[id]){
                     res.data[id].ratiosTable = table
+                    res.data[id].numOfDays = numOfDays
                     wx.setStorage({
                         key: lambda_key,
                         data: res.data,

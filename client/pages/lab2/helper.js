@@ -2,6 +2,8 @@ const putils = require('../portfolio/port_utils.js');
 const util = require('../../utils/util.js')
 const config = require('../../config')
 const lang = require('../../language.js')
+const parser = require('../../parsers/quote_parser.js')
+const Quotation = require('../../models/Quotation.js')
 const keywords = lang.CH
 
 function sleep(milliseconds) {
@@ -101,8 +103,53 @@ function quoteChangePrecentageForProfile(profile, that) {
   })
 }
 
+function quoteDailyChangeForProfile(profile, that) {
+    let tickers
+    if(profile.isLocal){
+        tickers = profile.tickers
+    }
+    else{
+        if (profile.curr_holds && profile.curr_holds[0] && typeof(profile.curr_holds[0]) === typeof("str"))
+            tickers = profile.curr_holds
+        else{
+            tickers = profile.curr_holds.map(stock=>stock.ticker)
+        }
+    }
+    ///////
+    parser.getBatchDataFromIEX(['AAPL','NVDA'], 'quote', function(result){})
+    // https://api.iextrading.com/1.0/stock/market/batch?symbols=aapl,fb,tsla&types=quote
+    // parser.getQuotation(that.data.ticker, function(quotation = new Quotation()){
+    //     let sign = quotation.zdf>0?'+':''
+    //     quotation.zdf = sign + (quotation.zdf*100).toFixed(2).toString() + '%'
+    //     quotation.zd = sign + quotation.zd.toFixed(2).toString()
+    //     quotation.high = quotation.high.toFixed(2)
+    //     quotation.low = quotation.low.toFixed(2)
+    //     quotation.price  = quotation.price.toFixed(2)
+    //
+    // })
+    // //////
+    // putils.realtime_price(tickers, function (results) {
+    //     var chg_pct = 0
+    //     if (results == undefined) {
+    //         wx.stopPullDownRefresh();
+    //         return;
+    //     }
+    //     if(!(results instanceof Array)){
+    //         results = [results]
+    //     }
+    //     results.forEach(function (e) {
+    //         chg_pct += parseFloat(e.realtime_chg_percent)
+    //     })
+    //     chg_pct = chg_pct / results.length
+    //     profile.latestChgPct = chg_pct
+    //     DisplayMetrics(profile, '', that.data.marketState)
+    //     Colorify(profile, 'inception')
+    //     wx.stopPullDownRefresh();
+    //     that.showProfileList()
+    // })
+}
 
-function loadProfilefromServer(that) {
+function loadProfileFromServer(that) {
   var options = {
     url: config.service.db_handler,
     data: { operation: 'R' },
@@ -127,6 +174,7 @@ function loadProfilefromServer(that) {
 
       that.data.public_list.forEach(function (profile) {
         quoteChangePrecentageForProfile(profile, that);
+          quoteDailyChangeForProfile(profile, that)
       })
       that.showProfileList()
       util.showSuccess('数据请求完成')
@@ -303,9 +351,8 @@ function DeleteLocalProfile(profile, that){
 module.exports = {
   marketIndex: marketIndex, 
   quoteMarketIndex: quoteMarketIndex,
-  quoteChangePrecentageForProfile: quoteChangePrecentageForProfile,
-  loadProfilefromServer: loadProfilefromServer,
-  loadProfilefromStorage: loadProfilefromStorage,
+  loadProfileFromServer: loadProfileFromServer,
+  loadProfileFromStorage: loadProfilefromStorage,
   DeleteCloudProfile: DeleteCloudProfile,
   DeleteLocalProfile: DeleteLocalProfile
   };

@@ -17,12 +17,17 @@ function quoteYahooFinance(ticker, modules, callback)
     wx.request(options1);
 }
 
-function callIEXFinance(apiUrl, freq, callback){
+function callIEXFinance(apiUrl, arg, callback){
     var options = {
         url: config.service.stockHistoryUrl,
-        data: { source: 'IEX', apiUrl : apiUrl, freq: freq },
+        data: { source: 'IEX', apiUrl : apiUrl, convertKLineChart: arg.convertKLineChart, convertFreq: arg.convertFreq },
         success(result) {
-            callback(result.data.data)
+            if(result.data.code !=0){
+                console.error(apiUrl,arg, result.data.error)
+            }
+            else {
+                callback(result.data.data)
+            }
         }
     }
     // util.showBusy('请求中...');

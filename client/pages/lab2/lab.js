@@ -68,8 +68,8 @@ Page({
 
   updateData: function () {
     helper.quoteMarketIndex(this, this.data.marketIndex);
-    helper.loadProfilefromServer(this)
-    helper.loadProfilefromStorage(this)
+    helper.loadProfileFromServer(this)
+    helper.loadProfileFromStorage(this)
   },
 
   tabClick: function (e) {
@@ -139,7 +139,7 @@ Page({
       this.setData({ currentPick: item })
     }
     else {
-      this.setData({ currentPick: undefined })
+      this.setData({ currentPick: null })
     }
   },
 

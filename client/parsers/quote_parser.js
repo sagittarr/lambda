@@ -32,7 +32,12 @@ function getQuotation(ticker, callback){
         callback(result)
     })
 }
-
+function getBatchDataFromIEX(tickers, quote, callback){
+    var url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols=' + tickers.join(',') +'&types='+ quote
+    api.callIEXFinance(url, {}, function (batch) {
+        console.log(batch)
+    })
+}
 function getMinuteData(ticker, option, callback, source = 'IEX'){
     let iexQuote
     let iexChartData
@@ -56,12 +61,12 @@ function getMinuteData(ticker, option, callback, source = 'IEX'){
             callback({ close: preClose * 1000, goods_id: 10000, market_date: parseInt(iexChartData[0].date), minutes: minutes })
         }
     }
-    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/quote', '', function (_iexQuote) {
+    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/quote', {}, function (_iexQuote) {
         iexQuote = _iexQuote
         console.log(_iexQuote)
         handle()
     })
-    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, option.freq, function (_iexChartData) {
+    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, {convertKLineChart: true, freq: option.freq}, function (_iexChartData) {
         iexChartData = _iexChartData
         console.log(_iexChartData)
         handle()
@@ -102,4 +107,4 @@ function getKlineData(ticker, option, callback, source= 'IEX'){
     //     callback(kline)
     // })
 }
-module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData}
+module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData, getBatchDataFromIEX : getBatchDataFromIEX}

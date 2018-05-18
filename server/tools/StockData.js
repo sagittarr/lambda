@@ -44,6 +44,7 @@ function Aggregation(name){
     this.inceptionDate = ''
     this.debugInfo = []
     this.phaseInfo = undefined //optional
+    this.numOfDays = NaN
     this.quant = {}
 }
 Aggregation.prototype.computeQuantMetric = function(){

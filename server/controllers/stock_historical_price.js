@@ -39,12 +39,17 @@ module.exports = async (ctx, next) => {
     } else if (ctx.query.source === 'IEX') {
         var args = parseURLArg(ctx.request.url)
         args.apiUrl = args.apiUrl.replace(/%3A/g, ':').replace(/%2F/g,'/')
-        console.log(args.freq,args.apiUrl)
+        console.log(args.apiUrl)
         await axios.get(args.apiUrl)
             .then(function(response){
-                console.log(response)
-                ctx.state.data = api.convertHistoricalData(response.data, args.freq)
-                console.log(ctx.state.data, args.freq,args.apiUrl)
+                console.log(response.data)
+                if(ctx.query.convertKLineChart === true){
+                    ctx.state.data = api.convertHistoricalData(response.data, ctx.query.convertFreq)
+                }
+                else{
+                    ctx.state.data = response.data
+                }
+
             });
     } else if (ctx.query.source === 'YHOO') {
         console.log(JSON.parse(ctx.query.symbols))
@@ -131,3 +136,12 @@ module.exports = async (ctx, next) => {
 //         }
 //         console.log(monthlyData)
 //     });
+// var url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols=' + ['AAPL','NVDA'].join(',') +'&types='+ 'quote'
+// axios.get(url)
+//     .then(function(response){
+//         console.log(response.data)
+//     });
+
+var uri = 'https://mozilla.org/?x=шеллы';
+var encoded = encodeURI('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + ['AAPL','NVDA'].join(',') +'&types='+ 'quote');
+console.log(encoded)
