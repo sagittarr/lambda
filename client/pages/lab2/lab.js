@@ -8,7 +8,7 @@ var helper = require('./helper.js')
 
 Page({   
   data: {
-    tabs: ["分析案例", "我的分析"],
+    tabs: ["掌控精选策略", "本地策略实验"],
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,

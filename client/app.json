@@ -6,7 +6,8 @@
     "pages/search/search",
     "pages/input/input",
     "pages/preview/preview",
-    "pages/stock/stock"
+    "pages/stock/stock",
+    "pages/newsdetail/newsdetail"
   ],
   "window": {
     "navigationBarTitleText": "掌控美股",

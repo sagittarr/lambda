@@ -62,13 +62,13 @@
 <!-- 新闻、资金、公告、研报 -->
 <view id="selector_info">
   <text style="background-color:{{currentInfoIndex == 0 ? '#eb333b' : '#f8f8f8'}}; color:{{currentInfoIndex == 0 ? '#ffffff' : '#353535'}}; border:{{currentInfoIndex == 0 ? '1rpx solid rgba(255, 255, 255, 0)' : '1rpx solid #dadada'}};" border-left: none;
-  bindtap="onInfoSelectorClick" data-index="0">新闻</text>
-  <text style="background-color:{{currentInfoIndex == 1 ? '#eb333b' : '#f8f8f8'}}; color:{{currentInfoIndex == 1 ? '#ffffff' : '#353535'}}; border:{{currentInfoIndex == 1 ? '1rpx solid rgba(255, 255, 255, 0)' : '1rpx solid #dadada'}}; border-left: none;"
-  bindtap="onInfoSelectorClick" data-index="1">资金</text>
+  bindtap="onInfoSelectorClick" data-index="0">新闻概要</text>
+    <text style="background-color:{{currentInfoIndex == 1 ? '#eb333b' : '#f8f8f8'}}; color:{{currentInfoIndex == 1 ? '#ffffff' : '#353535'}}; border:{{currentInfoIndex == 1 ? '1rpx solid rgba(255, 255, 255, 0)' : '1rpx solid #dadada'}}; border-left: none;"
+  bindtap="onInfoSelectorClick" data-index="1">资金</text> 
   <text style="background-color:{{currentInfoIndex == 2 ? '#eb333b' : '#f8f8f8'}}; color:{{currentInfoIndex == 2 ? '#ffffff' : '#353535'}}; border:{{currentInfoIndex == 2 ? '1rpx solid rgba(255, 255, 255, 0)' : '1rpx solid #dadada'}}; border-left: none;"
   bindtap="onInfoSelectorClick" data-index="2">公告</text>
   <text style="background-color:{{currentInfoIndex == 3 ? '#eb333b' : '#f8f8f8'}}; color:{{currentInfoIndex == 3 ? '#ffffff' : '#353535'}}; border:{{currentInfoIndex == 3 ? '1rpx solid rgba(255, 255, 255, 0)' : '1rpx solid #dadada'}}; border-left: none;"
-  bindtap="onInfoSelectorClick" data-index="3">研报</text>
+  bindtap="onInfoSelectorClick" data-index="3">研报</text> 
 </view>
 
 <view id="section_infos">
@@ -84,7 +84,8 @@
 
   <!-- 资金 -->
   <view hidden="{{currentInfoIndex != 1}}">
-    <template is="fundview" data="{{...fundViewData}}" />
+      <!-- <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{news.length != 0}}">功能暂未开通</view> -->
+     <template is="fundview" data="{{...fundViewData}}" /> 
   </view>
 
   <!-- 公告 -->
@@ -93,7 +94,7 @@
       <text class="time"> {{item.time}} </text>
       <text class="title"> {{item.title}} </text>
     </view>
-    <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{notices.length != 0}}">暂无数据，请点击重试</view>
+    <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{notices.length != 0}}">功能暂未开通</view>
   </view>
 
   <!-- 研报 -->
@@ -102,7 +103,7 @@
       <text class="time"> {{item.time}} </text>
       <text class="title"> {{item.title}} </text>
     </view>
-    <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{research.length != 0}}">暂无数据，请点击重试</view>
+    <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{research.length != 0}}">功能暂未开通</view>
   </view>
 
 </view>

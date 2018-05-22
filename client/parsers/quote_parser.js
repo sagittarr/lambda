@@ -2,6 +2,7 @@ var api = require('../api/data_api.js')
 var Quotation = require('../models/Quotation.js')
 var MinuteData = require('../models/MinuteData.js')
 var KlineData = require('../models/KLineData.js')
+const NewsItem = require('../models/NewsItem.js')
 const config = require('../config')
 
 function getQuotation(ticker, callback){
@@ -78,7 +79,7 @@ function getMinuteData(ticker, option, callback, source = 'IEX'){
 
 function getKlineData(ticker, option, callback, source= 'IEX'){
     // if(option.range === '5y'){
-    console.log(option)
+    // console.log(option)
     var options = {
         url: config.service.db_handler,
         data: { operation: 'READ_HISTORY', ticker: ticker, source : 'iex', option: option },
@@ -99,4 +100,17 @@ function getKlineData(ticker, option, callback, source= 'IEX'){
     wx.request(options);
     return
 }
-module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData, getBatchDataFromIEX : getBatchDataFromIEX}
+function getNewsItems(tickers, callback){
+    var newsItems = {}
+    getBatchDataFromIEX(tickers,'news', function(results){
+        tickers.map(ticker=>{
+            newsItems[ticker] = []
+            results[ticker].news.map(newsData=>{
+                newsItems[ticker].push(new NewsItem(newsData.url, newsData.source, '', newsData.datetime, '', newsData.headline, newsData.summary))
+            })
+        })
+        callback(newsItems)
+    })
+
+}
+module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData, getBatchDataFromIEX : getBatchDataFromIEX, getNewsItems: getNewsItems}

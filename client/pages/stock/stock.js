@@ -2,6 +2,7 @@ var KLineView = require('../common/KLineView/KLineView.js')
 var NewsItem = require('NewsItem.js')
 var Quotation = require('../../models/Quotation.js')
 var parser = require('../../parsers/quote_parser.js')
+var dataApi = require('../../api/data_api.js')
 const util = require('../../utils/util.js')
 Page({
 
@@ -190,7 +191,18 @@ Page({
 
         wx.showNavigationBarLoading()
         var that = this
-
+        var ticker = that.data.ticker
+        parser.getNewsItems([ticker], function(newsItems){
+                if (callback != null && typeof (callback) == 'function') {
+                    callback()
+                }
+                if (newsItems.hasOwnProperty(ticker) && newsItems[ticker].length>0) {
+                    that.setIsInfoLoad('0')
+                    that.setData({
+                        news: newsItems[ticker]
+                    })
+                }
+        })
         // Api.stock.getNews({
         //     id: that.data.ticker + '',
         //     cls: that.data.infoCls
@@ -303,13 +315,19 @@ Page({
 
     onNewsDetailEvent: function (e) {
         var newsItem = e.currentTarget.dataset.newsItem
-        var newsType = e.currentTarget.dataset.newsType
-
-        var data = e.currentTarget.dataset
+        // var newsType = e.currentTarget.dataset.newsType
+        //
+        // var data = e.currentTarget.dataset
         // var url = Util.urlNavigateEncode(newsItem.url)
         wx.navigateTo({
-            url: `../newsdetail/newsdetail?time=${newsItem.time}&id=${newsItem.newsId}&url=${url}&type=${newsType}`
+            url: `../newsdetail/newsdetail?date=${newsItem.time}&title=${newsItem.title}&content=${newsItem.summary}`
         })
+        // dataApi.callIEXFinance(newsItem.url,{}, function(content){
+        //     console.log(content)
+        //     wx.navigateTo({
+        //         url: `../newsdetail/newsdetail?date=${newsItem.time}&title=${newsItem.title}&content=${content}`
+        //     })
+        // })
     },
 
     // 添加删除自选股

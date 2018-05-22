@@ -82,13 +82,13 @@ AggregationFactory.prototype.build = function(stocks, spy, inceptionDate=undefin
             stock.values = tmp
         }
     })
-
+    var info = []
     var cumvalues = []
     for (var i = 0; i < spy.dateIndex.length; i++) {
         let all = []
         // stocks.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
         stocks.map(stock => { all.push(stock.values[i])})
-        // var info = [all.length]
+
         all = _.compact(all)
         // info.push(all.length)
         if(all.length == 0){
@@ -103,6 +103,7 @@ AggregationFactory.prototype.build = function(stocks, spy, inceptionDate=undefin
             let avg = all.reduce((previous, current) => current += previous) / all.length;
             cumvalues.push(avg);
         }
+        info.push(all)
     }
     var aggregation = new Aggregation('Portfolio')
     aggregation.values = cumvalues
@@ -111,7 +112,7 @@ AggregationFactory.prototype.build = function(stocks, spy, inceptionDate=undefin
     aggregation.avgDlyRtn = Math.pow(_.last(cumvalues), 1. / (cumvalues.length - 1))
     aggregation.dailyPctChange = cumvalues.map((v, i) => { return i > 0 ? v / cumvalues[i - 1] : 1. })
     // info = [_.last(cumvalues, 2)]
-    // aggregation.debugInfo = info
+    aggregation.debugInfo = [_.last(info, 2)]
     if(inceptionDate){
         aggregation.inceptionDate = parseInt(inceptionDate)
     }
