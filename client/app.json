@@ -7,7 +7,8 @@
     "pages/input/input",
     "pages/preview/preview",
     "pages/stock/stock",
-    "pages/newsdetail/newsdetail"
+    "pages/newsdetail/newsdetail",
+    "pages/market/market"
   ],
   "window": {
     "navigationBarTitleText": "掌控美股",
@@ -23,6 +24,12 @@
         "iconPath": "images/list.png",
         "selectedIconPath": "images/list-active.png",
         "text": "策略选股"
+      },
+      {
+        "pagePath": "pages/market/market",
+        "iconPath": "images/lambda.png",
+        "selectedIconPath": "images/lambda-active.png",
+        "text": "Market"
       },
       {
         "pagePath": "pages/about/about",

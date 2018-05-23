@@ -4,9 +4,6 @@
     <list default="true" id="722b7472-90db-49d1-8755-d4a9cca0e551" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/stock/stock.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/stock/stock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/parsers/quote_parser.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/parsers/quote_parser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/tools/StockData.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/tools/StockData.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
