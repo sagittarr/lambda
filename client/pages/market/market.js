@@ -24,6 +24,12 @@ Page({
         bkArr: [],
         tabArr: ["全部", "强者", "缺口", "题材", "黄金"],//tab
         goodsArr: [],//列表数据
+        metricsTbl: [
+          { "code": "A", "s1": "text0", "s2": "value", "s3": "text0" },
+          { "code": "B", "s1": "text0", "s2": "value", "s3": "text0"},
+          { "code": "C", "s1": "text0", "s2": "value", "s3": "text0"},
+          { "code": "D", "s1": "text0", "s2": "value", "s3": "text0"},
+        ]
     },
 
     onLoad: function (options) {

@@ -1,8 +1,29 @@
 <import src="../common/line.wxml" />
 <import src="../common/StockCell/StockCell.wxml" />
-<view id="section_header" style="height:{{bkArr.length>0?'410rpx':'170rpx'}}">
-  <block wx:if="{{bkArr.length>0}}">
 
+<view id="section_header" style="height:{{bkArr.length>0?'410rpx':'170rpx'}}">
+<view class="table">
+  <view class="tr">
+    <view class="th">标题1</view> 
+    <view class="th">标题2</view>
+    <view class="th">标题3</view>
+    </view>
+  <block wx:for="{{metricsTbl}}" wx:key="{{code}}">
+    <view class="tr">
+      <view class="S2 T2 td">{{item.s1}}</view>
+      <view class="S2 T2 td">{{item.s2}}</view>
+      <view class="S2 T2 td">{{item.s3}}</view>
+      <!-- <view class="S2 T2 td">{{item.s4}}</view>
+      <view class="S2 T2 td">{{item.s5}}</view>
+      <view class="S2 T2 td">{{item.s6}}</view>
+      <view class="S2 T2 td">{{item.s7}}</view>
+      <view class="S2 T2 td">{{item.s8}}</view>
+      <view class="S2 T2 td">{{item.s9}}</view>
+      <view class="S2 T2 td">{{item.s10}}</view> -->
+      </view>
+  </block>
+</view>
+  <block wx:if="{{bkArr.length>0}}">
     <!--板块-->
     <view class="bk_tip_container B1">
       <text class="S2 T2" style="margin-left:30rpx;">热门板块</text>
@@ -54,6 +75,6 @@
 
 <!--搜索按钮-->
 <view class="icon_search" bindtap="onStockSearchEvent">
-    <icon type="search" size="23"/>
-    <text style="color: #dddddd; font-size: 26rpx;">搜索</text>
+  <icon type="search" size="23" />
+  <text style="color: #dddddd; font-size: 26rpx;">搜索</text>
 </view>

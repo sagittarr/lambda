@@ -41,7 +41,7 @@ Page({
 
         keywords: keywords,
         metricsTbl: [
-            { "code": keywords.return, "text": "text0" },
+            { "code": keywords.return, "text": "text0", "test":"value" },
             { "code": keywords.volatility, "text": "text1" },
             { "code": keywords.sharpe_ratio, "text": "text2" },
             { "code": keywords.max_drawdown, "text": "text3" },

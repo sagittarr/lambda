@@ -1,6 +1,30 @@
 /* pages/kanpan/kanpan.wxss */
 @import "/pages/common/StockCell/StockCell.wxss";
-
+.table {
+   background-color: wheat;
+   padding: 10px;
+   border:1px solid #dadada;
+   border-left: 0;
+   border-right: 0;
+   border-bottom :0;
+   width: 95%;
+}
+.tr {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.th,.td {
+  padding: 10px;
+  border-bottom: 1px solid #dadada;
+  border-right: 1px solid #dadada;
+  text-align: center;
+  width:100%
+}
+.th {
+  font-weight: 400;
+  background-color: #dadada
+}
 .bk_tip_container {
   width: 100%;
   height: 70rpx;
