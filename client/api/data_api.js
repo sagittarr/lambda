@@ -17,20 +17,60 @@ function quoteYahooFinance(ticker, modules, callback)
     wx.request(options1);
 }
 
-function callIEXFinance(apiUrl, arg, callback){
-    var options = {
-        url: config.service.stockHistoryUrl,
-        data: { source: 'IEX', apiUrl :  encodeURIComponent(apiUrl), convertKLineChart: arg.convertKLineChart, convertFreq: arg.convertFreq },
-        success(result) {
-            if(result.data.code !=0){
-                console.error(apiUrl,arg, result.data.error)
-            }
-            else {
-                callback(result.data.data)
+function call3rdPartyAPI(source, apiUrl, arg, callback){
+    if(source == 'IEX') {
+        var options = {
+            url: config.service.stockHistoryUrl,
+            data: {
+                source: 'IEX',
+                apiUrl: encodeURIComponent(apiUrl),
+                convertKLineChart: arg.convertKLineChart,
+                convertFreq: arg.convertFreq
+            },
+            success(result) {
+                if (result.data.code != 0) {
+                    console.error(apiUrl, arg, result.data.error)
+                }
+                else {
+                    callback(result.data.data)
+                }
             }
         }
+        // util.showBusy('请求中...');
+        wx.request(options);
     }
-    // util.showBusy('请求中...');
-    wx.request(options);
+    else if(source == 'ALV'){
+        var options = {
+            url: config.service.stockHistoryUrl,
+            data: {
+                source: 'ALV',
+                apiUrl: encodeURIComponent(apiUrl),
+            },
+            success(result) {
+                if (result.data.code != 0) {
+                    console.error(apiUrl, arg, result.data.error)
+                }
+                else {
+                    callback(result.data.data)
+                }
+            }
+        }
+        // util.showBusy('请求中...');
+        wx.request(options);
+    }
+    else if(source == 'YHF'){
+        var options1 = {
+            url: config.service.stockDataQuote,
+            data: {ticker: arg.ticker, modules: arg.modules},
+            success(result) {
+                callback(result.data.data)
+                // console.log(result)
+            },
+            fail(error) {
+                console.log('request fail', error);
+            }
+        }
+        wx.request(options1);
+    }
 }
-module.exports = {quoteYahooFinance : quoteYahooFinance, callIEXFinance: callIEXFinance}
+module.exports = {quoteYahooFinance : quoteYahooFinance, call3rdPartyAPI: call3rdPartyAPI}

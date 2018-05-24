@@ -24,6 +24,42 @@
    border-bottom :0; */
    width: 95%;
 }
+.period-selector-tab{
+      width: 100%;   
+    height: 66rpx;
+    background-color: #f8f8f8;
+     margin-left: 10px; 
+          margin-top: 5px; 
+    display: flex;
+    flex-direction: row;
+    /* border: 1px solid rgba(0, 0, 0, 0.1);
+    border-left: none;
+    border-right: none; */
+}
+.period-selector-tab text {
+     /* display: flex;  */
+    width: 20%;
+    height: 100%;
+    box-sizing: border-box; 
+    border: 2rpx solid #dadada;
+    font-size: 26rpx;
+    /* color: #353535; */
+    text-align: center;
+    line-height: 66rpx;
+}
+.period-selector-tab text.active{
+	color: black;
+   background-color: wheat; 
+    font-weight: bold;
+}
+.period-selector-tab text:first-child {
+    border-radius: 8rpx 0 0 8rpx;
+}
+
+.period-selector-tab text:last-child {
+    border-radius: 0 8rpx 8rpx 0;
+}
+
 .sector_placeholder {
   padding: 5px;
   margin:2px;
@@ -94,7 +130,7 @@
 .tab_container {
   position: relative;
   width: 100%;
-  height: 100rpx;
+  /* height: 80rpx; */
   display: flex;
   align-items: center;
   border-bottom: 1rpx solid #e4e4e4;

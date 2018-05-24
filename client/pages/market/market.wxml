@@ -23,8 +23,22 @@
     </block>
      <view class="C1-bg tab_item_sel_line_container" style="left:{{currPeriodIndex*20}}%;" /> 
   </view>  -->
+      <template is="lineView"></template>
+   <view style='width:100%; display:flex; flex-direction:row'> 
+     <view class="period-selector-tab">
+    <text class="{{currentTimeIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">Today</text>
+    <text class="{{currentTimeIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">1 month</text>
+    <text class="{{currentTimeIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">3 years</text>
+    <!-- <text class="{{currentTimeIndex==3?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="3">1{{keywords.year}}</text>
+    <text class="{{currentTimeIndex==4?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="4">{{keywords.since_creation}} </text> -->
+  </view> 
+  <view>
     <image class="inline_icon_right" style="margin-right:10px" src="../../images/Translate-256.png" bindtap="onNewPortfolioTap" />
+    </view>
+
+   </view>   
   <view class="table">
+  
     <!-- <view class="tr">
     <view class="th">标题1</view> 
     <view class="th">标题2</view>
@@ -57,13 +71,12 @@
       </view>
     </block>
   </view>
-  <block wx:if="{{bkArr.length>0}}">
-    <!--板块-->
+   <!-- <block wx:if="{{bkArr.length>0}}">
+
     <view class="bk_tip_container B1">
       <text class="S2 T2" style="margin-left:30rpx;">热门板块</text>
     </view>
 
-    <!--板块内容-->
     <view class="bk_container">
       <block wx:for="{{bkArr}}" wx:key="Id">
         <view class="bk_item_container" hover="true" hover-class="navigator-hover">
@@ -79,10 +92,9 @@
       <text wx:if="{{bkArr.length<=2}}" class="S1_1 T2 bk_item_data_container" style="width:{{bkArr.length==1?'500rpx':'250rpx'}};">今日热点太少</text>
     </view>
 
-    <!--分隔线-->
     <view class="B1" style="border-bottom: 1rpx solid #e4e4e4; border-top: 1rpx solid #e4e4e4; width: 100%;height: 10rpx;" />
-  </block>
-
+  </block>  -->
+      <template is="lineView"></template>
   <!--tab-->
   <view class="tab_container">
     <block wx:for="{{tabArr}}" wx:key="Id">

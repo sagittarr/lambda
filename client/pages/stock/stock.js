@@ -322,7 +322,7 @@ Page({
         wx.navigateTo({
             url: `../newsdetail/newsdetail?date=${newsItem.time}&title=${newsItem.title}&content=${newsItem.summary}`
         })
-        // dataApi.callIEXFinance(newsItem.url,{}, function(content){
+        // dataApi.call3rdPartyAPI(newsItem.url,{}, function(content){
         //     console.log(content)
         //     wx.navigateTo({
         //         url: `../newsdetail/newsdetail?date=${newsItem.time}&title=${newsItem.title}&content=${content}`

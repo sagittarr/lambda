@@ -3,6 +3,7 @@ var Quotation = require('../models/Quotation.js')
 var MinuteData = require('../models/MinuteData.js')
 var KlineData = require('../models/KLineData.js')
 const NewsItem = require('../models/NewsItem.js')
+const SectorPerf = require('../models/SectorPerformance.js')
 const config = require('../config')
 
 function getQuotation(ticker, callback){
@@ -33,12 +34,31 @@ function getQuotation(ticker, callback){
         )
         callback(result)
     })
+    getSectorPerformanceFromALV(function (result) {
+        console.log(result)
+    })
 }
 
 function getBatchDataFromIEX(tickers, quote, callback){
     var url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols=' + tickers.join(',') +'&types='+ quote
-    api.callIEXFinance(url, {}, function (batchResult) {
+    api.call3rdPartyAPI('IEX', url, {}, function (batchResult) {
         callback(batchResult)
+    })
+}
+
+function getSectorPerformanceFromALV(callback){
+    var url = 'https://www.alphavantage.co/query?function=SECTOR&apikey=demo'
+    api.call3rdPartyAPI('ALV', url, {}, function(result){
+        // result[]
+        // result['Rank A: Real-Time Performance']
+        // result['Rank D: 1 Month Performance']
+        // result['Rank G: 1 Year Performance']
+        var sectorList = ['Consumer Discretionary', 'Consumer Staples', 'Energy', 'Financials', 'Health Care', 'Industrials', 'Information Technology', 'Materials', 'Real Estate', 'Telecommunication Services', 'Utilities']
+        var table = {}
+        table['realTime'] = sectorList.map(sectorName=>  new SectorPerf(sectorName, '', result['Rank A: Real-Time Performance'][sectorName]))
+        table['1month'] = sectorList.map(sectorName=>   new SectorPerf(sectorName, '', result['Rank D: 1 Month Performance'][sectorName]))
+        table['1year'] = sectorList.map(sectorName=>   new SectorPerf(sectorName, '', result['Rank G: 1 Year Performance'][sectorName]))
+        callback(table)
     })
 }
 
@@ -65,12 +85,12 @@ function getMinuteData(ticker, option, callback, source = 'IEX'){
             callback({ close: preClose * 1000, goods_id: 10000, market_date: parseInt(iexChartData[0].date), minutes: minutes })
         }
     }
-    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/quote', {}, function (_iexQuote) {
+    api.call3rdPartyAPI("IEX",'https://api.iextrading.com/1.0/stock/'+ticker+'/quote', {}, function (_iexQuote) {
         iexQuote = _iexQuote
         console.log(_iexQuote)
         handle()
     })
-    api.callIEXFinance('https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, {convertKLineChart: true, freq: option.freq}, function (_iexChartData) {
+    api.call3rdPartyAPI("IEX",'https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, {convertKLineChart: true, freq: option.freq}, function (_iexChartData) {
         iexChartData = _iexChartData
         console.log(_iexChartData)
         handle()

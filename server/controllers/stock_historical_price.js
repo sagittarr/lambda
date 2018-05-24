@@ -32,10 +32,14 @@ function compositeAlphaVantageURL(ticker, freq) {
 };
 
 module.exports = async (ctx, next) => {
-    if (ctx.query.source === 'AlphaV') {
-        var args = parseURLArg(ctx.request.url)
-        console.log(args)
-        ctx.redirect(compositeAlphaVantageURL(args.ticker, args.freq))
+    if (ctx.query.source === 'ALV') {
+        var apiUrl = decodeURIComponent(ctx.query.apiUrl)
+        console.log(apiUrl)
+        await axios.get(apiUrl)
+            .then(function(response){
+                console.log(response.data)
+                ctx.state.data = response.data
+            });
     } else if (ctx.query.source === 'IEX') {
         // var args = parseURLArg(ctx.request.url)
         var apiUrl = decodeURIComponent(ctx.query.apiUrl)
