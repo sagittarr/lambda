@@ -16,20 +16,24 @@ var qkGoodsArr = [];//缺口
 var tcGoodsArr = [];//题材
 var hjGoodsArr = [];//黄金
 var currCategory = CATEGORY_All;
+var helper = require('../lab2/helper.js')
 
 Page({
     data: {
         currIndex: 0,//当前选择的tab
+        currPeriodIndex:0,
         sortState: -1,//-1降序,1升序
         bkArr: [],
-        tabArr: ["全部", "强者", "缺口", "题材", "黄金"],//tab
+        sectorPeriodArr: ["当天", "一周", "一月", "一年"],//tab
+        tabArr: ["自选", "领涨", "领跌", "活跃", "放量"],//tab
         goodsArr: [],//列表数据
         metricsTbl: [
-          { "code": "A", "s1": "text0", "s2": "value", "s3": "text0" },
-          { "code": "B", "s1": "text0", "s2": "value", "s3": "text0"},
-          { "code": "C", "s1": "text0", "s2": "value", "s3": "text0"},
-          { "code": "D", "s1": "text0", "s2": "value", "s3": "text0"},
-        ]
+          { "code": "A", "s1": "Utilities", "s2": "Info Tech", "s3": "Real Estate" },
+          { "code": "B", "s1": "Consumer Disc", "s2": "Consumer Stap", "s3": "Health Care"},
+          { "code": "C", "s1": "Energy", "s2": "Industrials", "s3": "Materials"},
+          { "code": "D", "s1": "Telecomm Serv", "s2": "-", "s3": "Financials"},
+        ],
+        marketIndex: helper.marketIndex
     },
 
     onLoad: function (options) {
@@ -159,7 +163,34 @@ Page({
         var data = e.currentTarget.dataset
         util.gotoQuote(data.item.id, data.item.bkName, data.item.code)
     },
+    //tab的点击事件
+    onPeriodTabItemClickEvent: function (e) {
+      var index = e.currentTarget.dataset.index;
 
+      this.setData({
+        currPeriodIndex: index
+      })
+
+      // if (index == 0) {
+      //   //全部
+      //   currCategory = CATEGORY_All;
+      // } else if (index == 1) {
+      //   //强者
+      //   currCategory = CATEGORY_QZ;
+      // } else if (index == 2) {
+      //   //缺口
+      //   currCategory = CATEGORY_QK;
+      // } else if (index == 3) {
+      //   //题材
+      //   currCategory = CATEGORY_TC;
+      // } else if (index == 4) {
+      //   //黄金
+      //   currCategory = CATEGORY_HJ;
+      // }
+
+      //更新数据并排序
+      // this.updateData()
+    },
     //tab的点击事件
     onTabItemClickEvent: function (e) {
         var index = e.currentTarget.dataset.index;
