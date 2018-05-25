@@ -34,9 +34,9 @@ function getQuotation(ticker, callback){
         )
         callback(result)
     })
-    getSectorPerformanceFromALV(function (result) {
-        console.log(result)
-    })
+    // getSectorPerformanceFromALV(function (result) {
+    //     console.log(result)
+    // })
 }
 
 function getBatchDataFromIEX(tickers, quote, callback){
@@ -45,19 +45,28 @@ function getBatchDataFromIEX(tickers, quote, callback){
         callback(batchResult)
     })
 }
-
+function buildSectorPerformanceObject(data){
+    var sectorList = [
+        {name: 'Consumer Discretionary', shorterName :'Consumer Disc', nameCN: '非必需消费品', desp : ''},
+        {name: 'Consumer Staples',shorterName :'Consumer Stap', nameCN: '必需消费品', desp : ''},
+        {name: 'Energy' ,shorterName :'Energy', nameCN: '能源', desp : ''},
+        {name: 'Financials',shorterName :'Financials', nameCN: '金融', desp : ''},
+        {name: 'Health Care' ,shorterName :'Health Care', nameCN: '医疗', desp : ''},
+        {name: 'Industrials',shorterName :'Industrials', nameCN: '制造业', desp : ''},
+        {name: 'Information Technology',shorterName :'Info Tech', nameCN: '信息技术', desp : ''},
+        {name: 'Materials',shorterName :'Materials', nameCN: '材料', desp : ''},
+        {name: 'Real Estate',shorterName :'Real Estate', nameCN: '房地产', desp : ''},
+        {name: 'Telecommunication Services',shorterName :'Telecom Serv', nameCN: '电信服务', desp : ''},
+        {name: 'Utilities',shorterName :'Utilities', nameCN: '公用事业', desp : ''}]
+    return sectorList.map(sector=> new SectorPerf(sector.shorterName, sector.nameCN, sector.desp, data[sector.name]))
+}
 function getSectorPerformanceFromALV(callback){
     var url = 'https://www.alphavantage.co/query?function=SECTOR&apikey=demo'
     api.call3rdPartyAPI('ALV', url, {}, function(result){
-        // result[]
-        // result['Rank A: Real-Time Performance']
-        // result['Rank D: 1 Month Performance']
-        // result['Rank G: 1 Year Performance']
-        var sectorList = ['Consumer Discretionary', 'Consumer Staples', 'Energy', 'Financials', 'Health Care', 'Industrials', 'Information Technology', 'Materials', 'Real Estate', 'Telecommunication Services', 'Utilities']
         var table = {}
-        table['realTime'] = sectorList.map(sectorName=>  new SectorPerf(sectorName, '', result['Rank A: Real-Time Performance'][sectorName]))
-        table['1month'] = sectorList.map(sectorName=>   new SectorPerf(sectorName, '', result['Rank D: 1 Month Performance'][sectorName]))
-        table['1year'] = sectorList.map(sectorName=>   new SectorPerf(sectorName, '', result['Rank G: 1 Year Performance'][sectorName]))
+        table['realTime'] =  buildSectorPerformanceObject(result['Rank A: Real-Time Performance'])
+        table['1month'] = buildSectorPerformanceObject(result['Rank D: 1 Month Performance'])
+        table['1year'] = buildSectorPerformanceObject(result['Rank G: 1 Year Performance'])
         callback(table)
     })
 }
@@ -133,4 +142,4 @@ function getNewsItems(tickers, callback){
     })
 
 }
-module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData, getBatchDataFromIEX : getBatchDataFromIEX, getNewsItems: getNewsItems}
+module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData, getBatchDataFromIEX : getBatchDataFromIEX, getNewsItems: getNewsItems, getSectorPerformanceFromALV: getSectorPerformanceFromALV}

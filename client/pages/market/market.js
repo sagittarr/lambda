@@ -16,7 +16,8 @@ var qkGoodsArr = [];//缺口
 var tcGoodsArr = [];//题材
 var hjGoodsArr = [];//黄金
 var currCategory = CATEGORY_All;
-var helper = require('../lab2/helper.js')
+const helper = require('../lab2/helper.js')
+const parser = require('../../parsers/quote_parser.js')
 
 Page({
     data: {
@@ -25,19 +26,21 @@ Page({
         sortState: -1,//-1降序,1升序
         bkArr: [],
         sectorPeriodArr: ["当天", "一周", "一月", "一年"],//tab
+        // sectorPerfTable : {},
         tabArr: ["自选", "领涨", "领跌", "活跃", "放量"],//tab
         goodsArr: [],//列表数据
         metricsTbl: [
-          { "code": "A", "s1": "Utilities", "s2": "Info Tech", "s3": "Real Estate" },
-          { "code": "B", "s1": "Consumer Disc", "s2": "Consumer Stap", "s3": "Health Care"},
-          { "code": "C", "s1": "Energy", "s2": "Industrials", "s3": "Materials"},
-          { "code": "D", "s1": "Telecomm Serv", "s2": "-", "s3": "Financials"},
+          {},
+          {},
+          {},
+          {},
         ],
         marketIndex: helper.marketIndex
     },
 
     onLoad: function (options) {
         // 上次hide是退出hide时，才自动跳转到其它页面
+        var that = this
         var page = ''
         if (options.hasOwnProperty('page')) {
             page = options.page
@@ -62,6 +65,7 @@ Page({
 
     onShow: function () {
         this.startTimer();
+        this.getData()
     },
 
     onHide: function () {
@@ -104,10 +108,27 @@ Page({
     stopTimer: function () {
         clearInterval(intervalId)
     },
-
+    // showSectorHeatmap: function(){
+    //     vart that  = this
+    //     that.data.sectorPerfTable
+    // },
     getData: function () {
         var that = this
-
+        parser.getSectorPerformanceFromALV(function(table){
+            var i = 0
+            that.data.metricsTbl.map(row=>{
+                var j = 0
+                row.num = i
+                while(i*3+j < table['realTime'].length && j<3){
+                    row['s'+j.toString()] = table['realTime'][i*3+j]
+                    j+=1
+                }
+                i+=1
+            })
+            that.setData({metricsTbl : that.data.metricsTbl})
+            console.log(that.data.metricsTbl)
+            // that.data.sectorPerfTable
+        })
         //板块
         // Api.kanpan.getHotBK({
         //     uid: getApp().globalData.uid

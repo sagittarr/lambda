@@ -44,19 +44,21 @@
     <view class="th">标题2</view>
     <view class="th">标题3</view>
     </view> -->
-    <block wx:for="{{metricsTbl}}" wx:key="{{code}}">
+    <block wx:for="{{metricsTbl}}" wx:key="{{num}}">
+      <!-- <view class="tr">
+       <block wx:for="{{item}}" wx:key="{{index}}"> -->
       <view class="tr">
         <view class="sector_placeholder" style="color:{{item.ltsChgPct_bg}}">
-          <text class='S2 T2'>{{item.s1}}</text>
-          <text class='S6'>12</text>
+          <text class='S2 T2'>{{item.s0.nameCN}}</text>
+          <text class='S6'>{{item.s0.performance}}</text>
         </view>
         <view class="sector_placeholder" style="color:{{item.ltsChgPct_bg}}">
-          <text class='S2 T2'>{{item.s2}}</text>
-          <text class='S6'>12</text>
+          <text class='S2 T2'>{{item.s1.nameCN}}</text>
+          <text class='S6'>{{item.s1.performance}}</text>
         </view>
         <view class="sector_placeholder" style="color:{{item.ltsChgPct_bg}}">
-          <text class='S2 T2'>{{item.s3}}</text>
-          <text class='S6'>12</text>
+          <text class='S2 T2'>{{item.s2.nameCN}}</text>
+          <text class='S6'>{{item.s2.performance}}</text>
         </view>
         <!-- <view class="S2 T2 td">{{item.s1}}</view>
         <view class="S2 T2 td">{{item.s2}}</view>
