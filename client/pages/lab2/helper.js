@@ -47,7 +47,8 @@ var marketIndex = [
     }
 ];
 function quoteMarketIndex (that, marketIndex) {
-    var color_style = getApp().globalData.color_style
+
+    const color_style = getApp().globalData.color_style
     marketIndex.forEach(function (e, i, a) {
         putils.quoteYahooFinance(e.ticker, ['price'], function (v) {
             console.log(v)
@@ -60,7 +61,7 @@ function quoteMarketIndex (that, marketIndex) {
             e.showPct = true
             // e.color = v.price.regularMarketChangePercent > 0 ? color_style[0]: v.price.regularMarketChangePercent< 0 ? color_style[2]: color_style[2]
             e.color = 'white'
-            e.bg = v.price.regularMarketChangePercent > 0 ? "SeaGreen" : v.price.regularMarketChangePercent < 0 ? 'IndianRed' : color_style[7]
+            e.bg = v.price.regularMarketChangePercent > 0 ? color_style.up : v.price.regularMarketChangePercent < 0 ? color_style.down : color_style.default
             // e.bg = v.price.regularMarketChangePercent > 0 ? color_style[0] : v.price.regularMarketChangePercent < 0 ? color_style[2] : color_style[7]
             that.setData({
                 marketIndex: marketIndex,
@@ -243,51 +244,41 @@ function DisplayMetrics(profile, timeKey, marketState = '') {
 }
 
 function Colorify(profile, timeKey) {
-    var gold = '../../images/award_first-512.png'
-    var silver = '../../images/award_second-512.png'
-    var bronz = '../../images/award_third-512.png'
-    var icon_array = [gold, silver, bronz]
     var benchmark = getApp().globalData.benchmark
     var color_style = getApp().globalData.color_style
 
     // set default color
-    profile.return_bg = color_style[3]
-    profile.ltsChgPct_bg = color_style[3]
-    profile.volatility_bg = color_style[3]
-    profile.dailyReturn_bg = color_style[3]
-    profile.size_bg = color_style[3]
+    profile.return_bg = color_style.default
+    profile.ltsChgPct_bg = color_style.default
+    profile.volatility_bg = color_style.default
+    profile.dailyReturn_bg = color_style.default
+    profile.size_bg = color_style.default
     // set color for latest change in precentage.
     var ltsChgPct = profile.latestChgPct;
     // console.log("coloriy ", ltsChgPct)
     if (ltsChgPct) {
         if (ltsChgPct > 0) {
-            profile.ltsChgPct_bg = color_style[0]
+            profile.ltsChgPct_bg = color_style.up
         }
         else if (ltsChgPct < 0) {
-            profile.ltsChgPct_bg = color_style[2]
+            profile.ltsChgPct_bg = color_style.down
         }
         else if (latestChgPct == 'PRE'){
             profile.ltsChgPct_bg = 'black'
         }
         else {
-            profile.ltsChgPct_bg = color_style[3]
+            profile.ltsChgPct_bg = color_style.off
         }
     }
 
     // set color for cumulative return and volatility, and avg daily return
     // for given time period.
     if (profile.ratiosTable && profile.ratiosTable[timeKey]) {
-        var return_rank = profile.ratiosTable[timeKey].totalReturn > benchmark.target_return ? 1 : profile.ratiosTable[timeKey].totalReturn> benchmark.base_return ? 2 : 3
-        var volatility_rank = profile.ratiosTable[timeKey].volatility < benchmark.target_volatility ? 1 : profile.ratiosTable[timeKey].volatility < benchmark.base_volatility ? 2 : 3
-
-        profile.return_bg = color_style[return_rank - 1]
-        profile.volatility_bg = color_style[volatility_rank - 1]
-        var total_rank = Math.ceil((return_rank + volatility_rank) / 2)
-        profile.icon_path = icon_array[total_rank - 1]
-
+        profile.return_bg = profile.ratiosTable[timeKey].totalReturn > benchmark.target_return ? color_style.up : profile.ratiosTable[timeKey].totalReturn> benchmark.base_return ? color_style.fine : color_style.down
+        profile.volatility_bg = profile.ratiosTable[timeKey].volatility < benchmark.target_volatility ? color_style.up : profile.ratiosTable[timeKey].volatility < benchmark.base_volatility ? color_style.fine : color_style.down
         var avgDlyReturn = profile.ratiosTable[timeKey].avgDlyReturn
         if (avgDlyReturn) {
-            profile.dailyReturn_bg = avgDlyReturn > 0.1 ? color_style[0] : avgDlyReturn > 0 ? color_style[1]: color_style[2];
+            profile.dailyReturn_bg = avgDlyReturn > 0.1 ? color_style.up : avgDlyReturn > 0 ? color_style.fine: color_style.down;
         }
     }
 }

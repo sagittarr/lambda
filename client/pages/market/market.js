@@ -29,12 +29,9 @@ Page({
         // sectorPerfTable : {},
         tabArr: ["自选", "领涨", "领跌", "活跃", "放量"],//tab
         goodsArr: [],//列表数据
-        metricsTbl: [
-          {},
-          {},
-          {},
-          {},
-        ],
+        sectorTables:{'realtime':{}, '1month':{},'1year':{}},
+        sectorsToShow: [{},{},{},{}],
+        sectorPeriodIndex:0,
         marketIndex: helper.marketIndex
     },
 
@@ -108,26 +105,27 @@ Page({
     stopTimer: function () {
         clearInterval(intervalId)
     },
-    // showSectorHeatmap: function(){
-    //     vart that  = this
-    //     that.data.sectorPerfTable
-    // },
+
     getData: function () {
         var that = this
-        parser.getSectorPerformanceFromALV(function(table){
-            var i = 0
-            that.data.metricsTbl.map(row=>{
-                var j = 0
-                row.num = i
-                while(i*3+j < table['realTime'].length && j<3){
-                    row['s'+j.toString()] = table['realTime'][i*3+j]
-                    j+=1
-                }
-                i+=1
+        helper.quoteMarketIndex(this, this.data.marketIndex)
+        parser.getSectorPerformanceFromALV(function(input){
+            let sectorTables = {}
+            let periods = ['realTime', '1month', '1year']
+            periods.map(period=>{
+                sectorTables[period] = []
+                let row = {}
+                input[period].map((sector, index)=>{
+                    sector.colorify()
+                    row['s'+(index%3).toString()]=sector
+                    if(index%3 == 2 || index == input[period].length-1){
+                        sectorTables[period].push(row)
+                        row = {}
+                    }
+                })
             })
-            that.setData({metricsTbl : that.data.metricsTbl})
-            console.log(that.data.metricsTbl)
-            // that.data.sectorPerfTable
+            that.setData({ sectorTables: sectorTables, sectorsToShow: sectorTables[periods[that.data.sectorPeriodIndex]]})
+            console.log(sectorTables)
         })
         //板块
         // Api.kanpan.getHotBK({
@@ -320,5 +318,18 @@ Page({
         wx.navigateTo({
             url: '../search/search'
         })
+    },
+    onPeriodSelectorClick: function(e){
+      let index = parseInt(e.currentTarget.dataset.index)
+      let that = this
+
+      if(index == 0)
+        this.setData({ sectorsToShow: that.data.sectorTables['realTime'], sectorPeriodIndex: index })
+      else if(index == 1){
+        this.setData({ sectorsToShow: that.data.sectorTables['1month'], sectorPeriodIndex: index })
+      }
+      else{
+        this.setData({ sectorsToShow: that.data.sectorTables['1year'], sectorPeriodIndex:index })
+      }
     }
 })

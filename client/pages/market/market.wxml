@@ -26,9 +26,9 @@
       <template is="lineView"></template>
    <view style='width:100%; display:flex; flex-direction:row'> 
      <view class="period-selector-tab">
-    <text class="{{currentTimeIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">Today</text>
-    <text class="{{currentTimeIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">1 month</text>
-    <text class="{{currentTimeIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">3 years</text>
+    <text class="{{sectorPeriodIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">Today</text>
+    <text class="{{sectorPeriodIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">1 month</text>
+    <text class="{{sectorPeriodIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">1 year</text>
     <!-- <text class="{{currentTimeIndex==3?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="3">1{{keywords.year}}</text>
     <text class="{{currentTimeIndex==4?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="4">{{keywords.since_creation}} </text> -->
   </view> 
@@ -38,38 +38,20 @@
 
    </view>   
   <view class="table">
-  
-    <!-- <view class="tr">
-    <view class="th">标题1</view> 
-    <view class="th">标题2</view>
-    <view class="th">标题3</view>
-    </view> -->
-    <block wx:for="{{metricsTbl}}" wx:key="{{num}}">
-      <!-- <view class="tr">
-       <block wx:for="{{item}}" wx:key="{{index}}"> -->
+    <block wx:for="{{sectorsToShow}}" wx:key="{{index}}">
       <view class="tr">
-        <view class="sector_placeholder" style="color:{{item.ltsChgPct_bg}}">
+        <view class="sector_placeholder" style="color:{{item.s0.bgColor}}">
           <text class='S2 T2'>{{item.s0.nameCN}}</text>
           <text class='S6'>{{item.s0.performance}}</text>
         </view>
-        <view class="sector_placeholder" style="color:{{item.ltsChgPct_bg}}">
+         <view class="sector_placeholder" style="color:{{item.s1.bgColor}}">
           <text class='S2 T2'>{{item.s1.nameCN}}</text>
           <text class='S6'>{{item.s1.performance}}</text>
         </view>
-        <view class="sector_placeholder" style="color:{{item.ltsChgPct_bg}}">
+        <view class="sector_placeholder" style="color:{{item.s2.bgColor}}">
           <text class='S2 T2'>{{item.s2.nameCN}}</text>
           <text class='S6'>{{item.s2.performance}}</text>
-        </view>
-        <!-- <view class="S2 T2 td">{{item.s1}}</view>
-        <view class="S2 T2 td">{{item.s2}}</view>
-        <view class="S2 T2 td">{{item.s3}}</view> -->
-        <!-- <view class="S2 T2 td">{{item.s4}}</view>
-      <view class="S2 T2 td">{{item.s5}}</view>
-      <view class="S2 T2 td">{{item.s6}}</view>
-      <view class="S2 T2 td">{{item.s7}}</view>
-      <view class="S2 T2 td">{{item.s8}}</view>
-      <view class="S2 T2 td">{{item.s9}}</view>
-      <view class="S2 T2 td">{{item.s10}}</view> -->
+        </view> 
       </view>
     </block>
   </view>

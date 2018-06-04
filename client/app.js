@@ -9,7 +9,7 @@ App({
     color_style: undefined,
 
     benchmark: { 'target_return': 10, 'base_return': 0, 'target_volatility': 0.12, 'base_volatility': 0.25 },
-    color_style_1: ['SeaGreen', 'darkgoldenrod', 'IndianRed', 'gainsboro', '#ccffcc', '#ffffcc', '#ffcccc', '#ebebeb'],
+    color_style_1: {'up':'SeaGreen', 'fine':'darkgoldenrod', 'down':'IndianRed', 'off':'gainsboro', 'default':'#ebebeb'},
     color_style_2: ['IndianRed', 'darkgoldenrod', 'SeaGreen', 'gainsboro', '#ffcccc', '#ffffcc', '#ccffcc', '#ebebeb'],
 
     lambda_key: 'lambdaKey',

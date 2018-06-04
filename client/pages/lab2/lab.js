@@ -4,7 +4,7 @@ const util = require('../../utils/util.js')
 const config = require('../../config')
 const lang = require('../../language.js')
 const keywords = lang.CH
-var helper = require('./helper.js')
+const helper = require('./helper.js')
 
 Page({   
   data: {
