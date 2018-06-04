@@ -257,7 +257,7 @@ Page({
                 'zdf': realtime_chg_percent,
                 'zdfDisplay': mark + realtime_chg_percent.toFixed(2) + '%',
                 'price': parseFloat(e.realtime_price).toFixed(2),
-                'bg_color': e.realtime_chg_percent > 0 ? color_style[0] : e.realtime_chg_percent < 0 ? color_style[2] : color_style[3],
+                'bg_color': e.realtime_chg_percent > 0 ? color_style.up : e.realtime_chg_percent < 0 ? color_style.down : color_style.off,
                 'show_name': false
             })
         })
