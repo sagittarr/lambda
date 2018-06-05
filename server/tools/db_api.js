@@ -82,7 +82,7 @@ async function buildStrategyFromId (productId, toUpdateTblDB = false, debug = fa
                 // console.log(phases)
                 buildStrategyFromPhases(phases).then(function (result) {
                     if(toUpdateTblDB){
-                        updateProfileCalculationData(productId, result.quant, result.dataset.numOfDays)
+                        updateProfileCalculationData(productId, result.quant)
                     }
                     resolve(result)
                 }).catch(function (err) {
@@ -248,10 +248,10 @@ async function createNewProfile(profile, response) {
     })
 }
 
-function updateProfileCalculationData(id, table, numOfDays) {
+function updateProfileCalculationData(id, table) {
     if (id) {
         console.log('updating profile calculation data')
-        knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table) , numOfDays : numOfDays}).then(function (result) { console.log(result) })
+        knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table)}).then(function (result) { console.log(result) })
     }
 }
 async function updateProfile(profile, response) {
@@ -331,15 +331,15 @@ async function getHistoricalDataFromYahoo(request) {
 
 function insert_historical(ticker, data, time_stamp, source, update_time = null) {
     knex('historical_data').select()
-        .where({'ticker': ticker, 'source' : source})
+        .where({'id': ticker+'_'+source})
         .then(function (rows) {
             if (rows.length === 0) {
                 // no matching records found
-                console.log('try insert', ticker)
-                return knex('historical_data').insert({ ticker: ticker, data: data, last_update: time_stamp, update_time: new Date().toISOString() ,  source: source})
+                console.log('try insert', ticker+'_'+source)
+                return knex('historical_data').insert({ id: ticker+'_'+source, ticker: ticker, data: data, update_time: new Date().toISOString() ,  source: source})
             } else {
-                console.log('try update', ticker)
-                knex('historical_data').where('ticker', ticker).update({ data: data, last_update: time_stamp, update_time: new Date().toISOString() , source: source}).then(function (result) { console.log(result) })
+                console.log('try update', ticker+'_'+source)
+                knex('historical_data').where('ticker', ticker).update({ data: data, update_time: new Date().toISOString() , source: source}).then(function (result) { console.log(result) })
             }
         })
         .catch(function (ex) {

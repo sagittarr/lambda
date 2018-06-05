@@ -26,12 +26,10 @@ app.use(router.routes())
 // 启动程序，监听端口
 app.listen(config.port, () => debug(`listening on port ${config.port}`))
 
-cron.schedule('1 13 * * *', function () {
+cron.schedule('15 9 * * *', function () {
     api.read_historical(null, null).then( function (rows) {
         console.log('number of rows', rows.length)
         rows.forEach(function (row) {
-            // sleep(10000).then(function () {
-            // console.log('sleep', new Date().toISOString())
             let request = {ticker: row.ticker, source: 'iex', range: '5y', freq: 'd'}
             api.getHistoricalDataFromIEX(request).then(function(ts){
                 let lastUpdate = Date.now() / 1000
