@@ -1,9 +1,9 @@
 <import src="../common/SearchBar/SearchBar.wxml" />
 <import src="../common/line.wxml" />
 <!-- <import src="../../utils/input_form.wxml" /> -->
-<import src="/utils/dist/toptips/index.wxml"/>
+<import src="/utils/dist/toptips/index.wxml" />
 <template is="zan-toptips" data="{{ zanTopTips }}"></template>
-<view class="page">
+<!-- <view class="page"> -->
   <view class="search_view B1">
     <template is="SearchBar" data="{{searchData}}" style="background-color:#ebebeb" />
   </view>
@@ -39,13 +39,21 @@
     </block>
   </view>
   <template is="lineView"></template>
+  <view class="list_item" style='width:100%'>
+    <text class="item_text T3 S8" style="width:15%;">Add</text>
+    <text class="item_text T3 S8" style="width:85%;">Detail</text>
+  </view>
+  <view style='width:100%'>
   <block wx:key="optional" wx:for="{{showList}}" wx:for-item="item" wx:for-index="index">
-    <view class="list_item" bindtap="addStock" data-stock="{{item}}">
-      <text class="item_type C3-font S1" style="border-width:{{item.type.length > 0 ? 1 : 0}}px">{{item.type}}</text>
-      <text class="item_text T3 S5">{{item.ticker}}</text>
-      <text class="item_text T1 S7">{{item.code}}</text>
-    </view>
-    <template is="lineView"></template>
-  </block>
+    <view class="list_item" bindtap="addStock" data-stock="{{item}}" style='width:100%'>
+      <!-- <text class="item_text T1 S7" style="width:15%; border-width:1px">添加自选</text> -->
+      <icon type="success_circle" size="40" style="width:15%;" />
+      <text class="item_type C3-font S1" style="width:10%; border-width:{{item.type.length > 0 ? 1 : 0}}px">{{item.type}}</text>
+      <text class="item_text T3 S5" style="width:15%;">{{item.ticker}}</text>
+      <text class="item_text T1 S7" style="width:60%;">{{item.code}}</text>
 
-</view>
+    </view>
+    <!-- <template is="lineView"></template> -->
+  </block>
+  </view>
+<!-- </view> -->

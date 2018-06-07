@@ -14,11 +14,12 @@
 
 
 .list_item {
-  display: flex;
-  flex-direction: row;
-  /* position: relative; */
+   display: flex; 
+   flex-direction: row; 
+   position: relative; 
+  background-color:gainsboro;
   width: 100%;
-  align-items: center;
+   align-items: center;  
 }
 
 .item_type {
@@ -26,26 +27,26 @@
   border-style: solid;
   border-radius: 6rpx;
   border-width: 1rpx;
-  padding: 6rpx;
+   padding: 6rpx; 
   text-align: center;
   font-size: 10px;
-  margin-left: 20rpx;
-  margin-right: 20rpx;
+  /* margin-left: 20rpx;
+  margin-right: 20rpx; */
 }
 
-.list_item .item_text {
+ .list_item .item_text {
   position: relative;
   font-size: 14px;
-      margin-left: 20rpx;
-   margin-right: 20rpx;
-}
+        margin-left: 20rpx; 
+   /* margin-right: 20rpx;  */
+} 
 
-.list_item image {
+/* .list_item image {
   position: absolute;
   width: 44rpx;
   height: 100%;
-  right: 50rpx;
-}
+   right: 50rpx; 
+} */
 
 .popup-example--bottom .zan-popup__container {
   left: 0;

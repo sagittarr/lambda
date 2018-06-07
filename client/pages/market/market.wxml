@@ -21,6 +21,17 @@
 
   <template is="lineView"></template>
   <view style='width:100%;'>
+    <view class="search_view B1">
+      <view class="search_bar B2">
+        <icon type="search" size="15"></icon>
+
+        <!--placeholder-class 使用这个input只能获取一次焦点 maxlength="6" -->
+        <input class="T1 S4" placeholder="{{searchData.placeholder}}" bindtap="onSearchBarClick" value="{{searchData.searchContent}}" />
+        <block wx:if="{{searchData.showClearButton == true}}">
+          <image src="../common/SearchBar/icon_clear.png" mode="aspectFit" bindtap="onSearchBarClearEvent"></image>
+        </block>
+      </view>
+    </view>
     <view style='width:100%; display:flex; flex-direction:row'>
       <view class="period-selector-tab">
         <text class="{{sectorPeriodIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">Today</text>
@@ -52,10 +63,7 @@
   </view>
   <template is="lineView"></template>
 
-   <view>
-    <view class="search_view B1">
-      <template is="SearchBar" data="{{searchData}}" style="background-color:#ebebeb" />
-    </view>
+  <view>
     <view class="tab_container">
       <block wx:for="{{tabArr}}" wx:key="Id">
         <text class="S4  tab_item_text {{currListIndex==index?'C1-font':'T3'}}" data-index="{{index}}" bindtap="onStockListSelectorClick" style="font-weight:{{currListIndex==index?'bold':'normal'}};">{{item}}</text>
@@ -74,7 +82,7 @@
         <template is="StockCell" data="{{data:item}}" />
       </block>
     </view>
-  </view> 
+  </view>
 </view>
 <!--搜索按钮-->
 <!-- <view class="icon_search" bindtap="onStockSearchEvent">

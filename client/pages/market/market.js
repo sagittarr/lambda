@@ -11,6 +11,8 @@ var intervalId = 0;
 
 const helper = require('../lab2/helper.js')
 const parser = require('../../parsers/quote_parser.js')
+var SearchBar = require('../common/SearchBar/SearchBar.js')
+
 var stockLists = [[]/*watch*/,[]/*gainer*/,[]/*loser*/,[]/*active*/,[]/*pct change*/]
 
 Page({
@@ -204,6 +206,11 @@ Page({
   },
 
   onStockSearchEvent: function (e) {
+    wx.navigateTo({
+      url: '../search/search'
+    })
+  },
+  onSearchBarClick: function(e){
     wx.navigateTo({
       url: '../search/search'
     })
