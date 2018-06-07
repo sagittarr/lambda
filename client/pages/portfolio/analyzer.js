@@ -252,12 +252,13 @@ Page({
             let mark = realtime_chg_percent > 0 ? '+' : ''
             let avg_chg_percent = 0.
             stocks.push({
-                'id': i, 'ticker': e.symbol, 'name': e.Name,
+                'ticker': e.symbol, 
+                'companyName': e.Name,
                 'time': getApp().globalData.selected.inception,
-                'zdf': realtime_chg_percent,
-                'zdfDisplay': mark + realtime_chg_percent.toFixed(2) + '%',
+                'chgPct': realtime_chg_percent,
+                'chgPctDisplay': mark + realtime_chg_percent.toFixed(2) + '%',
                 'price': parseFloat(e.realtime_price).toFixed(2),
-                'bg_color': e.realtime_chg_percent > 0 ? color_style.up : e.realtime_chg_percent < 0 ? color_style.down : color_style.off,
+                'bgColor': e.realtime_chg_percent > 0 ? color_style.up : e.realtime_chg_percent < 0 ? color_style.down : color_style.off,
                 'show_name': false
             })
         })

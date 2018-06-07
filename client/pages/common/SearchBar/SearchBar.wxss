@@ -1,9 +1,9 @@
-page {
-  background:#ebebeb;
+/* page {
+   background:#ebebeb; 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-} 
+}  */
 .search_bar {
   display: flex;
   flex-direction: row;

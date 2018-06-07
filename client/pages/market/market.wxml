@@ -1,5 +1,6 @@
 <import src="../common/line.wxml" />
 <import src="../common/StockCell/StockCell.wxml" />
+<import src="../common/SearchBar/SearchBar.wxml" />
 
 <view id="section_header" style="height:{{bkArr.length>0?'410rpx':'170rpx'}}">
   <view class="weui-flex">
@@ -17,94 +18,66 @@
       </view>
     </block>
   </view>
-   <!-- <view class="tab_container">
-    <block wx:for="{{sectorPeriodArr}}" wx:key="Id">
-      <text class="S4  tab_item_text {{currPeriodIndex==index?'C1-font':'T3'}}" data-index="{{index}}" bindtap="onPeriodTabItemClickEvent" style="font-weight:{{currPeriodIndex==index?'bold':'normal'}};">{{item}}</text>
-    </block>
-     <view class="C1-bg tab_item_sel_line_container" style="left:{{currPeriodIndex*20}}%;" /> 
-  </view>  -->
-      <template is="lineView"></template>
-   <view style='width:100%; display:flex; flex-direction:row'> 
-     <view class="period-selector-tab">
-    <text class="{{sectorPeriodIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">Today</text>
-    <text class="{{sectorPeriodIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">1 month</text>
-    <text class="{{sectorPeriodIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">1 year</text>
-    <!-- <text class="{{currentTimeIndex==3?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="3">1{{keywords.year}}</text>
-    <text class="{{currentTimeIndex==4?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="4">{{keywords.since_creation}} </text> -->
-  </view> 
-  <view>
-    <image class="inline_icon_right" style="margin-right:10px" src="../../images/Translate-256.png" bindtap="onNewPortfolioTap" />
-    </view>
 
-   </view>   
-  <view class="table">
-    <block wx:for="{{sectorsToShow}}" wx:key="{{index}}">
-      <view class="tr">
-        <view class="sector_placeholder" style="color:{{item.s0.bgColor}}">
-          <text class='S2 T2'>{{item.s0.nameCN}}</text>
-          <text class='S6'>{{item.s0.performance}}</text>
-        </view>
-         <view class="sector_placeholder" style="color:{{item.s1.bgColor}}">
-          <text class='S2 T2'>{{item.s1.nameCN}}</text>
-          <text class='S6'>{{item.s1.performance}}</text>
-        </view>
-        <view class="sector_placeholder" style="color:{{item.s2.bgColor}}">
-          <text class='S2 T2'>{{item.s2.nameCN}}</text>
-          <text class='S6'>{{item.s2.performance}}</text>
-        </view> 
+  <template is="lineView"></template>
+  <view style='width:100%;'>
+    <view style='width:100%; display:flex; flex-direction:row'>
+      <view class="period-selector-tab">
+        <text class="{{sectorPeriodIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">Today</text>
+        <text class="{{sectorPeriodIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">1 month</text>
+        <text class="{{sectorPeriodIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">1 year</text>
       </view>
-    </block>
-  </view>
-   <!-- <block wx:if="{{bkArr.length>0}}">
-
-    <view class="bk_tip_container B1">
-      <text class="S2 T2" style="margin-left:30rpx;">热门板块</text>
+      <view>
+        <image class="inline_icon_right" style="margin-right:10px" src="../../images/Translate-256.png" bindtap="onNewPortfolioTap" />
+      </view>
     </view>
-
-    <view class="bk_container">
-      <block wx:for="{{bkArr}}" wx:key="Id">
-        <view class="bk_item_container" hover="true" hover-class="navigator-hover">
-          <view class="bk_item_data_container" data-item="{{item}}" bindtap="onBKItemClickEvent">
-            <text class="S4 T3">{{item.bkName}}</text>
-            <view style="width:120rpx;margin-top:8rpx; border-bottom: 1rpx solid #e4e4e4;" />
-            <text class="S2 T2" style="margin-top:8rpx;">{{item.goodsName}}</text>
-            <text class="S2 {{item.zdf>0?'C1-font':(item.zdf<0?'C2-font':'T1')}}">{{item.zdf>0?'+':''}}{{item.zdfDisplay}}</text>
+    <view class="table">
+      <block wx:for="{{sectorsToShow}}" wx:key="{{index}}">
+        <view class="tr">
+          <view class="sector_placeholder" style="color:{{item.s0.bgColor}}">
+            <text class='S2 T2'>{{item.s0.nameCN}}</text>
+            <text class='S6'>{{item.s0.performance}}</text>
           </view>
-          <view wx:if="{{index<2}}" style="height:120rpx;border-left: 1rpx solid #e4e4e4;" />
+          <view class="sector_placeholder" style="color:{{item.s1.bgColor}}">
+            <text class='S2 T2'>{{item.s1.nameCN}}</text>
+            <text class='S6'>{{item.s1.performance}}</text>
+          </view>
+          <view class="sector_placeholder" style="color:{{item.s2.bgColor}}">
+            <text class='S2 T2'>{{item.s2.nameCN}}</text>
+            <text class='S6'>{{item.s2.performance}}</text>
+          </view>
         </view>
       </block>
-      <text wx:if="{{bkArr.length<=2}}" class="S1_1 T2 bk_item_data_container" style="width:{{bkArr.length==1?'500rpx':'250rpx'}};">今日热点太少</text>
+    </view>
+  </view>
+  <template is="lineView"></template>
+
+   <view>
+    <view class="search_view B1">
+      <template is="SearchBar" data="{{searchData}}" style="background-color:#ebebeb" />
+    </view>
+    <view class="tab_container">
+      <block wx:for="{{tabArr}}" wx:key="Id">
+        <text class="S4  tab_item_text {{currListIndex==index?'C1-font':'T3'}}" data-index="{{index}}" bindtap="onStockListSelectorClick" style="font-weight:{{currListIndex==index?'bold':'normal'}};">{{item}}</text>
+      </block>
+      <view class="C1-bg tab_item_sel_line_container" style="left:{{currListIndex*20}}%;" />
+    </view>
+    <view class="lisetview_data_container B1" style="height: 70rpx">
+      <text class="S2 T2 lisetview_item_left_container">名称</text>
+      <text class="S2 T2 lisetview_item_middle_container">最新价</text>
+      <text class="S2 C1-font lisetview_item_zdf_container" bindtap="onZDFSort">{{sortState==1?'涨跌幅↑':'涨跌幅↓'}}</text>
+      <text class="S2 T2 lisetview_item_right_container">终选时间</text>
     </view>
 
-    <view class="B1" style="border-bottom: 1rpx solid #e4e4e4; border-top: 1rpx solid #e4e4e4; width: 100%;height: 10rpx;" />
-  </block>  -->
-      <template is="lineView"></template>
-  <!--tab-->
-  <view class="tab_container">
-    <block wx:for="{{tabArr}}" wx:key="Id">
-      <text class="S4  tab_item_text {{currIndex==index?'C1-font':'T3'}}" data-index="{{index}}" bindtap="onTabItemClickEvent" style="font-weight:{{currIndex==index?'bold':'normal'}};">{{item}}</text>
-    </block>
-    <view class="C1-bg tab_item_sel_line_container" style="left:{{currIndex*20}}%;" />
-  </view>
-
-  <!--列表头-->
-  <view class="lisetview_data_container B1" style="height: 70rpx">
-    <text class="S2 T2 lisetview_item_left_container">名称</text>
-    <text class="S2 T2 lisetview_item_middle_container">最新价</text>
-    <text class="S2 C1-font lisetview_item_zdf_container" bindtap="onZDFSort">{{sortState==1?'涨跌幅↑':'涨跌幅↓'}}</text>
-    <text class="S2 T2 lisetview_item_right_container">终选时间</text>
-  </view>
+    <view id="section_list">
+      <block wx:for="{{showList}}" wx:key="symbol">
+        <template is="StockCell" data="{{data:item}}" />
+      </block>
+    </view>
+  </view> 
 </view>
-
-<!--列表-->
-<view id="section_list" style="top:{{bkArr.length>0?'415rpx':'175rpx'}}">
-  <block wx:for="{{goodsArr}}" wx:key="Id">
-    <template is="StockCell" data="{{data:item}}" />
-  </block>
-</view>
-
 <!--搜索按钮-->
-<view class="icon_search" bindtap="onStockSearchEvent">
+<!-- <view class="icon_search" bindtap="onStockSearchEvent">
   <icon type="search" size="23" />
   <text style="color: #dddddd; font-size: 26rpx;">搜索</text>
-</view>
+</view> -->

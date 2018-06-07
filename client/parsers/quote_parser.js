@@ -1,7 +1,8 @@
-var api = require('../api/data_api.js')
-var Quotation = require('../models/Quotation.js')
-var MinuteData = require('../models/MinuteData.js')
-var KlineData = require('../models/KLineData.js')
+const api = require('../api/data_api.js')
+const Quotation = require('../models/Quotation.js')
+const MinuteData = require('../models/MinuteData.js')
+const KlineData = require('../models/KLineData.js')
+const StockItem = require('../models/StockItem')
 const NewsItem = require('../models/NewsItem.js')
 const SectorPerf = require('../models/SectorPerformance.js')
 const config = require('../config')
@@ -45,6 +46,33 @@ function getBatchDataFromIEX(tickers, quote, callback){
         callback(batchResult)
     })
 }
+function parseStockItemFromIEX(item){
+    return new StockItem(
+      item.symbol, 
+      item.companyName, 
+      item.changePercent,
+      item.latestPrice
+      );
+}
+function getStockListFromIEX(callback){
+    var url = 'https://api.iextrading.com/1.0/stock/market/list/mostactive'
+    api.call3rdPartyAPI('IEX', url, {}, function (result) {
+        callback(result.map(item=>parseStockItemFromIEX(item)), 'active')
+    })
+    url = 'https://api.iextrading.com/1.0/stock/market/list/gainers'
+    api.call3rdPartyAPI('IEX', url, {}, function (result) {
+        callback(result.map(item=>parseStockItemFromIEX(item)), 'gainers')
+    })
+    url = 'https://api.iextrading.com/1.0/stock/market/list/losers'
+    api.call3rdPartyAPI('IEX', url, {}, function (result) {
+        callback(result.map(item=>parseStockItemFromIEX(item)), 'losers')
+    })
+    url = 'https://api.iextrading.com/1.0/stock/market/list/iexpercent'
+    api.call3rdPartyAPI('IEX', url, {}, function (result) {
+        callback(result.map(item=>parseStockItemFromIEX(item)), 'iexpercent')
+    })
+}
+
 function buildSectorPerformanceObject(data){
     var sectorList = [
         {name: 'Consumer Discretionary', shorterName :'Consumer Disc', nameCN: '非必需消费品', desp : ''},
@@ -142,4 +170,11 @@ function getNewsItems(tickers, callback){
     })
 
 }
-module.exports = { getQuotation: getQuotation, getMinuteData: getMinuteData, getKlineData: getKlineData, getBatchDataFromIEX : getBatchDataFromIEX, getNewsItems: getNewsItems, getSectorPerformanceFromALV: getSectorPerformanceFromALV}
+module.exports = {
+    getQuotation: getQuotation,
+    getMinuteData: getMinuteData,
+    getKlineData: getKlineData,
+    getBatchDataFromIEX : getBatchDataFromIEX,
+    getNewsItems: getNewsItems,
+    getSectorPerformanceFromALV: getSectorPerformanceFromALV,
+    getStockListFromIEX: getStockListFromIEX}

@@ -61,6 +61,7 @@ Page({
           success(result) {
             let res = result.data.data.ResultSet.Result
             let toshow = []
+            console.log(res)
             res.forEach(function (e, i, a) {
               if (e.typeDisp == "Equity") {
                 toshow.push({ 'ticker': e.symbol, 'code': e.name, 'type': e.typeDisp, 'exchDisp': e.exchDisp, 'toDel': false })

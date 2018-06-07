@@ -2,7 +2,8 @@
 @import "../../utils/weapp.wxss";
 @import "../../utils/icons.wxss";
 @import "../../utils/zanui.wxss";
-@import "/pages/common/StockCell/StockCell.wxss";
+@import "../common/StockCell/StockCell.wxss";
+ @import "../common/SearchBar/SearchBar.wxss"; 
 .index_placeholder {
   margin: 5px;
   /* padding: 0 10px; */
@@ -17,12 +18,12 @@
 }
 .table {
    /* background-color: wheat; */
-   padding: 10px;
+   /* padding: 10px; */
    /* border:1px solid #dadada; */
    /* border-left: 0;
    border-right: 0;
    border-bottom :0; */
-   width: 95%;
+   width: 100%;
 }
 .period-selector-tab{
       width: 100%;   
@@ -155,7 +156,7 @@
 /* 头部 */
 #section_header {
   width: 100%;
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   background-color: white;
@@ -163,6 +164,14 @@
 }
 
 #section_list {
-  position: absolute;
+  position: relative;
   width: 100%;
+}
+
+.search_view {
+  width: 99%;
+  height: 90rpx;
+   display: flex; 
+  justify-content: left;
+  align-items: center;
 }

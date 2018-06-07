@@ -3,12 +3,12 @@
     <view class="lisetview_item_left_container">
       <text class="S3 T3" wx:if="{{!data.show_name}}">{{data.ticker}}</text>
       <!-- <text class="S5 T3">{{id}}</text> -->
-      <text class="S1 T2" wx:if="{{data.show_name}}">{{data.name}}</text>
+      <text class="S1 T2" wx:if="{{data.show_name}}">{{data.companyName}}</text>
     </view>
     <text class="S5 T3 lisetview_item_middle_container">{{data.suspension==1?'--':data.price}}</text>
     <view class="lisetview_item_zdf_container">
-      <view class="listview_item_zdf_bg " style="background-color: {{data.bg_color}}">
-        <text class="S5 T4 listview_item_zdf">{{data.suspension==1?'停牌':data.zdfDisplay}}</text>
+      <view class="listview_item_zdf_bg " style="background-color: {{data.bgColor}}">
+        <text class="S5 T4 listview_item_zdf">{{data.suspension==1?'停牌':data.chgPctDisplay}}</text>
       </view>
     </view>
     <text class="S3 T2 lisetview_item_right_container">{{data.time}}</text>
