@@ -408,20 +408,17 @@ function getCurrentGoodsClassType(goodsId) {
 // 跳转到股票详情
 function gotoStockPage(ticker, companyName) {
   var url = '/pages/stock/stock?ticker=' + ticker+'&companyName='+companyName
-    console.log(url)
-    // if (isBK(goodsId) || isZS(goodsId)) {
-    //     url = `/pages/bk/bk?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
-    // } else if (isAG(goodsId)) {
-    //     url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
-    // } else {
-    //     // url = `/pages/fund/fund?id=${ticker}&name=${goodsName}&code=${goodsCode}`
-    //     url = `/pages/stock/stock?id=${goodsId}&name=${goodsName}&code=${goodsCode}`
-    // }
     wx.navigateTo({
         url: url
     })
 }
 
+function gotoSearchPage(opt, tickers) {
+  var url = '/pages/search/search?opt=' + opt + '&tickers=' + tickers
+  wx.navigateTo({
+    url: url
+  })
+}
 // 仅个股 不包含版块返回 bk20XXXX
 function getStockCodeByGoodsId(goodsId) {
     goodsId = '' + goodsId;
@@ -440,6 +437,33 @@ function getStockCodeByGoodsId(goodsId) {
     }
 }
 
+function addToWatchList(stocks){
+  function pushStocks(res){
+    let data = {}
+    if (res.data != undefined) {
+      data = res.data
+    }
+    if (data['watchlist'] == undefined) {
+      data['watchlist'] = []
+    }
+    stocks.map(stk => { if (!data['watchlist'].some(x=>x.ticker ==stk.ticker)){data['watchlist'].push(stk)} })
+    console.log(data['watchlist'])
+    wx.setStorage({
+      key: lambda_key,
+      data: data,
+    })
+  }
+  var lambda_key = getApp().globalData.lambda_key
+  wx.getStorage({
+    key: lambda_key,
+    success: function (res) {
+      pushStocks(res)
+    },
+    fail: function (res) {
+      pushStocks()
+    }
+  });
+}
 module.exports = {
     formateTime: formateTime,
     formateNumber: formateNumber,
@@ -460,6 +484,7 @@ module.exports = {
     isZS: isZS,
     isJiJin: isJiJin,
     gotoStockPage: gotoStockPage,
+    gotoSearchPage: gotoSearchPage,
     //formatKanPanTime: formatKanPanTime,
     //formatDateHHMM: formatDateHHMM,
     getCurrentGoodsClassType: getCurrentGoodsClassType,
@@ -467,7 +492,8 @@ module.exports = {
     formatTime : formatTime,
     showBusy: showBusy,
     showSuccess : showSuccess,
-    showModel : showModel
+    showModel : showModel,
+    addToWatchList: addToWatchList
 }
 
 // module.exports = { }

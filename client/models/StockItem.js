@@ -1,9 +1,10 @@
 const color_style = getApp().globalData.color_style
-function StockItem(ticker, companyName, chgPct, price){
+function StockItem(ticker, companyName, chgPct, price, securityType){
     this.ticker = ticker
     this.companyName = companyName
     this.chgPct = chgPct
     this.price = price.toFixed(2)
+    this.securityType = securityType
 
     let pctValue = parseFloat(chgPct)
     let mark = pctValue > 0 ? '+' : ''

@@ -1,12 +1,12 @@
 <import src="../common/line.wxml" />
-
+<import src="../common/SearchBar/SearchBar.wxml" />
 <view class="zan-popup {{ showOperationPopup ? 'zan-popup--show' : ''}}">
   <view class="zan-popup__mask" bindtap="togglePopup"></view>
   <view class="zan-popup__container popup-example--center" style="width:50%;  border-radius: 5px;">
     <view class="zan-btns" style="flex-direction: column; text-align:center">
       <text class=" T5 S8">{{currentPick.name}}</text>
-       <button class="weui-btn" type="default" bindtap="onPublish" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>发布</button>   
-       <button class="weui-btn" type="default" bindtap="onUpdateClick" wx:if="{{activeIndex <= 1}}" style='background-color: wheat; width:100%;'>更新</button>   
+      <button class="weui-btn" type="default" bindtap="onPublish" wx:if="{{activeIndex == 1}}" style='background-color: wheat; width:100%;'>发布</button>
+      <button class="weui-btn" type="default" bindtap="onUpdateClick" wx:if="{{activeIndex <= 1}}" style='background-color: wheat; width:100%;'>更新</button>
       <button class="weui-btn" type="default" bindtap="onEditClick" wx:if="{{activeIndex <= 1}}" style='background-color: wheat; width:100%;'>编辑</button>
       <button class="weui-btn" type="default" bindtap="onDeleteClick" wx:if="{{activeIndex <= 1}}" style='background-color: wheat; width:100%;'>删除</button>
       <button class="weui-btn" type="default" bindtap="togglePopup" style='width:100%;'>返回</button>
@@ -41,24 +41,31 @@
       </view>
     </block>
   </view>
-  <view class="page__hd" style='padding:10px'>
-    <view style='display: flex; flex-direction: row; width:100%'>
-      <text class="page__title" style="width:50%">投资策略分析</text>
-
-      <view class="weui-flex" style="width:65%">
-        <view class="weui-flex__item">
-          <!-- <navigator url="../about/about" open-type="navigate"> 
-      <image class="inline_icon_left" style="background:gainsboro;" src="../../images/Help_02-512.png" />
-             </navigator>  -->
-        </view>
-        <view class="weui-flex__item">
-          <image class="inline_icon_right" style="background:gainsboro;" src="../../images/Plus_01-66-512.png" bindtap="onNewPortfolioTap" />
-
+  <!-- <view class="page__hd" style='padding:10px'> -->
+    <view style='width:100%;display:flex;flex-direction:row;'>
+      <view class="search_view B1" style='width:100%'>
+        <view class="search_bar B2" bindtap="onNewPortfolioTap">
+          <icon type="search" size="15"></icon>
+          <view class="T1 S4" placeholder="{{searchData.placeholder}}" value="{{searchData.searchContent}}">创建新策略组合</view>
         </view>
       </view>
+      <!-- <view class="S2 T3" style="float:right">创建新策略</view> -->
+      <!-- <view style="display:flex;flex-direction:column;align-items:center;float:right">
+        <image class="inline_icon_right" style="margin-left:5rpx;background:#ebebeb;" src="../../images/Note_Plus-512.png" bindtap="onNewPortfolioTap" />
+        <view class="S1 T5">创建新策略</view>
+      </view> -->
     </view>
+    <!-- <view style='display: flex; flex-direction: row; width:100%'>
+      <text class="page__title" style="width:50%">投资策略分析</text> -->
+
+    <!-- <view class="weui-flex" style="width:65%">
+        <view class="weui-flex__item">
+          <image class="inline_icon_right" style="background:gainsboro;" src="../../images/Note_Plus-512.png" bindtap="onNewPortfolioTap" />
+        </view>
+      </view>  -->
+    <!-- </view> -->
     <!-- <view class="page__desc">控制风险，提高收益</view> -->
-  </view>
+  <!-- </view> -->
   <view class="page__bd">
     <view class="weui-tab">
       <view class="weui-navbar">
@@ -75,47 +82,43 @@
     <view class="weui-panel weui-panel_access" style="background-color:#ebebeb">
       <view class="weui-panel__hd"></view>
       <!-- 请点击文字进入分析页面 -->
-      <view class="logo" wx:if="{{collection.length==0}}">
-        <!-- <image src="../../images/optional_add.png" /> -->
-        <!-- <image class="icon_panel_icon" style="background:gainsboro;" src="../../images/Plus_01-66-512.png" bindtap="onNewPortfolioTap"/>
-      
-      <view><text>请创建新的分析案例</text></view> -->
-        <text style="font-size:30rpx;">暂无数据</text>
-      </view>
-
+      <!-- <view class="bottom_tip">
+       <text>创建新策略</text> 
+       <image class="inline_icon_right" src="../../images/Note_Plus-512.png" bindtap="onNewPortfolioTap" /> 
+      </view> -->
       <block wx:key="id" wx:for="{{collection}}" wx:for-item="item" wx:for-index="index">
         <view style="display:flex; flex-direction:row; width:100%;background-color:#F8F8F8;margin-bottom:3%">
           <view class="weui-panel__bd" style="height:100%;width:100%">
-          <view style="display:flex; flex-direction: row, width:100%;">
-            <view class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" bindtap="onPortfolioSelect" data-item="{{item}}" style="width:90%">
-              <view class="" style="height:60px; width:100%;">
-                <view class="T5 S6" style="width: 100%; display:flex; flex-direction: row;margin-left:10px">{{item.name}}
-                  <view class="item_type" style="width:50px; height: 20px">主题投资</view>
-                   <!-- <image class="inline_icon_right" src="../../images/Info_01-512.png" />  -->
-                </view>
-                <view class="minor_cell_placeholder" style=" margin-left:10px">
-                <view class=" T2 S1">起始日期</view>
-                  <view class=" T2 S1">{{item.inception}}</view>
-                </view>
-                <view class="minor_cell_placeholder" style=" margin-left:10px">
-                <view class=" T2 S1">累计天数</view>
-                  <view class=" T2 S1">{{item.numOfDays}}</view>
-                </view>
-                 <view class="minor_cell_placeholder" style=" margin-left:10px">
-                <view class=" T2 S1">持股更新</view>
-                  <view class=" T2 S1">{{item.last_update}}</view>
-                </view> 
-                 <view class="minor_cell_placeholder" style=" margin-left:10px">
-                 <view class=" T2 S1">更新次数</view>
-                  <view class=" T2 S1">{{item.numOfUpdates}}</view>
-                </view> 
+            <view style="display:flex; flex-direction: row, width:100%;">
+              <view class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" bindtap="onPortfolioSelect" data-item="{{item}}" style="width:90%">
+                <view class="" style="height:60px; width:100%;">
+                  <view class="T5 S6" style="width: 100%; display:flex; flex-direction: row;margin-left:10px">{{item.name}}
+                    <view class="item_type" style="width:50px; height: 20px">主题投资</view>
+                    <!-- <image class="inline_icon_right" src="../../images/Info_01-512.png" />  -->
+                  </view>
+                  <view class="minor_cell_placeholder" style=" margin-left:10px">
+                    <view class=" T2 S1">起始日期</view>
+                    <view class=" T2 S1">{{item.inception}}</view>
+                  </view>
+                  <view class="minor_cell_placeholder" style=" margin-left:10px">
+                    <view class=" T2 S1">累计天数</view>
+                    <view class=" T2 S1">{{item.numOfDays}}</view>
+                  </view>
+                  <view class="minor_cell_placeholder" style=" margin-left:10px">
+                    <view class=" T2 S1">持股更新</view>
+                    <view class=" T2 S1">{{item.last_update}}</view>
+                  </view>
+                  <view class="minor_cell_placeholder" style=" margin-left:10px">
+                    <view class=" T2 S1">更新次数</view>
+                    <view class=" T2 S1">{{item.numOfUpdates}}</view>
+                  </view>
                   <!-- <view class="minor_cell_placeholder" style=" margin-left:10px">
                 <view class=" T3 S1">creator</view>
                   <view class=" T3 S1">lambda</view>
                 </view>   -->
+                </view>
               </view>
-            </view>
-            <image class="inline_icon_right"  src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex <= 1}}" />   
+              <image class="inline_icon_right" src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex <= 1}}" />
             </view>
 
             <view class="weui-flex">
@@ -140,7 +143,7 @@
             </view>
           </view>
           <view class="weui-flex menu_bar">
-             <!-- <image class="menu_bar__thumb" src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex <= 1}}" />  -->
+            <!-- <image class="menu_bar__thumb" src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex <= 1}}" />  -->
             <!-- <image class="menu_bar__thumb" src="../../images/Info_01-512.png" /> -->
             <!-- <image class="menu_bar__thumb" src="../../images/List-512.png" />  -->
           </view>

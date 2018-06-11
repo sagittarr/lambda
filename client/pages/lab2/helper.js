@@ -178,6 +178,7 @@ function loadProfilefromStorage(that) {
             }
             var list = []
             Object.keys(data).forEach(function (key, i, a) {
+                if(key =='watchlist') {return}
                 var profile = data[key]
                 if (typeof (profile.phases) === typeof ("str")) {
                     profile.phases = JSON.parse(profile.phases)

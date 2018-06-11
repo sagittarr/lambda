@@ -17,11 +17,19 @@
   width: 75rpx;
   height: 75rpx;
   /* border-radius: 4px; */
-  background-color: gainsboro
+  /* background-color: gainsboro */
 }
 
 .icon_panel__icon :active{
   background-color: wheat; 
+}
+.icon_disable{
+  margin: 0 auto;
+  width: 75rpx;
+  height: 75rpx;
+  /* border-radius: 4px; */
+  background-color: gainsboro;
+  filter:grayscale(100%);
 }
 .inline_icon_right{
    /* display: inline-block;  */

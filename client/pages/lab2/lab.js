@@ -8,7 +8,7 @@ const helper = require('./helper.js')
 
 Page({   
   data: {
-    tabs: ["掌控精选策略", "本地策略实验"],
+    tabs: ["公开选股策略", "私有本地策略"],
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,

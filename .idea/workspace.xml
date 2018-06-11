@@ -4,12 +4,21 @@
     <list default="true" id="722b7472-90db-49d1-8755-d4a9cca0e551" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/common/StockCell/StockCell.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/common/StockCell/StockCell.wxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/StockItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/models/StockItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/lab2/helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/helper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.wxss" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.wxss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/pages/market/market.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/market/market.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/pages/market/market.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/market/market.wxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/market/market.wxss" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/market/market.wxss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/portfolio/analyzer.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/portfolio/analyzer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/parsers/quote_parser.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/parsers/quote_parser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/portfolio/analyzer.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/portfolio/analyzer.wxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/portfolio/analyzer.wxss" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/portfolio/analyzer.wxss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/search/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/search/search.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/search/search.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/search/search.wxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/search/search.wxss" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/search/search.wxss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/stock/stock.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/stock/stock.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/utils/icons.wxss" beforeDir="false" afterPath="$PROJECT_DIR$/client/utils/icons.wxss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/utils/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/utils/util.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -45,7 +54,7 @@
         <entry file="file://$PROJECT_DIR$/server/app.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="506">
-              <caret line="48" column="108" lean-forward="true" selection-start-line="48" selection-start-column="108" selection-end-line="48" selection-end-column="108" />
+              <caret line="48" column="108" selection-start-line="48" selection-start-column="108" selection-end-line="48" selection-end-column="108" />
             </state>
           </provider>
         </entry>
@@ -647,7 +656,7 @@
     <entry file="file://$PROJECT_DIR$/server/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="506">
-          <caret line="48" column="108" lean-forward="true" selection-start-line="48" selection-start-column="108" selection-end-line="48" selection-end-column="108" />
+          <caret line="48" column="108" selection-start-line="48" selection-start-column="108" selection-end-line="48" selection-end-column="108" />
         </state>
       </provider>
     </entry>

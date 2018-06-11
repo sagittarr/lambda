@@ -44,7 +44,7 @@
     </view>
   </view> -->
   <view class="item-tab">
-    <view class="item_title_icon C3-bg"></view>
+     <view class="item_title_icon C3-bg"></view> 
     <text bindtap="onChangeShowLineChart" class="{{showLineChart?'active':''}}">市场对比</text>
   </view>
   <!-- '#0387fe' -->

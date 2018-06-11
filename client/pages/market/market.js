@@ -6,15 +6,15 @@
 // const SORT_UP = 1;//升序
 // const SORT_DOWN = -1;//降序
 
-// var util = require('../../utils/util.js')
+const util = require('../../utils/util.js')
 var intervalId = 0;
 
 const helper = require('../lab2/helper.js')
 const parser = require('../../parsers/quote_parser.js')
-var SearchBar = require('../common/SearchBar/SearchBar.js')
+const SearchBar = require('../common/SearchBar/SearchBar.js')
 
-var stockLists = [[]/*watch*/,[]/*gainer*/,[]/*loser*/,[]/*active*/,[]/*pct change*/]
-
+var stockLists = [[]/*watch*/, []/*gainer*/, []/*loser*/, []/*active*/, []/*pct change*/]
+var whileLongPress = false
 Page({
   data: {
     // currIndex: 0,//当前选择的tab
@@ -45,9 +45,7 @@ Page({
             util.gotoQuote(parseInt(options.id), options.name, options.code)
           }
         } else if (page == 'search') {
-          wx.navigateTo({
-            url: '/pages/search/search'
-          })
+          util.gotoSearchPage('search', '')
         }
       }
     }
@@ -106,6 +104,20 @@ Page({
   getData: function () {
     var that = this
     helper.quoteMarketIndex(this, this.data.marketIndex)
+    if (stockLists[0].length == 0) {
+      var lambda_key = getApp().globalData.lambda_key
+      wx.getStorage({
+        key: lambda_key,
+        success: function (res) {
+          console.log(res.data['watchlist'])
+          stockLists[0] = res.data['watchlist']
+          that.setData({ showList: stockLists[that.data.currListIndex] })
+        },
+        fail: function (res) {
+          console.log('storage is empty')
+        }
+      });
+    }
     parser.getSectorPerformanceFromALV(function (input) {
       let sectorTables = {}
       let periods = ['realTime', '1month', '1year']
@@ -157,7 +169,7 @@ Page({
 
   onStockListSelectorClick: function (e) {
     var index = e.currentTarget.dataset.index;
-    if(index < stockLists.length){
+    if (index < stockLists.length) {
       this.setData({
         currListIndex: index,
         showList: stockLists[index]
@@ -210,9 +222,55 @@ Page({
       url: '../search/search'
     })
   },
-  onSearchBarClick: function(e){
-    wx.navigateTo({
-      url: '../search/search'
+  onSearchBarClick: function (e) {
+    util.gotoSearchPage('search', '')
+  },
+  longPressStockItem: function (e) {
+    if (this.data.currListIndex!=0) return;
+    var that = this
+    let item = e.target.dataset.item
+    let showList = that.data.showList
+    showList.map(x => {
+      if (x.ticker == item.ticker) {
+        if (x.toDel == true) {
+          x.toDel = false
+        }
+        else {
+          x.toDel = true
+        }
+      }
+
     })
+    stockLists[that.data.currListIndex] = showList
+    this.setData({ showList: showList })
+    // whileLongPress = true
+  },
+  clickStockItem: function (e) {
+    console.log(e)
+  },
+  removeStockItem: function(e){
+    console.log(e)
+    let showList = this.data.showList
+    showList = showList.filter(x => x.ticker != e.currentTarget.dataset.item.ticker);
+    this.setData({showList:showList})
+    stockLists[0] = showList
+    console.log(this.data.showList)
+    var lambda_key = getApp().globalData.lambda_key
+    wx.getStorage({
+      key: lambda_key,
+      success: function (res) {
+        let data = res.data
+        // console.log(res.data['watchlist'])
+        data['watchlist'] = stockLists[0]
+        wx.setStorage({
+          key: lambda_key,
+          data: data,
+        })
+      },
+      fail: function (res) {
+        console.log('storage is empty')
+      }
+    });
+
   }
 })

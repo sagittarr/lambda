@@ -447,7 +447,7 @@ function initData(that) {
     // 初始化数据显示
     // Quotation(price, zd, zdf, open, high, low, hsl, syl, sjl, cjl, jl, zz, cje, lb, ltsz, date, time, color, ticker)
     // var quota = new Quotation('--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
-    var quota = new Quotation('1', '2', '3', '4', '5', '6', '7', '8', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
+    var quota = new Quotation('--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
     that.setData({
         quotation: quota
     })

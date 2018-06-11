@@ -22,14 +22,9 @@
   <template is="lineView"></template>
   <view style='width:100%;'>
     <view class="search_view B1">
-      <view class="search_bar B2">
+      <view class="search_bar B2" bindtap="onSearchBarClick">
         <icon type="search" size="15"></icon>
-
-        <!--placeholder-class 使用这个input只能获取一次焦点 maxlength="6" -->
-        <input class="T1 S4" placeholder="{{searchData.placeholder}}" bindtap="onSearchBarClick" value="{{searchData.searchContent}}" />
-        <block wx:if="{{searchData.showClearButton == true}}">
-          <image src="../common/SearchBar/icon_clear.png" mode="aspectFit" bindtap="onSearchBarClearEvent"></image>
-        </block>
+        <view class="T1 S4" placeholder="{{searchData.placeholder}}"  value="{{searchData.searchContent}}">搜索个股</view>
       </view>
     </view>
     <view style='width:100%; display:flex; flex-direction:row'>

@@ -1,59 +1,75 @@
 <import src="../common/SearchBar/SearchBar.wxml" />
 <import src="../common/line.wxml" />
-<!-- <import src="../../utils/input_form.wxml" /> -->
 <import src="/utils/dist/toptips/index.wxml" />
 <template is="zan-toptips" data="{{ zanTopTips }}"></template>
-<!-- <view class="page"> -->
-  <view class="search_view B1">
-    <template is="SearchBar" data="{{searchData}}" style="background-color:#ebebeb" />
-  </view>
 
-  <view class="icon_panel" style="background-color:#ebebeb">
+<view class="search_view B1">
+  <template is="SearchBar" data="{{searchData}}" style="background-color:#ebebeb" />
+</view>
+
+<view>
+  <view class="icon_panel" >
     <view class="icon_panel_item">
-      <view class="icon_panel_icon" bindtap='onEmptyStocks'>
-        <image src='../../images/Trash-512.png' style="width:100%; height:100%"></image>
+      <view class="icon_disable" wx:if="{{stockList.length == 0}}">
+        <image src='../../images/Ban-512.png' style="width:100%; height:100%"></image>
+      </view>
+      <view class="icon_panel_icon"wx:if="{{stockList.length != 0}}"  bindtap='onEmptyStocks'>
+        <image src='../../images/Ban-512.png' style="width:100%; height:100%"></image>
       </view>
       <text>清空</text>
     </view>
     <view class="icon_panel_item">
-      <view class="icon_panel_icon" bindtap='onRemoveCheckedStock'>
-        <image src='../../images/Remove-512.png' style="width:100%; height:100%"></image>
+      <view class="icon_disable" wx:if="{{!someActive}}">
+        <image src='../../images/Minus_02-512.png' style="width:100%; height:100%"></image>
+      </view>
+      <view class="icon_panel_icon" wx:if="{{someActive}}"bindtap='onRemoveCheckedStock'>
+        <image src='../../images/Minus_02-512.png' style="width:100%; height:100%"></image>
       </view>
       <text>移除</text>
     </view>
     <view class="icon_panel_item">
-      <!-- <navigator url="../input/input" open-type="navigate"> -->
-      <view class="icon_panel_icon" bindtap='onCreateNewPortfolio'>
-        <image src='../../images/OK-512.png' style="width:100%; height:100%"></image>
+      <view class="icon_disable" wx:if="{{stockList.length == 0}}">
+        <image src='../../images/Plus_01-66-512.png' style="width:100%; height:100%"></image>
       </view>
-      <text>继续</text>
-      <!-- </navigator> -->
+      <view class="icon_panel_icon" wx:if="{{stockList.length != 0}}" bindtap='addToWatchList'>
+        <image src='../../images/Plus_01-66-512.png' style="width:100%; height:100%"></image>
+      </view>
+      <text>加入自选股</text>
+    </view>
+    <view class="icon_panel_item">
+      <view class="icon_disable" wx:if="{{stockList.length == 0}}">
+        <image src='../../images/Folder_Plus-512.png' style="width:100%; height:100%"></image>
+      </view>
+      <view class="icon_panel_icon" wx:if="{{stockList.length != 0}}" bindtap='onCreateNewPortfolio'>
+        <image src='../../images/Folder_Plus-512.png' style="width:100%; height:100%"></image>
+      </view>
+      <text>创建新组合</text>
     </view>
   </view>
-  <template is="lineView"></template>
-  <!-- <template is="inputForm" data="{{...popup}}"></template> -->
   <view class="weui-cells__title">入选个股</view>
   <view class="multiple-select">
     <block wx:key="ticker" wx:for="{{stockList}}" wx:for-item="item" wx:for-index="index">
       <text bindtap="onCheckStock" data-ticker="{{item.ticker}}" class="{{item.toDel?'active':''}}">{{item.ticker}}</text>
     </block>
   </view>
-  <template is="lineView"></template>
-  <view class="list_item" style='width:100%'>
-    <text class="item_text T3 S8" style="width:15%;">Add</text>
-    <text class="item_text T3 S8" style="width:85%;">Detail</text>
-  </view>
-  <view style='width:100%'>
+</view>
+
+<view class="list_item" style='width:100%;' wx:if="{{showList.length>0}}">
+  <text class="item_text T3 S8" style="margin:0px;width:15%;text-align:center;background-color:#ebebeb;">添加</text>
+  <text class="item_text T3 S8" style="margin-left: 10rpx;width:85%;background-color:#ebebeb;">查看详情</text>
+</view>
+<view style='width:100%'>
   <block wx:key="optional" wx:for="{{showList}}" wx:for-item="item" wx:for-index="index">
-    <view class="list_item" bindtap="addStock" data-stock="{{item}}" style='width:100%'>
+    <view class="list_item" style='width:100%;'>
       <!-- <text class="item_text T1 S7" style="width:15%; border-width:1px">添加自选</text> -->
-      <icon type="success_circle" size="40" style="width:15%;" />
-      <text class="item_type C3-font S1" style="width:10%; border-width:{{item.type.length > 0 ? 1 : 0}}px">{{item.type}}</text>
-      <text class="item_text T3 S5" style="width:15%;">{{item.ticker}}</text>
-      <text class="item_text T1 S7" style="width:60%;">{{item.code}}</text>
+      <view class="zan-icon zan-icon-add2"  style="margin:0px;height:100%;width:15%;" bindtap="addStock" data-stock="{{item}}" ></view>
+      <!-- <icon type="success_circle" size="40" style="height:90%;width:15%;" bindtap="addStock" data-stock="{{item}}" /> -->
+      <text class="item_type C3-font S1" style="width:10%;margin-left: 30rpx; border-width:2rpx;" bindtap='onStockItemClickEvent' data-stock="{{item}}">{{item.securityType}}</text>
+      <text class="item_text T3 S5" style="width:15%;" bindtap='onStockItemClickEvent' data-stock="{{item}}">{{item.ticker}}</text>
+      <text class="item_text T1 S7" style="width:60%;" bindtap='onStockItemClickEvent' data-stock="{{item}}">{{item.companyName}}</text>
 
     </view>
-    <!-- <template is="lineView"></template> -->
+    <template is="lineView"></template>
   </block>
-  </view>
+</view>
 <!-- </view> -->

@@ -3,16 +3,26 @@ var config = require('../../config')
 var util = require('../../utils/util.js');
 const validator = require('./validator.js')
 var Zan = require('../../utils/dist/index');
+const StockItem = require('../../models/StockItem.js')
 Page({
   data: {
     showList: [],
     searchItem: null,
     stockList: [],
+    someActive: false,
     popup: { showBottomPopup: false, date: '2018-01-01', input_hint: '' },
     showPopup: false,
+    showPanel: false
   },
 
-  onLoad: function () {
+  onLoad: function (option) {
+    if (option.opt == 'search') {
+      this.setData({ 'showPanel': false })
+    }
+    else {
+      this.setData({ 'showPanel': true })
+    }
+    // console.log(this.data.showPanel)
     if (getApp().globalData.useExistingProfile) {
       var profile = getApp().globalData.selected
       console.log(profile.curr_holds)
@@ -42,7 +52,6 @@ Page({
   onSearchBarClearEvent: function (e) {
     var that = this
     SearchBar.onSearchBarClearEvent(e, that)
-
     that.data.showList = []
     that.setData(that.data)
   },
@@ -64,7 +73,9 @@ Page({
         console.log(res)
         res.forEach(function (e, i, a) {
           if (e.typeDisp == "Equity") {
-            toshow.push({ 'ticker': e.symbol, 'code': e.name, 'type': e.typeDisp, 'exchDisp': e.exchDisp, 'toDel': false })
+            let item = new StockItem(e.symbol,e.name, 0, 0, e.typeDisp)
+              toshow.push(item)
+            // toshow.push({ 'ticker': e.symbol, 'code': e.name, 'type': e.typeDisp, 'exchDisp': e.exchDisp, 'toDel': false })
           }
         })
         console.log(toshow)
@@ -92,12 +103,12 @@ Page({
 
   onRemoveCheckedStock: function () {
     var stockList = this.data.stockList.filter(e => !e.toDel);
-    this.setData({ stockList: stockList })
+    this.setData({ stockList: stockList, someActive: false })
     console.log(this.data.stockList)
   },
 
   onEmptyStocks: function () {
-    this.setData({ stockList: [] })
+    this.setData({ stockList: [], someActive:false })
     console.log(this.data.stockList)
   },
 
@@ -113,9 +124,15 @@ Page({
         }
       }
     })
+    let someActive = this.data.stockList.some(x=>x.toDel)
+    this.setData({someActive: someActive})
     this.setData({ stockList: this.data.stockList })
   },
-
+  addToWatchList(){
+    if (this.data.stockList && this.data.stockList.length>0){
+      util.addToWatchList(this.data.stockList)
+    }
+  },
   onCreateNewPortfolio() {
     if (this.data.stockList.length > 0 && this.data.stockList.length <= 15) {
       getApp().globalData.stocksForCreateOrModify = this.data.stockList
@@ -127,7 +144,13 @@ Page({
       this.showTopTips()
     }
   },
+
   showTopTips() {
     Zan.TopTips.showZanTopTips(this, '请确认个股数量大于1且不超过15');
+  },
+
+  onStockItemClickEvent: function (e) {
+    var data = e.currentTarget.dataset
+    util.gotoStockPage(data.stock.ticker, data.stock.companyName)
   }
 })
