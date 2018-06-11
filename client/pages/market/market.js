@@ -7,6 +7,7 @@
 // const SORT_DOWN = -1;//降序
 
 const util = require('../../utils/util.js')
+const putil = require('../../pages/portfolio/port_utils.js')
 var intervalId = 0;
 
 const helper = require('../lab2/helper.js')
@@ -93,6 +94,7 @@ Page({
     var interval = getApp().globalData.netWorkType == 'wifi' ? getApp().globalData.WIFI_REFRESH_INTERVAL : getApp().globalData.MOBILE_REFRESH_INTERVAL;
     intervalId = setInterval(function () {
       that.getData();
+      that.setData({ showList: stockLists[that.data.currListIndex] })
     }, interval);
   },
 
@@ -109,15 +111,32 @@ Page({
       wx.getStorage({
         key: lambda_key,
         success: function (res) {
-          console.log(res.data['watchlist'])
-          stockLists[0] = res.data['watchlist']
-          that.setData({ showList: stockLists[that.data.currListIndex] })
+          if (res && res.data && res.data['watchlist']) {
+            console.log(res.data['watchlist'])
+            stockLists[0] = res.data['watchlist']
+            // that.setData({ showList: stockLists[that.data.currListIndex]})
+            putil.realtime_price(stockLists[0].map(stk => stk.ticker), function (results) {
+              console.log('res',results)
+              if (typeof(results) === 'object') {
+                results = [results]
+              }
+              stockLists[0] = putil.quoteRealTimePriceCallback(results)
+            })
+          }
         },
         fail: function (res) {
           console.log('storage is empty')
         }
       });
     }
+
+    putil.realtime_price(stockLists[0].map(stk=>stk.ticker), function (results) {
+      console.log(results)
+      if (typeof (results) === 'object') {
+        results = [results]
+      }
+      stockLists[0] = putil.quoteRealTimePriceCallback(results)
+    })
     parser.getSectorPerformanceFromALV(function (input) {
       let sectorTables = {}
       let periods = ['realTime', '1month', '1year']
@@ -226,9 +245,13 @@ Page({
     util.gotoSearchPage('search', '')
   },
   longPressStockItem: function (e) {
+    console.log(e)
     if (this.data.currListIndex!=0) return;
     var that = this
     let item = e.target.dataset.item
+    if (!item){
+      item = e.currentTarget.dataset.item
+    }
     let showList = that.data.showList
     showList.map(x => {
       if (x.ticker == item.ticker) {

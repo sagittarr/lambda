@@ -77,11 +77,7 @@ Page({
             console.error('getSystemInfoSync failed!');
         }
         var profile = getApp().globalData.selected;
-        // if (!profile.short_desp) {
-        //   profile.short_desp = profile.desp.slice(0, 35) + '...'
-        //   console.log('short ', profile.short_desp);
-        // }
-        console.log("selected", profile);
+        // console.log("selected", profile);
         this.setData({ 'profile': profile })
         var options = {
             url: config.service.db_handler,
@@ -109,7 +105,7 @@ Page({
             if (!Array.isArray(results)) {
                 results = [results]
             }
-            that.quoteRealTimePriceCallback(results)
+            that.setData({ holdings: putils.quoteRealTimePriceCallback(results) })
         })
         wx.request(options);
     },
@@ -269,7 +265,7 @@ Page({
         var that = this;
         var tickers = getApp().globalData.selected.curr_holds;
         putils.realtime_price(tickers, function (results) {
-            that.quoteRealTimePriceCallback(results)
+            that.setData({holdings:putils.quoteRealTimePriceCallback(results)})
             wx.stopPullDownRefresh();
         })
     },
