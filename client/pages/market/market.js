@@ -25,7 +25,7 @@ Page({
     bkArr: [],
     sectorPeriodArr: ["当天", "一周", "一月", "一年"],//tab
     // sectorPerfTable : {},
-    tabArr: ["自选", "领涨", "领跌", "活跃", "放量"],//tab
+    tabArr: ["自选", "领涨", "领跌", "活跃"],//tab
     showList: [],//列表数据
     sectorTables: { 'realtime': {}, '1month': {}, '1year': {} },
     sectorsToShow: [{}, {}, {}, {}],
@@ -165,9 +165,9 @@ Page({
       else if (category == 'active') {
         stockLists[3] = result
       }
-      else if (category == 'iexpercent') {
-        stockLists[4] = result
-      }
+      // else if (category == 'iexpercent') {
+      //   stockLists[4] = result
+      // }
       that.setData({ showList: stockLists[that.data.currListIndex] })
     })
   },

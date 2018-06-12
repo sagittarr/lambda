@@ -8,6 +8,7 @@ var YAxisLayer = require('YAxisLayer.js')
 var XAxisLayer = require('XAxisLayer.js')
 var GroupLayer = require('GroupLayer.js')
 var draw = require('../../../../utils/canvasUtil.js')
+const color_style = getApp().globalData.color_style
 const MINTUES = 390
 function MinuteCanvas() {
 	this.mIsInit = false;    // 是否已初始化分时绘图区域布局结构和设置
@@ -89,13 +90,13 @@ MinuteCanvas.prototype.initLayers = function () {
 		this.columnarLayer.setMaxCount(MINTUES)
 		this.columnarLayer.setOnDrawCallback(function (context, pos) {
 			// console.log('pos: ' + pos)
-			var color = '#e64340'
+      var color = color_style.up
 			var currentPrice = that.lineLayer.getValue(pos)
 			var prePrice = that.lineLayer.getValue(pos > 0 ? pos - 1 : 0)
 			if (currentPrice >= prePrice) {
-				color = '#e64340'
+        color = color_style.up
 			} else {
-				color = '#09bb07'
+        color = color_style.down
 			}
 			context.setStrokeStyle(color)
 			context.setFillStyle(color)

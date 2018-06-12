@@ -9,6 +9,7 @@ var XAxisLayer = require('XAxisLayer.js')
 var GroupLayer = require('GroupLayer.js')
 var draw = require('../../../../utils/canvasUtil.js')
 var util = require('../../../../utils/util.js')
+const color_style = getApp().globalData.color_style
 
 function KLineCanvas(period) {
 	this.mIsInit = false;    // 是否已初始化K线绘图区域布局结构和设置
@@ -65,7 +66,7 @@ KLineCanvas.prototype.initLayers = function() {
         this.kLineLayer.setStrokeWidth(strokeWidth);
         this.kLineLayer.setOnDrawCallback(function(context, pos) {
         	var atom = that.kLineLayer.getValue(pos)
-        	var color = '#e64340'
+          var color = color_style.up
 
         	var zdFlag = 0
         	if (atom.mClose > atom.mOpen) {
@@ -86,7 +87,7 @@ KLineCanvas.prototype.initLayers = function() {
         	}
 
         	if (zdFlag < 0) {
-        		color = '#09bb07'
+        		color = color_style.down
         	}
 
         	context.setStrokeStyle(color)
@@ -143,7 +144,7 @@ KLineCanvas.prototype.initLayers = function() {
         this.mVolumeLayer.setColumnarWidth(columnWidth);
         this.mVolumeLayer.setOnDrawCallback(function(context, pos) {
 			var atom = that.kLineLayer.getValue(pos)
-        	var color = '#e64340'
+        	var color = color_style.up
 
         	var zdFlag = 0
         	if (atom.mClose > atom.mOpen) {
@@ -164,7 +165,7 @@ KLineCanvas.prototype.initLayers = function() {
         	}
 
         	if (zdFlag < 0) {
-        		color = '#09bb07'
+        		color = color_style.down
         	}
 
         	context.setStrokeStyle(color)

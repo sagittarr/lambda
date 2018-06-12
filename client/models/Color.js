@@ -1,5 +1,5 @@
 
 module.exports = {
-	c1: '#e64340',    // red
+	c1: 'indianRed',    // red
 	c2: '#09bb07'     // green
 }

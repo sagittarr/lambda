@@ -111,6 +111,7 @@ async function buildStrategy(phases, spy, inceptionDate){
         })
     })
 }
+
 function SplitTimeRange(timeIds, dateIndex, aggValues, spy, inception){
     var timeRange = timeIds.map(timeId => {
         var index = util.dateIndexPicker(dateIndex, timeId)
@@ -339,7 +340,7 @@ function insert_historical(ticker, data, time_stamp, source, update_time = null)
                 return knex('historical_data').insert({ id: ticker+'_'+source, ticker: ticker, data: data, update_time: new Date().toISOString() ,  source: source})
             } else {
                 console.log('try update', ticker+'_'+source)
-                knex('historical_data').where('ticker', ticker).update({ data: data, update_time: new Date().toISOString() , source: source}).then(function (result) { console.log(result) })
+                knex('historical_data').where('id', ticker + '_' + source).update({ data: data, update_time: new Date().toISOString() , source: source}).then(function (result) { console.log(result) })
             }
         })
         .catch(function (ex) {

@@ -29,9 +29,9 @@
     </view>
     <view style='width:100%; display:flex; flex-direction:row'>
       <view class="period-selector-tab">
-        <text class="{{sectorPeriodIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">Today</text>
-        <text class="{{sectorPeriodIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">1 month</text>
-        <text class="{{sectorPeriodIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">1 year</text>
+        <text class="{{sectorPeriodIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">最新</text>
+        <text class="{{sectorPeriodIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">最近一月</text>
+        <text class="{{sectorPeriodIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">最近一年</text>
       </view>
       <view>
         <image class="inline_icon_right" style="margin-right:10px" src="../../images/Translate-256.png" bindtap="onNewPortfolioTap" />
@@ -61,9 +61,9 @@
   <view>
     <view class="tab_container">
       <block wx:for="{{tabArr}}" wx:key="Id">
-        <text class="S4  tab_item_text {{currListIndex==index?'C1-font':'T3'}}" data-index="{{index}}" bindtap="onStockListSelectorClick" style="font-weight:{{currListIndex==index?'bold':'normal'}};">{{item}}</text>
+        <text class="S4  tab_item_text {{currListIndex==index?'active':'T3'}}" data-index="{{index}}" bindtap="onStockListSelectorClick" style="font-weight:{{currListIndex==index?'bold':'normal'}};">{{item}}</text>
       </block>
-      <view class="C1-bg tab_item_sel_line_container" style="left:{{currListIndex*20}}%;" />
+      <view class="C1-bg tab_item_sel_line_container" style="left:{{currListIndex*25}}%;" />
     </view>
     <view class="lisetview_data_container B1" style="height: 70rpx">
       <text class="S2 T2 lisetview_item_left_container">名称</text>

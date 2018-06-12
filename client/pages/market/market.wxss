@@ -6,7 +6,6 @@
  @import "../common/SearchBar/SearchBar.wxss"; 
 .index_placeholder {
   margin: 5px;
-  /* padding: 0 10px; */
   background-color:#ebebeb ;
   height: 5em;
 
@@ -135,22 +134,31 @@
   display: flex;
   align-items: center;
   border-bottom: 1rpx solid #e4e4e4;
+  /* color: goldenrod; */
 }
 
 .tab_item_text {
   display: inline-block;
-  width: 20%;
+  width: 25%;
   height: 100%;
   line-height: 100rpx;
   text-align: center;
+  /* color: goldenrod; */
 }
-
+.active {
+  display: inline-block;
+  width: 25%;
+  height: 100%;
+  line-height: 100rpx;
+  text-align: center;
+   color: goldenrod; 
+}
 .tab_item_sel_line_container {
-  width: 20%;
+  width: 25%;
   height: 5rpx;
   position: absolute;
   bottom: 0;
-  background-color: C1-font;
+  background-color: goldenrod;
 }
 
 /* 头部 */

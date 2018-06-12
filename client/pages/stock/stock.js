@@ -4,6 +4,7 @@ var Quotation = require('../../models/Quotation.js')
 var parser = require('../../parsers/quote_parser.js')
 var dataApi = require('../../api/data_api.js')
 const util = require('../../utils/util.js')
+const color_style = getApp().globalData.color_style
 Page({
 
     data: {
@@ -13,7 +14,7 @@ Page({
         // goodsName: '青岛啤酒',
         ticker: '--',
         companyName: '--',
-        quotationColor: '#eb333b',
+        // quotationColor: 'green',
         currentTimeIndex: 0,
         currentInfoIndex: 0,
         quotePeriod: 1,
@@ -140,6 +141,7 @@ Page({
             quotation.high = quotation.high.toFixed(2)
             quotation.low = quotation.low.toFixed(2)
             quotation.price  = quotation.price.toFixed(2)
+            quotation.color = quotation.zdf < 0 ? color_style.down :color_style.up
             that.setData({ quotation: quotation })
                 if (callback != null && typeof (callback) == 'function') {
                     callback()
@@ -150,13 +152,14 @@ Page({
     getMinuteData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getMinuteData(that.data.ticker, getIEXHistoricalDataOption(that.data.quotePeriod),function(minutes){
+        let quotePeriod = that.data.quotePeriod
+        parser.getMinuteData(that.data.ticker, getIEXHistoricalDataOption(quotePeriod),function(minutes){
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }
             console.log('stock minute result ', minutes)
-            console.log('canvas id ' + getCanvasId(that.data.quotePeriod))
-            that.kLineView.drawMinuteCanvas(minutes, getCanvasId(that.data.quotePeriod))
+            console.log('canvas id ' + getCanvasId(quotePeriod))
+            that.kLineView.drawMinuteCanvas(minutes, getCanvasId(quotePeriod))
 
         })
     },
@@ -164,13 +167,15 @@ Page({
     getKlineData: function (callback) {
         wx.showNavigationBarLoading()
         var that = this
-        parser.getKlineData(that.data.ticker, getIEXHistoricalDataOption(that.data.quotePeriod), function(klineData){
+        let quotePeriod = that.data.quotePeriod
+        parser.getKlineData(that.data.ticker, getIEXHistoricalDataOption(quotePeriod), function(klineData){
             console.log(klineData)
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }
             // console.log('stock kline result ', results)
-            that.kLineView.drawKLineCanvas(klineData, getCanvasId(that.data.quotePeriod), that.data.quotePeriod)
+            
+            that.kLineView.drawKLineCanvas(klineData, getCanvasId(quotePeriod), quotePeriod)
         })
     },
 
