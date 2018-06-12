@@ -368,10 +368,9 @@ Page({
         });
     },
 
-    onItemClickEvent: function (e) {
+    clickStockItem: function (e) {
       var data = e.currentTarget.dataset
-      console.log(data.item)
-      util.gotoStockPage(data.item.ticker, data.item.name)
+      util.gotoStockPage(data.item.ticker, data.item.companyName)
     }
 
 });

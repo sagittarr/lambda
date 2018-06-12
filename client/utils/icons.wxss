@@ -20,7 +20,7 @@
   /* background-color: gainsboro */
 }
 
-.icon_panel__icon :active{
+.icon_panel_icon :active{
   background-color: wheat; 
 }
 .icon_disable{

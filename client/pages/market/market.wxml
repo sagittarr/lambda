@@ -71,12 +71,13 @@
       <text class="S2 C1-font lisetview_item_zdf_container" bindtap="onZDFSort">{{sortState==1?'涨跌幅↑':'涨跌幅↓'}}</text>
       <text class="S2 T2 lisetview_item_right_container">终选时间</text>
     </view>
-    <view class="S3 T3" style="text-align:center;width:100%;background-color:#ebebeb"wx:if="{{showList.length==0}}">暂无数据，点击上方搜索栏添加自选股</view>
+    <view class="S3 T2" style="text-align:center;width:100%;background-color:#ebebeb"wx:if="{{showList.length==0}}">暂无数据，点击上方搜索栏添加自选股</view>
     <view id="section_list">
       <block wx:for="{{showList}}" wx:key="symbol">
         <template is="StockCell" data="{{data:item}}" />
       </block>
     </view>
+    <view class="S3 T2" style="text-align:center;width:100%;background-color:#ebebeb"wx:if="{{showList.length!=0 && currListIndex==0}}">提示：长按弹出删除按键，再次长按收回</view>
   </view>
 </view>
 <!--搜索按钮-->

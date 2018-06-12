@@ -212,7 +212,7 @@ class PortfolioUtils {
       var color_style = getApp().globalData.color_style
       var stocks = []
       var avg_chg_pct = 0;
-      console.log(typeof(quotes))
+      console.log('q',quotes)
       quotes.forEach(function (item, i, a) {
         let realtime_chg_percent = parseFloat(item.realtime_chg_percent)
         avg_chg_pct += realtime_chg_percent
@@ -220,22 +220,11 @@ class PortfolioUtils {
         let avg_chg_percent = 0.
         let stockItem = new StockItem(
           item.symbol,
-          item.companyName,
+          item.Name,
           parseFloat(item.realtime_chg_percent)/100.0,
           item.realtime_price
         );
         stocks.push(stockItem)
-      // }
-        // stocks.push({
-        //   'ticker': e.symbol,
-        //   'companyName': e.Name,
-        //   'time': getApp().globalData.selected.inception,
-        //   'chgPct': realtime_chg_percent,
-        //   'chgPctDisplay': mark + realtime_chg_percent.toFixed(2) + '%',
-        //   'price': parseFloat(e.realtime_price).toFixed(2),
-        //   'bgColor': e.realtime_chg_percent > 0 ? color_style.up : e.realtime_chg_percent < 0 ? color_style.down : color_style.off,
-        //   'show_name': false
-        // })
       })
       return stocks
     }

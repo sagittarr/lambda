@@ -131,6 +131,7 @@ Page({
   addToWatchList(){
     if (this.data.stockList && this.data.stockList.length>0){
       util.addToWatchList(this.data.stockList)
+      Zan.TopTips.showZanTopTips(this, '已经加入自选股');
     }
   },
   onCreateNewPortfolio() {

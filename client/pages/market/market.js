@@ -37,19 +37,19 @@ Page({
     // 上次hide是退出hide时，才自动跳转到其它页面
     var that = this
     var page = ''
-    if (options.hasOwnProperty('page')) {
-      page = options.page
+    // if (options.hasOwnProperty('page')) {
+    //   page = options.page
 
-      if (page != '') {
-        if (page == 'stock' || page == 'bk') {
-          if (options.hasOwnProperty('id') && options.hasOwnProperty('name') && options.hasOwnProperty('code')) {
-            util.gotoQuote(parseInt(options.id), options.name, options.code)
-          }
-        } else if (page == 'search') {
-          util.gotoSearchPage('search', '')
-        }
-      }
-    }
+    //   if (page != '') {
+    //     if (page == 'stock' || page == 'bk') {
+    //       if (options.hasOwnProperty('id') && options.hasOwnProperty('name') && options.hasOwnProperty('code')) {
+    //         util.gotoQuote(parseInt(options.id), options.name, options.code)
+    //       }
+    //     } else if (page == 'search') {
+    //       util.gotoSearchPage('search', '')
+    //     }
+    //   }
+    // }
   },
 
   onReady: function () {
@@ -57,8 +57,11 @@ Page({
   },
 
   onShow: function () {
+    stockLists[0] = []
     this.startTimer();
-    this.getData()
+    this.getData();
+    
+    console.log(this.data.showList)
   },
 
   onHide: function () {
@@ -112,15 +115,12 @@ Page({
         key: lambda_key,
         success: function (res) {
           if (res && res.data && res.data['watchlist']) {
-            console.log(res.data['watchlist'])
             stockLists[0] = res.data['watchlist']
-            // that.setData({ showList: stockLists[that.data.currListIndex]})
-            putil.realtime_price(stockLists[0].map(stk => stk.ticker), function (results) {
-              console.log('res',results)
-              if (typeof(results) === 'object') {
-                results = [results]
-              }
+            if (stockLists[0].length==0) return
+            let tickers = stockLists[0].length == 1 ? [stockLists[0].ticker] : stockLists[0].map(stk => stk.ticker)
+            putil.realtime_price(tickers, function (results) {
               stockLists[0] = putil.quoteRealTimePriceCallback(results)
+              that.setData({ showList: stockLists[that.data.currListIndex] })
             })
           }
         },
@@ -129,14 +129,14 @@ Page({
         }
       });
     }
-
-    putil.realtime_price(stockLists[0].map(stk=>stk.ticker), function (results) {
-      console.log(results)
-      if (typeof (results) === 'object') {
-        results = [results]
-      }
+    else{
+    let tickers = stockLists[0].length == 1 ? [stockLists[0].ticker] : stockLists[0].map(stk => stk.ticker)
+    putil.realtime_price(tickers, function (results) {
       stockLists[0] = putil.quoteRealTimePriceCallback(results)
+      that.setData({ showList: stockLists[that.data.currListIndex] })
     })
+    }
+
     parser.getSectorPerformanceFromALV(function (input) {
       let sectorTables = {}
       let periods = ['realTime', '1month', '1year']
@@ -247,6 +247,7 @@ Page({
   longPressStockItem: function (e) {
     console.log(e)
     if (this.data.currListIndex!=0) return;
+    wx.vibrateShort();  
     var that = this
     let item = e.target.dataset.item
     if (!item){
@@ -269,7 +270,8 @@ Page({
     // whileLongPress = true
   },
   clickStockItem: function (e) {
-    console.log(e)
+    var data = e.currentTarget.dataset
+    util.gotoStockPage(data.item.ticker, data.item.companyName)
   },
   removeStockItem: function(e){
     console.log(e)
