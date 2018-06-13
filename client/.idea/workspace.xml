@@ -35,17 +35,17 @@
       <file leaf-file-name="stock.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages/stock/stock.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="87">
-              <caret line="130" selection-start-line="130" selection-end-line="130" />
+            <state relative-caret-position="109">
+              <caret line="131" selection-start-line="131" selection-end-line="131" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="market.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="market.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pages/market/market.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="59" column="13" selection-start-line="59" selection-start-column="13" selection-end-line="59" selection-end-column="13" />
+            <state relative-caret-position="574">
+              <caret line="318" column="2" selection-start-line="318" selection-start-column="2" selection-end-line="318" selection-end-column="2" />
             </state>
           </provider>
         </entry>
@@ -62,8 +62,8 @@
       <file leaf-file-name="analyzer.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages/portfolio/analyzer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
-              <caret line="254" selection-start-line="254" selection-end-line="261" selection-end-column="34" />
+            <state relative-caret-position="93">
+              <caret line="250" selection-start-line="250" selection-end-line="250" />
             </state>
           </provider>
         </entry>
@@ -95,11 +95,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="search.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="search.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages/search/search.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="153" column="64" selection-start-line="153" selection-start-column="64" selection-end-line="153" selection-end-column="64" />
+            <state relative-caret-position="1994">
+              <caret line="154" column="64" selection-start-line="154" selection-start-column="64" selection-end-line="154" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -151,10 +151,10 @@
         <option value="$PROJECT_DIR$/pages/lab2/helper.js" />
         <option value="$PROJECT_DIR$/models/SectorPerformance.js" />
         <option value="$PROJECT_DIR$/pages/StockItem.js" />
-        <option value="$PROJECT_DIR$/pages/market/market.js" />
         <option value="$PROJECT_DIR$/parsers/quote_parser.js" />
         <option value="$PROJECT_DIR$/models/StockItem.js" />
         <option value="$PROJECT_DIR$/pages/search/search.js" />
+        <option value="$PROJECT_DIR$/pages/market/market.js" />
       </list>
     </option>
   </component>
@@ -169,7 +169,7 @@
       <path value="$PROJECT_DIR$/vendor/wafer2-client-sdk/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="259" />
     <option name="y" value="15" />
     <option name="width" value="1406" />
@@ -212,12 +212,12 @@
       <workItem from="1526087384774" duration="22243000" />
       <workItem from="1527077983713" duration="597000" />
       <workItem from="1527170303770" duration="2265000" />
-      <workItem from="1528080149471" duration="12573000" />
+      <workItem from="1528080149471" duration="13817000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42771000" />
+    <option name="totallyTimeSpent" value="44015000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1477" height="797" extended-state="6" />
@@ -562,8 +562,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pages/stock/stock.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="87">
-          <caret line="130" selection-start-line="130" selection-end-line="130" />
+        <state relative-caret-position="109">
+          <caret line="131" selection-start-line="131" selection-end-line="131" />
         </state>
       </provider>
     </entry>
@@ -572,8 +572,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pages/portfolio/analyzer.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="254" selection-start-line="254" selection-end-line="261" selection-end-column="34" />
+        <state relative-caret-position="93">
+          <caret line="250" selection-start-line="250" selection-end-line="250" />
         </state>
       </provider>
     </entry>
@@ -588,13 +588,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="286">
           <caret line="23" selection-start-line="23" selection-end-line="23" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pages/market/market.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="59" column="13" selection-start-line="59" selection-start-column="13" selection-end-line="59" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -614,8 +607,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pages/search/search.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="153" column="64" selection-start-line="153" selection-start-column="64" selection-end-line="153" selection-end-column="64" />
+        <state relative-caret-position="1994">
+          <caret line="154" column="64" selection-start-line="154" selection-start-column="64" selection-end-line="154" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pages/market/market.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="574">
+          <caret line="318" column="2" selection-start-line="318" selection-start-column="2" selection-end-line="318" selection-end-column="2" />
         </state>
       </provider>
     </entry>

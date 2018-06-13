@@ -212,7 +212,6 @@ class PortfolioUtils {
       var color_style = getApp().globalData.color_style
       var stocks = []
       var avg_chg_pct = 0;
-      console.log('q',quotes)
       quotes.forEach(function (item, i, a) {
         let realtime_chg_percent = parseFloat(item.realtime_chg_percent)
         avg_chg_pct += realtime_chg_percent

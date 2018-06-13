@@ -447,7 +447,6 @@ function addToWatchList(stocks){
       data['watchlist'] = []
     }
     stocks.map(stk => { if (!data['watchlist'].some(x=>x.ticker ==stk.ticker)){data['watchlist'].push(stk)} })
-    console.log(data['watchlist'])
     wx.setStorage({
       key: lambda_key,
       data: data,
