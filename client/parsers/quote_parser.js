@@ -127,11 +127,27 @@ function getMinuteData(ticker, option, callback, source = 'IEX'){
         console.log(_iexQuote)
         handle()
     })
-    api.call3rdPartyAPI("IEX",'https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, {convertKLineChart: true, freq: option.freq}, function (_iexChartData) {
+    var options = {
+      url: config.service.db_handler,
+      data: { operation: 'LOAD_INTRADAY', ticker: ticker, source: 'IEX', apiUrl: 'https://api.iextrading.com/1.0/stock/' + ticker + '/chart/1d' },
+      success(res) {
+        let _iexChartData = res.data.data
+        console.log("LOAD_INTRADAY", _iexChartData)
         iexChartData = _iexChartData
-        console.log(_iexChartData)
+        console.log(iexChartData)
         handle()
-    })
+      },
+      fail(error) {
+        util.showModel('请求失败', error);
+        console.log('LOAD_INTRADAY', error);
+      }
+    }
+    wx.request(options);
+    // api.call3rdPartyAPI("IEX",'https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, {convertKLineChart: true, freq: option.freq}, function (_iexChartData) {
+    //     iexChartData = _iexChartData
+    //     console.log(_iexChartData)
+    //     handle()
+    // })
 }
 
 function getKlineData(ticker, option, callback, source= 'IEX'){
