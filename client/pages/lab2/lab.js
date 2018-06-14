@@ -37,6 +37,19 @@ Page({
         });
       }
     });
+    let ticker = 'AAPL'
+    var options = {
+      url: config.service.db_handler,
+      data: { operation: 'LOAD_INTRADAY', ticker: 'AAPL', source: 'IEX', apiUrl:'https://api.iextrading.com/1.0/stock/'+ticker+'/chart/1d'},
+      success(result) {
+        console.log("LOAD_INTRADAY", result)
+      },
+      fail(error) {
+        util.showModel('请求失败', error);
+        console.log('LOAD_INTRADAY', error);
+      }
+    }
+    wx.request(options);
     // putils.callAPI('', 'IEX')
     // this.updateData()
     // var options = {

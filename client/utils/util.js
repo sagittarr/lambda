@@ -459,7 +459,7 @@ function addToWatchList(stocks){
       pushStocks(res)
     },
     fail: function (res) {
-      pushStocks()
+      pushStocks({})
     }
   });
 }

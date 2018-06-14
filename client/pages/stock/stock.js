@@ -141,7 +141,7 @@ Page({
             quotation.high = quotation.high.toFixed(2)
             quotation.low = quotation.low.toFixed(2)
             quotation.price  = quotation.price.toFixed(2)
-            quotation.color = quotation.zdf < 0 ? color_style.down :color_style.up
+            quotation.color = sign =='+' ? color_style.up :color_style.down
             that.setData({ quotation: quotation })
                 if (callback != null && typeof (callback) == 'function') {
                     callback()
@@ -206,6 +206,7 @@ Page({
                     that.setData({
                         news: newsItems[ticker]
                     })
+                    console.log(newsItems[ticker])
                 }
         })
         // Api.stock.getNews({

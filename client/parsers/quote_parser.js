@@ -163,7 +163,7 @@ function getNewsItems(tickers, callback){
         tickers.map(ticker=>{
             newsItems[ticker] = []
             results[ticker].news.map(newsData=>{
-                newsItems[ticker].push(new NewsItem(newsData.url, newsData.source, '', newsData.datetime, '', newsData.headline, newsData.summary))
+                newsItems[ticker].push(new NewsItem(newsData.url, newsData.source, '', newsData.datetime, '', newsData.headline.replace(new RegExp('&amp;'),'\&').replace(new RegExp('&apos;'),'\''), newsData.summary))
             })
         })
         callback(newsItems)

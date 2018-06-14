@@ -9,6 +9,8 @@ var StockDataFactory = STK.StockDataFactory;
 var AggregationData = STK.Aggregation;
 var AggregationFactory = STK.AggregationFactory
 var StrategyBuilder = require('./StrategyBuilder')
+const ExtApi = require('./externalApi')
+
 
 var knex = require('knex')({
     client: 'mysql',
@@ -157,7 +159,25 @@ async function loadSingleStockData(ticker, source){
         })
     })
 }
-
+async function smartLoadIntraday(request){
+    return new Promise(function(resolve, reject){
+        readTable('intraday',{'id': request.ticker+'_'+ request.source}).then(function(rows){
+            console.log(rows)
+            if (rows.length === 0) {
+                // if(request.source === 'iex'){
+                    var iexReq = {apiUrl: request.apiUrl}
+                    ExtApi.call(iexReq).then(function (res) {
+                        insertTable('intraday',{'id': request.ticker+'_'+ request.source}, {'id': request.ticker+'_'+ request.source, 'ticker': request.ticker, 'source':request.source, 'data': JSON.stringify(res)})
+                        resolve(res)
+                    }).catch(function(err){console.error(err);reject(err)})
+                // }
+            }
+            else {
+                resolve(JSON.parse(rows[0].data))
+            }
+        })
+    })
+}
 async function smartLoadStockHistory(ticker, source){
     return new Promise(function(resolve, reject){
         readHistoricalFromDB(ticker, source).then(function (rows) {
@@ -330,6 +350,35 @@ async function getHistoricalDataFromYahoo(request) {
     });
 }
 
+function insertTable(tableName, condition, data){
+    knex(tableName).select()
+        .where(condition)
+        .then(function (rows) {
+            console.log('ins',rows,data)
+            if (rows.length === 0) {
+                knex(tableName).insert(data).then(function(msg){console.log(msg)}).catch(function(err){console.log(err)})
+            } else {
+                knex(tableName).where(condition).update(data)
+            }
+        })
+        .catch(function (ex) {
+            console.error(ex)
+        })
+}
+
+function readTable(tableName, condition){
+    return new Promise(function (resolve, reject) {
+        knex(tableName).select()
+            .where(condition)
+            .then(function (rows) {
+                resolve(rows)
+            })
+            .catch(function (ex) {
+                reject(ex)
+            })
+    })
+
+}
 function insert_historical(ticker, data, time_stamp, source, update_time = null) {
     knex('historical_data').select()
         .where({'id': ticker+'_'+source})
@@ -399,6 +448,7 @@ module.exports = {
     createNewProfile: createNewProfile,
     retryer: reTryer,
     deleteProfile:deleteProfile,
-    convertHistoricalData:convertHistoricalData
+    convertHistoricalData:convertHistoricalData,
+    smartLoadIntraday:smartLoadIntraday
 };
 

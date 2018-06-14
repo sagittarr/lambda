@@ -26,7 +26,7 @@ app.use(router.routes())
 // 启动程序，监听端口
 app.listen(config.port, () => debug(`listening on port ${config.port}`))
 
-cron.schedule('5 9 * * *', function () {
+cron.schedule('5,26 9,11 * * *', function () {
     api.read_historical(null, null).then( function (rows) {
         console.log('number of rows', rows.length)
         rows.forEach(function (row) {
