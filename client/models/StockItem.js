@@ -1,7 +1,7 @@
 const color_style = getApp().globalData.color_style
 function StockItem(ticker, companyName, chgPct, price, securityType){
     this.ticker = ticker
-    this.companyName = companyName
+    this.companyName = companyName.replace(new RegExp('&amp;','g'),'\&')
     this.chgPct = parseFloat(chgPct)
     this.price = parseFloat(price).toFixed(2)
     this.securityType = securityType

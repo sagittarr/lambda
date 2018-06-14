@@ -194,6 +194,7 @@ Page({
             }
             else if (category == 'active') {
                 stockLists[3] = result
+                console.log(result)
             }
             // else if (category == 'iexpercent') {
             //   stockLists[4] = result
@@ -301,6 +302,7 @@ Page({
     },
     clickStockItem: function (e) {
         var data = e.currentTarget.dataset
+        // console.log(data)
         util.gotoStockPage(data.item.ticker, data.item.companyName)
     },
     removeStockItem: function(e){

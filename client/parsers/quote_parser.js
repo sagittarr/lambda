@@ -49,7 +49,7 @@ function getBatchDataFromIEX(tickers, quote, callback){
 function parseStockItemFromIEX(item){
     return new StockItem(
       item.symbol, 
-      item.companyName, 
+      item.companyName.replace(new RegExp('&amp;','g'),'\&'),
       item.changePercent,
       item.latestPrice
       );
@@ -163,7 +163,7 @@ function getNewsItems(tickers, callback){
         tickers.map(ticker=>{
             newsItems[ticker] = []
             results[ticker].news.map(newsData=>{
-                newsItems[ticker].push(new NewsItem(newsData.url, newsData.source, '', newsData.datetime, '', newsData.headline.replace(new RegExp('&amp;'),'\&').replace(new RegExp('&apos;'),'\''), newsData.summary))
+                newsItems[ticker].push(new NewsItem(newsData.url, newsData.source, '', newsData.datetime, '', newsData.headline.replace(new RegExp('&amp;','g'),'\&').replace(new RegExp('&apos;','g'),'\''), newsData.summary))
             })
         })
         callback(newsItems)

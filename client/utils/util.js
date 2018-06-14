@@ -407,7 +407,7 @@ function getCurrentGoodsClassType(goodsId) {
 
 // 跳转到股票详情
 function gotoStockPage(ticker, companyName) {
-  var url = '/pages/stock/stock?ticker=' + ticker+'&companyName='+companyName
+  var url = '/pages/stock/stock?ticker=' + ticker+'&companyName='+companyName.replace("&","")
     wx.navigateTo({
         url: url
     })
