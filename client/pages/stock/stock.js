@@ -1,25 +1,96 @@
-var KLineView = require('../common/KLineView/KLineView.js')
-var NewsItem = require('NewsItem.js')
-var Quotation = require('../../models/Quotation.js')
-var parser = require('../../parsers/quote_parser.js')
-var dataApi = require('../../api/data_api.js')
-const util = require('../../utils/util.js')
-const color_style = getApp().globalData.color_style
-Page({
+const KLineView = require('../common/KLineView/KLineView.js');
+const KlineData = require('../../models/KLineData.js');
+const NewsItem = require('NewsItem.js');
+const Quotation = require('../../models/Quotation.js');
+const parser = require('../../parsers/quote_parser.js');
+const dataApi = require('../../api/data_api.js');
+const util = require('../../utils/util.js');
+const api = require('../../api/data_api.js');
+const color_style = getApp().globalData.color_style;
+const Zan = require('../../utils/dist/index');
+const StockItem = require('../../models/StockItem.js');
 
+function getIEXHistoricalDataOption(period) {
+    switch (period) {
+        case 1:
+            return {range: '1d', freq: ''};
+            break;
+        case 100:
+            return {range: '1y', freq: ''};
+            break;
+        case 101:
+            return {range: '2y', freq: 'W'};
+            break;
+        case 102:
+            return {range: '5y', freq : 'M'};
+            break;
+        case 60:
+            return {range: '1d', freq: ''};
+            break;
+    }
+    return ;
+}
+function getCanvasId(period) {
+    switch (period) {
+        case 1:
+            return 1;
+            break;
+        case 100:
+            return 2;
+            break;
+        case 101:
+            return 3;
+            break;
+        case 102:
+            return 4;
+            break;
+        case 60:
+            return 5;
+            break;
+    }
+    return 1;
+}
+function idx2Period(idx){
+    if(idx<=4 && idx>=1) {
+        return [1, 1, 100, 101, 102][idx];
+    }
+    return 0;
+}
+function movingAverage(klineData = [new KlineData()], option){
+    let K = 20;
+    if(option === 'ma20'){
+        K = 20;
+    }
+    else if(option === 'ma5'){
+        K = 5;
+    }
+    else if(option === 'ma10'){
+        K = 10;
+    }
+    let sum = 0;
+    klineData.map((item,i)=>{
+        sum += parseFloat(item.price);
+        item[option] = NaN;
+        if(i>=K - 1){
+            item[option] = sum/K;
+            sum -= klineData[i-K+ 1].price;
+        }
+    });
+};
+
+Page({
     data: {
         // 个股头部数据
         quotation: {},
-        // ticker: '--',
-        // goodsName: '青岛啤酒',
         ticker: '--',
         companyName: '--',
-        // quotationColor: 'green',
-        currentTimeIndex: 0,
+        companyInfo: {},
+        latestKline: undefined,
+        currentTimeIndex: 1,
         currentInfoIndex: 0,
-        quotePeriod: 1,
+        quotePeriod: 100,
         quoteData: {
-            canvasIndex: 0
+            canvasIndex: 2
         },
         news: [],               // 新闻列表数据
         notices: [],            // 公告列表数据
@@ -33,19 +104,36 @@ Page({
             notice: false,
             research: false
         },
-        isAddToZxg: false    // 是否已添加到自选股
+        isAddToZxg: false,    // 是否已添加到自选股
+        finanicalTable: [
+            { "code": '', "col1": '' }
+        ],
     },
 
     onLoad: function (option) {
         if (option.hasOwnProperty('ticker')) {
             this.setData({
-                // ticker: parseInt(option.id),
-                // goodsName: option.name,
-                ticker: option.ticker,
+                ticker: option.ticker
+            })
+        }
+        if (option.hasOwnProperty('companyName')) {
+            this.setData({
                 companyName: option.companyName
             })
         }
-
+        if (option.hasOwnProperty('currentTimeIndex') ) {
+            let idx = parseInt(option.currentTimeIndex);
+            this.setData({
+                currentTimeIndex: idx,
+                quotePeriod: idx2Period(idx+1),
+                quoteData: {canvasIndex : idx+1}
+            })
+        }
+        if (option.hasOwnProperty('currentInfoIndex')) {
+            this.setData({
+                currentInfoIndex: parseInt(option.currentInfoIndex)
+            })
+        }
         wx.setNavigationBarTitle({
             title: `${this.data.ticker}(${this.data.companyName})`
         })
@@ -54,13 +142,26 @@ Page({
         this.kLineView = new KLineView()
         this.timerId = -1             // 循环请求id
 
-        console.log('stock page onLoad ', this.data.ticker)
-
-        // fundview.init(this);
-        // fundview.show(this);
-        // fundview.setJLValue(this);
+        console.log('stock page onLoad ', this.data.ticker, option)
         util.showBusy('请求中...');
         this.getData()
+    },
+
+
+    onShareAppMessage: function (options) {
+        let that = this;
+        console.log(that.data.currentTimeIndex)
+        return {
+            title : that.data.ticker,
+            desc: '个股信息',
+            path: '/pages/market/market?ticker='+that.data.ticker +'&companyName='+that.data.companyName.replace("&","") + '&currentTimeIndex=' +that.data.currentTimeIndex.toString() + '&currentInfoIndex=' + that.data.currentInfoIndex.toString(),
+            success: function (){
+                wx.showToast({
+                    title: '转发成功！',
+                    icon: 'success'
+                });
+            }
+        };
     },
 
     onShow: function () {
@@ -77,22 +178,9 @@ Page({
         this.stopAutoRequest()
     },
 
-    onShareAppMessage: function () {
-        var that = this
-        // var id = that.data.ticker
-        // var name = that.data.goodsName
-        var code = that.data.ticker
-
-        return {
-            title: `(${code})`,
-            desc: `${getApp().globalData.shareDesc}`,
-            // path: `/pages/stock/stock?id=${id}&name=${name}&code=${code}`
-            path: `/pages/kanpan/kanpan?code=${code}&page=stock`
-        }
-    },
 
     onPullDownRefresh: function (event) {
-      util.showBusy('请求中...');
+        util.showBusy('请求中...');
         this.getData()
     },
 
@@ -113,6 +201,8 @@ Page({
 
     // 循环请求
     getData: function () {
+        let that = this
+
         // 请求行情
         this.getQuotationValue(function () {
             wx.hideNavigationBarLoading()
@@ -128,54 +218,131 @@ Page({
         this.getNews(function () {
             wx.hideNavigationBarLoading()
         })
+        this.getCompanyInfo(function(info){
+            wx.hideNavigationBarLoading()
+        })
+        this.getKeyStats(function(stats){
+            wx.hideNavigationBarLoading()
+        })
+        this.getFinanicalTableFromYH(function(){
+            wx.hideNavigationBarLoading()
+        })
+        util.isStockInWatchList(this.data.ticker, function(res){
+            that.setData({ isAddToZxg: res})
+            console.log(that.data.ticker,that.data.isAddToZxg)
+        })
     },
-
+    getFinanicalTableFromYH(callback){
+        var that = this;
+        api.quoteYahooFinance(this.data.ticker, ['financialData'], function (quote) {
+            let fTable = [];
+            fTable.push({'code':'earningsGrowth', 'col1':quote['financialData'].earningsGrowth});
+            fTable.push({ 'code': 'quickRatio', 'col1': quote['financialData'].quickRatio });
+            fTable.push({ 'code': 'currentRatio', 'col1': quote['financialData'].currentRatio });
+            fTable.push({ 'code': 'targetMedianPrice', 'col1': quote['financialData'].targetMedianPrice });
+            fTable.push({ 'code': 'recommendationKey', 'col1': quote['financialData'].recommendationKey });
+            fTable.push({ 'code': 'totalCashPerShare', 'col1': quote['financialData'].totalCashPerShare });
+            fTable.push({ 'code': 'revenuePerShare', 'col1': quote['financialData'].revenuePerShare });
+            fTable.push({ 'code': 'debtToEquity', 'col1': quote['financialData'].debtToEquity });
+            fTable.push({ 'code': 'returnOnAssets', 'col1': quote['financialData'].returnOnAssets });
+            fTable.push({ 'code': 'returnOnEquity', 'col1': quote['financialData'].returnOnEquity });
+            fTable.push({ 'code': 'grossProfits', 'col1': quote['financialData'].grossProfits });
+            fTable.push({ 'code': 'freeCashflow', 'col1': quote['financialData'].freeCashflow });
+            fTable.push({ 'code': 'totalRevenue', 'col1': quote['financialData'].totalRevenue });
+            that.setData({finanicalTable: fTable});
+            console.log(quote)
+            callback();
+        })
+    },
+    getKeyStats: function(callback){
+        let that = this;
+        parser.quoteSingleStockFromIEX(this.data.ticker, 'stats', function(stats){
+            if (stats && stats.latestEPS && that.data.quotation && that.data.quotation.price){
+                stats.peRatio = (that.data.quotation.price / stats.latestEPS).toFixed(2)
+            }
+            stats.year5ChangePercent = stats.year5ChangePercent.toFixed(2)
+            stats.EBITDA = (stats.EBITDA/1000000).toFixed(1) +'M'
+            stats.institutionPercent = stats.institutionPercent + '%'
+            stats.latestEPSDate = stats.latestEPSDate.replace('-', '').replace('-', '')
+            that.setData({ keyStats: stats })
+            // console.log(stats)
+        })
+    },
+    getCompanyInfo: function(callback){
+        wx.showNavigationBarLoading()
+        let that = this
+        parser.quoteSingleStockFromIEX(this.data.ticker,'company', function(res){
+            that.setData({ companyInfo: res})
+        })
+    },
     // 获取行情数据
     getQuotationValue: function (callback) {
-        wx.showNavigationBarLoading()
-        var that = this
+        wx.showNavigationBarLoading();
+        var that = this;
         parser.getQuotation(that.data.ticker, function(quotation = new Quotation()){
-            let sign = quotation.zdf>0?'+':''
-            quotation.zdf = sign + (quotation.zdf*100).toFixed(2).toString() + '%'
-            quotation.zd = sign + quotation.zd.toFixed(2).toString()
-            quotation.high = quotation.high.toFixed(2)
-            quotation.low = quotation.low.toFixed(2)
-            quotation.price  = quotation.price.toFixed(2)
-            quotation.color = sign =='+' ? color_style.up :color_style.down
-            that.setData({ quotation: quotation })
-                if (callback != null && typeof (callback) == 'function') {
-                    callback()
-                }
+            let stats = that.data.keyStats
+            if (stats && stats.latestEPS && quotation && quotation.price) {
+                stats.peRatio = (quotation.price / stats.latestEPS).toFixed(2)
+                that.setData({keyStats: stats})
+            }
+            let sign = quotation.zdf>0?'+':'';
+            quotation.zdf = sign + (quotation.zdf*100).toFixed(2).toString() + '%';
+            quotation.zd = sign + quotation.zd.toFixed(2).toString();
+            quotation.high = quotation.high.toFixed(2);
+            quotation.low = quotation.low.toFixed(2);
+            quotation.price  = quotation.price.toFixed(2);
+            quotation.color = '+' == sign ? color_style.up :color_style.down;
+            let klineData = new KlineData(
+                parseInt(quotation.regularMarketTime.slice(0,10).replace(/-/g,'')),
+                parseFloat(quotation.open)*1000,
+                parseFloat(quotation.high)*1000,
+                parseFloat(quotation.low)*1000,
+                parseFloat(quotation.price)*1000,
+                parseFloat(quotation.price)*1000,
+                undefined,
+                undefined,
+                quotation.realVolume,
+                parseFloat(quotation.price)*1000,
+                quotation.realVolume);
+            that.setData({ quotation: quotation, latestKline: klineData});
+            if (callback != null && typeof (callback) == 'function') {
+                callback()
+            }
         })
     },
 
     getMinuteData: function (callback) {
         wx.showNavigationBarLoading()
-        var that = this
+        util.showBusy('请求中...');
+        let that = this;
         let quotePeriod = that.data.quotePeriod
         parser.getMinuteData(that.data.ticker, getIEXHistoricalDataOption(quotePeriod),function(minutes){
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }
-            console.log('stock minute result ', minutes)
-            console.log('canvas id ' + getCanvasId(quotePeriod))
+            util.showSuccess('请求成功');
+            console.log(minutes)
             that.kLineView.drawMinuteCanvas(minutes, getCanvasId(quotePeriod))
 
         })
     },
 
     getKlineData: function (callback) {
-        wx.showNavigationBarLoading()
-        var that = this
-        let quotePeriod = that.data.quotePeriod
+        wx.showNavigationBarLoading();
+        var that = this;
+        let quotePeriod = that.data.quotePeriod;
         parser.getKlineData(that.data.ticker, getIEXHistoricalDataOption(quotePeriod), function(klineData){
-            console.log(klineData)
-            if (callback != null && typeof (callback) == 'function') {
+            if (callback != null && typeof(callback) == 'function') {
                 callback()
             }
-            // console.log('stock kline result ', results)
-            
-            that.kLineView.drawKLineCanvas(klineData, getCanvasId(quotePeriod), quotePeriod)
+            if(quotePeriod === 100 && that.data.latestKline && that.data.latestKline.time > klineData[klineData.length -1].time){
+                klineData.push(that.data.latestKline);
+            }
+            movingAverage(klineData, 'ma20');
+            movingAverage(klineData, 'ma5');
+            movingAverage(klineData, 'ma10');
+            // console.log(klineData);
+            that.kLineView.drawKLineCanvas(klineData, getCanvasId(quotePeriod), quotePeriod);
         })
     },
 
@@ -192,55 +359,47 @@ Page({
 
     getNews: function (callback) {
         // 如果数据已请求完成，不再请求
-        if (this.getIsInfoLoad()) return
-
-        wx.showNavigationBarLoading()
+        if (this.getIsInfoLoad()) return;
+        wx.showNavigationBarLoading();
         var that = this
         var ticker = that.data.ticker
         parser.getNewsItems([ticker], function(newsItems){
-                if (callback != null && typeof (callback) == 'function') {
-                    callback()
-                }
-                if (newsItems.hasOwnProperty(ticker) && newsItems[ticker].length>0) {
-                    that.setIsInfoLoad('0')
-                    that.setData({
-                        news: newsItems[ticker]
-                    })
-                    console.log(newsItems[ticker])
-                }
+            if (callback != null && typeof (callback) == 'function') {
+                callback()
+            }
+            if (newsItems.hasOwnProperty(ticker) && newsItems[ticker].length>0) {
+                that.setIsInfoLoad('0')
+                that.setData({
+                    news: newsItems[ticker]
+                })
+                console.log(newsItems[ticker])
+            }
         })
-        // Api.stock.getNews({
-        //     id: that.data.ticker + '',
-        //     cls: that.data.infoCls
-        // }).then(function (results) {
-        //     // console.log('stock news result ', results)
 
-        //     if (callback != null && typeof (callback) == 'function') {
-        //         callback()
-        //     }
-
-        //     if (results.hasOwnProperty('news')) {
-        //         that.setIsInfoLoad('0')
-        //         that.setData({
-        //             news: results.news
-        //         })
-        //     } else if (results.hasOwnProperty('notices')) {
-        //         that.setIsInfoLoad('2')
-        //         that.setData({
-        //             notices: results.notices
-        //         })
-        //     } else if (results.hasOwnProperty('research')) {
-        //         that.setIsInfoLoad('3')
-        //         that.setData({
-        //             research: results.research
-        //         })
-        //     }
-        // }, function (res) {
-        //     console.log("------fail----", res)
-        //     wx.hideNavigationBarLoading()
-        // })
     },
-
+    updateWatchList: function (e) {
+        let that = this
+        if (this.data.ticker) {
+            if (this.data.isAddToZxg) {
+                util.removeFromWatchList([this.data.ticker])
+                Zan.TopTips.showZanTopTips(this, '已从自选股移除');
+            } else {
+                let stocks = []
+                stocks.push(new StockItem(
+                    this.data.ticker,
+                    this.data.companyName
+                    // item.changePercent,
+                    // item.latestPrice
+                ));
+                util.addToWatchList(stocks)
+                Zan.TopTips.showZanTopTips(this, '已经加入自选股');
+            }
+            util.isStockInWatchList(this.data.ticker, function (res) {
+                that.setData({ isAddToZxg: res })
+                console.log(that.data.ticker, that.data.isAddToZxg)
+            })
+        }
+    },
     onPeriodSelectorClick: function (e) {
         let index = e.currentTarget.dataset.index
         let period = 1
@@ -249,23 +408,23 @@ Page({
         switch (index) {
             case "0":
                 period = 1;
-                canvasIndex = 0
+                canvasIndex = 1
                 break;
             case "1":
                 period = 100;
-                canvasIndex = 1
+                canvasIndex = 2
                 break;
             case "2":
                 period = 101;
-                canvasIndex = 2
+                canvasIndex = 3
                 break;
             case "3":
                 period = 102;
-                canvasIndex = 3
+                canvasIndex = 4
                 break;
             case "4":
                 period = 60;
-                canvasIndex = 4
+                canvasIndex = 5
                 break;
         }
 
@@ -277,7 +436,7 @@ Page({
             }
         })
 
-        if (this.kLineView.isCanvasDrawn(canvasIndex + 1)) return;
+        if (this.kLineView.isCanvasDrawn(canvasIndex)) return;
 
         this.getQuotationTrend(function () {
             wx.hideNavigationBarLoading()
@@ -406,48 +565,7 @@ Page({
         // })
     }
 })
-function getIEXHistoricalDataOption(period) {
-    switch (period) {
-        case 1:
-            return {range: '1d', freq: ''};
-            break;
-        case 100:
-            return {range: '1y', freq: ''};
-            break;
-        case 101:
-            return {range: '2y', freq: 'W'};
-            break;
-        case 102:
-            return {range: '5y', freq : 'M'};
-            break;
-        case 60:
-            return {range: '1d', freq: ''};
-            break;
-    }
 
-    return ;
-}
-function getCanvasId(period) {
-    switch (period) {
-        case 1:
-            return 1;
-            break;
-        case 100:
-            return 2;
-            break;
-        case 101:
-            return 3;
-            break;
-        case 102:
-            return 4;
-            break;
-        case 60:
-            return 5;
-            break;
-    }
-
-    return 1;
-}
 
 function initData(that) {
     // 初始化数据显示

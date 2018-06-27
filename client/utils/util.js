@@ -406,8 +406,14 @@ function getCurrentGoodsClassType(goodsId) {
 }
 
 // 跳转到股票详情
-function gotoStockPage(ticker, companyName) {
-  var url = '/pages/stock/stock?ticker=' + ticker+'&companyName='+companyName.replace("&","")
+function gotoStockPage(ticker, companyName, currentTimeIndex, currentInfoIndex) {
+    let url = '/pages/stock/stock?ticker=' + ticker+'&companyName='+companyName.replace("&","");
+    if(currentTimeIndex){
+        url += '&currentTimeIndex=' + currentTimeIndex;
+    }
+    if(currentInfoIndex){
+        url += '&currentInfoIndex=' + currentInfoIndex;
+    }
     wx.navigateTo({
         url: url
     })
@@ -436,7 +442,42 @@ function getStockCodeByGoodsId(goodsId) {
         return goodsId.substring(left);
     }
 }
-
+function isStockInWatchList(ticker, callback){
+  var lambda_key = getApp().globalData.lambda_key
+  wx.getStorage({
+    key: lambda_key,
+    success: function (res) {
+      if (res.data['watchlist']){
+        callback(res.data['watchlist'].some(function(stk){return stk.ticker == ticker}))
+      }
+      else{
+        callback(false)
+      }
+    },
+    fail: function (res) {
+      callback(false)
+    }
+  });
+}
+function removeFromWatchList(tickers) {
+  var lambda_key = getApp().globalData.lambda_key
+  wx.getStorage({
+    key: lambda_key,
+    success: function (res) {
+      if(res.data && res.data['watchlist']){
+        res.data['watchlist'] = res.data['watchlist'].filter(stk => !tickers.includes(stk.ticker));
+        console.log(res.data['watchlist'])
+        wx.setStorage({
+          key: lambda_key,
+          data: res.data,
+        });
+      }
+    },
+    fail: function (res) {
+      console.error('watchlist not exist')
+    }
+  });
+}
 function addToWatchList(stocks){
   function pushStocks(res){
     let data = {}
@@ -463,6 +504,38 @@ function addToWatchList(stocks){
     }
   });
 }
+/**
+ * 将object转化成URL query字符串
+ * obj Object 转化对象
+ * mark Boolean 是否添加 ? 到query之前
+ */
+function encodeQuery(obj, mark = true) {
+  if (!Object.keys(obj).length) {
+    return '';
+  }
+  var query = Object.keys(obj).map(function (key) {
+    return key + '=' + obj[key]
+  }).join('&')
+  return mark ? '?' + query : query;
+}
+
+/**
+ * 将URL query转化成Object
+ * query String 查询字符串
+ */
+function decodeQuery(query) {
+  if (typeof query != 'string') {
+    return {};
+  }
+  query = query.startsWith('?') ? query.substring(1) : query;
+  var obj = {}
+  query.split('&').map(function (key) {
+    var tempArr = key.split('=');
+    obj[tempArr[0]] = tempArr[1];
+  })
+  return obj;
+}
+
 module.exports = {
     formateTime: formateTime,
     formateNumber: formateNumber,
@@ -492,7 +565,11 @@ module.exports = {
     showBusy: showBusy,
     showSuccess : showSuccess,
     showModel : showModel,
-    addToWatchList: addToWatchList
+    addToWatchList: addToWatchList,
+    removeFromWatchList: removeFromWatchList,
+    isStockInWatchList: isStockInWatchList,
+    'encodeQuery': encodeQuery,
+    'decodeQuery': decodeQuery
 }
 
 // module.exports = { }

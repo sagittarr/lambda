@@ -10,26 +10,28 @@
 }
 
 .lisetview_item_left_container {
-  width: 189rpx;
+  width: 25%;
   height: 100%;
   display: flex;
   flex-direction: column;
   padding-left: 15rpx;
-  justify-content: center;
-  align-items: center;
+    justify-content: center;
+  align-items: center;  
 }
 
 .lisetview_item_middle_container {
-  width: 187rpx;
+  width: 40%;
   height: 100%;
-  display: flex;
+  display: inline-block;  
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center; 
+  word-wrap:break-all;
+  text-overflow:ellipsis;overflow:hidden;
 }
 
 .lisetview_item_zdf_container {
-  width: 187rpx;
+  width: 35%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -38,7 +40,7 @@
 }
 
 .lisetview_item_right_container {
-  width: 187rpx;
+  width: 35%;
   height: 100%;
   display: flex;
   padding-left: 30rpx;

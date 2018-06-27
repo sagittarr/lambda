@@ -72,18 +72,18 @@ function quoteMarketIndex (that, marketIndex) {
 }
 
 function quoteProfileDailyChangeFromYHD(profile, that) {
-    let tickers
-    if(profile.isLocal){
-        tickers = profile.tickers
-    }
-    else{
-        if (profile.curr_holds && profile.curr_holds[0] && typeof(profile.curr_holds[0]) === typeof("str"))
-            tickers = profile.curr_holds
-        else{
-            tickers = profile.curr_holds.map(stock=>stock.ticker)
-        }
-    }
-    putils.realtime_price(tickers, function (results) {
+    // let tickers
+    // if(profile.isLocal){
+    //     tickers = profile.tickers
+    // }
+    // else{
+    //     if (profile.curr_holds && profile.curr_holds[0] && typeof(profile.curr_holds[0]) === typeof("str"))
+    //         tickers = profile.curr_holds
+    //     else{
+    //         tickers = profile.curr_holds.map(stock=>stock.ticker)
+    //     }
+    // }
+    putils.realtime_price(profile.tickers, function (results) {
         var chg_pct = 0
         if (results == undefined) {
             wx.stopPullDownRefresh();
@@ -105,23 +105,12 @@ function quoteProfileDailyChangeFromYHD(profile, that) {
 }
 
 function quoteProfileDailyChangeFromIEX(profile, that) {
-    let tickers
-    if(profile.isLocal){
-        tickers = profile.tickers
-    }
-    else{
-        if (profile.curr_holds && profile.curr_holds[0] && typeof(profile.curr_holds[0]) === typeof("str"))
-            tickers = profile.curr_holds
-        else{
-            tickers = profile.curr_holds.map(stock=>stock.ticker)
-        }
-    }
-    parser.getBatchDataFromIEX(tickers, 'quote', function(result){
+    parser.getBatchDataFromIEX(profile.tickers, 'quote', '', function(result){
         let dlyChange = 0
-        tickers.map(ticker =>{
+        profile.tickers.map(ticker =>{
             dlyChange += result[ticker].quote.changePercent
         })
-        profile.latestChgPct = 100*dlyChange/tickers.length
+        profile.latestChgPct = 100*dlyChange/profile.tickers.length
         DisplayMetrics(profile, '', that.data.marketState)
         Colorify(profile, 'inception')
         wx.stopPullDownRefresh();
@@ -134,15 +123,17 @@ function loadProfileFromServer(that) {
         url: config.service.db_handler,
         data: { operation: 'R' },
         success(result) {
-            console.log("cloud ", result.data.data)
+            console.log("cloud ", result.data.data);
             result.data.data.forEach(function (loaded) {
-                let phases = JSON.parse(loaded.phases)
+                let phases = JSON.parse(loaded.phases);
                 if (phases) {
-                    loaded.curr_holds = phases[phases.length - 1].stocks
-                    loaded.tickers = phases[phases.length - 1].tickers
-                    loaded.isLocal = false
-                    loaded.phases = phases
+                    loaded.curr_holds = JSON.parse(loaded.curr_holds);
+                    loaded.tickers = phases[phases.length - 1].tickers;
+                    loaded.isLocal = false;
+                    loaded.phases = phases;
+                    loaded.ratiosTable = JSON.parse(loaded.ratiosTable);
                     loaded.numOfUpdates = loaded.phases.length - 1
+                    loaded.numOfDays = loaded.ratiosTable.inception.dlyRtns.length
                 }
                 DisplayMetrics(loaded, 'inception')
                 Colorify(loaded, 'inception')
@@ -231,16 +222,16 @@ function DisplayMetrics(profile, timeKey, marketState = '') {
         profile.ratiosTable = JSON.parse(profile.ratiosTable)
     }
     if (profile.ratiosTable && profile.ratiosTable[timeKey]) {
-        let mark = profile.ratiosTable[timeKey].totalReturn > 0 ? '+' : ''
-        if (profile.ratiosTable[timeKey].totalReturn)
-            profile.ratiosDisplay.totalReturn = mark + profile.ratiosTable[timeKey].totalReturn.toFixed(2) + '%';
+        let mark = profile.ratiosTable[timeKey].totalRtn > 0 ? '+' : ''
+        if (profile.ratiosTable[timeKey].totalRtn)
+          profile.ratiosDisplay.totalReturn = mark + profile.ratiosTable[timeKey].totalRtn.toFixed(2) + '%';
         // profile.ratiosDisplay.volatility = profile.ratiosTable[timeKey].volatility.toFixed(2) ;
     }
 
-    if (profile.ratiosTable && profile.ratiosTable[timeKey] && profile.ratiosTable[timeKey].avgDlyReturn) {
-        let mark = profile.ratiosTable[timeKey].avgDlyReturn > 0 ? '+' : ''
-        if (profile.ratiosTable[timeKey].avgDlyReturn)
-            profile.ratiosDisplay.avgDlyReturn = mark + profile.ratiosTable[timeKey].avgDlyReturn.toFixed(2) +'%';
+    if (profile.ratiosTable && profile.ratiosTable[timeKey] && profile.ratiosTable[timeKey].avgDlyRtn) {
+      let mark = profile.ratiosTable[timeKey].avgDlyRtn > 0 ? '+' : ''
+      if (profile.ratiosTable[timeKey].avgDlyRtn)
+        profile.ratiosDisplay.avgDlyReturn = mark + profile.ratiosTable[timeKey].avgDlyRtn.toFixed(2) +'%';
     }
 }
 
@@ -275,9 +266,9 @@ function Colorify(profile, timeKey) {
     // set color for cumulative return and volatility, and avg daily return
     // for given time period.
     if (profile.ratiosTable && profile.ratiosTable[timeKey]) {
-        profile.return_bg = profile.ratiosTable[timeKey].totalReturn > benchmark.target_return ? color_style.up : profile.ratiosTable[timeKey].totalReturn> benchmark.base_return ? color_style.fine : color_style.down
-        profile.volatility_bg = profile.ratiosTable[timeKey].volatility < benchmark.target_volatility ? color_style.up : profile.ratiosTable[timeKey].volatility < benchmark.base_volatility ? color_style.fine : color_style.down
-        var avgDlyReturn = profile.ratiosTable[timeKey].avgDlyReturn
+      profile.return_bg = profile.ratiosTable[timeKey].totalRtn > benchmark.target_return ? color_style.up : profile.ratiosTable[timeKey].totalRtn> benchmark.base_return ? color_style.fine : color_style.down
+        // profile.volatility_bg = profile.ratiosTable[timeKey].volatility < benchmark.target_volatility ? color_style.up : profile.ratiosTable[timeKey].volatility < benchmark.base_volatility ? color_style.fine : color_style.down
+        var avgDlyReturn = profile.ratiosTable[timeKey].avgDlyRtn
         if (avgDlyReturn) {
             profile.dailyReturn_bg = avgDlyReturn > 0.1 ? color_style.up : avgDlyReturn > 0 ? color_style.fine: color_style.down;
         }
@@ -286,7 +277,7 @@ function Colorify(profile, timeKey) {
 function DeleteCloudProfile(profile, that) {
     var options = {
         url: config.service.db_handler,
-        data: { operation: 'DEL', profile : profile },
+        data: { operation: 'DEL', id : profile.id },
         success(result) {
             console.log("cloud ", result.data.data)
             util.showSuccess('数据请求完成')

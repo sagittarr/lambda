@@ -11,63 +11,49 @@
     <text class="item-space-text S3 T2 hide{{showDesp?'show':''}}" bindtap="toggleInfoPopup" data-key="0">{{keywords.desp}}: {{profile.short_desp}}</text>
   </view>
 
-  <view class="item-tab">
+  <!-- <view class="item-tab">
     <view class="item_title_icon C3-bg"></view>
     <text>{{keywords.control_panel}}</text>
-  </view>
-  <!-- <view class="filter-tab">
-    <text bindtap="setFilterPanel" data-findex="1" class="{{showfilterindex==1?'active':''}}">select history</text>
   </view> -->
-  <view class="filter-content" wx:if="{{showfilter}}">
+
+  <!-- <view class="filter-content" wx:if="{{showfilter}}">
     <view class="filter-panel filter-sort" wx:if="{{showfilterindex==1}}">
       <view wx:for="{{filterdata.sort}}" wx:key="{{item.id}}" bindtap="setSort" data-sortindex="{{index}}" data-sortid="{{item.id}}" class="{{sortindex==index?'active':''}}">{{item.date}}: {{item.size}} stocks</view>
     </view>
-  </view>
-
-   <view class="selector-tab">
-    <text class="{{currentTimeIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">10{{keywords.days}}</text>
-    <text class="{{currentTimeIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">30{{keywords.days}}</text>
-    <text class="{{currentTimeIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">3{{keywords.month}}</text>
-    <text class="{{currentTimeIndex==3?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="3">1{{keywords.year}}</text>
-    <text class="{{currentTimeIndex==4?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="4">{{keywords.since_creation}} </text>
-  </view> 
-  <!-- <view class="page__bd">
-    <view class="weui-tab">
-      <view class="weui-navbar">
-        <block wx:for="{{timeRange}}" wx:key="*this">
-          <view id="{{index}}" class="weui-navbar__item {{currentTimeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
-            <view class="weui-navbar__title">{{item}}</view>
-          </view>
-        </block>
-        <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
-      </view>
-    </view>
   </view> -->
   <view class="item-tab">
-     <view class="item_title_icon C3-bg"></view> 
+    <view class="item_title_icon C3-bg"></view>
     <text bindtap="onChangeShowLineChart" class="{{showLineChart?'active':''}}">市场对比</text>
   </view>
-  <!-- '#0387fe' -->
   <view class="hide{{showLineChart?'show':''}}">
-    <view class="item-space" style="display: flex;">
-      <text class="item-space-text S4 T2" style="color:darkgoldenrod">投资组合</text>
-      <text class="item-space-text S4 T2">大盘(SPY)</text>
+    <view class="table" style="width:100%">
+      <block wx:for="{{metricsTbl}}" wx:key="{{code}}">
+        <view class="tr" wx:if="{{index % 2 == 0}}">
+          <view class="td">{{item.code}}</view>
+          <view class="td">{{item.col1}}</view>
+          <view class="td">{{item.col2}}</view>
+        </view>
+        <view class="tr bg-g" wx:else>
+          <view class="td">{{item.code}}</view>
+          <view class="td">{{item.col1}}</view>
+          <view class="td">{{item.col2}}</view>
+        </view>
+      </block>
     </view>
-    <view class="item-space" style="display: flex;">
-      <text class="item-space-text S4 T2">累计回报率 {{cumulativeReturnComparison[0]}}</text>
-      <text class="item-space-text S4 T2">同期累计回报率 {{cumulativeReturnComparison[1]}}</text>
+    <view class="selector-tab">
+      <text class="{{currentTimeIndex==0?'active':''}}" bindtap="onPeriodSelectorClick" data-index="0">10{{keywords.days}}</text>
+      <text class="{{currentTimeIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">30{{keywords.days}}</text>
+      <text class="{{currentTimeIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">3{{keywords.month}}</text>
+      <text class="{{currentTimeIndex==3?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="3">1{{keywords.year}}</text>
+      <text class="{{currentTimeIndex==4?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="4">{{keywords.since_creation}} </text>
     </view>
-    <view class="item-space" style="display: flex;">
-      <text class="item-space-text S4 T2">最大回撤 {{maxDrawdownComparison[0]}}</text>
-      <text class="item-space-text S4 T2">同期最大回撤 {{maxDrawdownComparison[1]}}</text>
-    </view>
+
     <template is="lineView"></template>
-    <!-- <checkbox style="S1 T2" value="touch"/>开启点击 -->
-    <canvas canvas-id="lineCanvas" style="width:100%;height:300px" class="canvas.hide{{!showInfoPopup?'.show':''}}"bindtouchstart="touchHandler"></canvas>
+    <canvas canvas-id="lineCanvas" style="width:100%;height:300px" class="canvas.hide{{!showInfoPopup?'.show':''}}" bindtouchstart="touchHandler"></canvas>
   </view>
 
 
-  <view class="item-tab">
+  <!-- <view class="item-tab">
     <view class="item_title_icon C3-bg"></view>
     <text bindtap="onChangeShowMetrics" class="{{showMetrics?'active':''}}">{{keywords.key_ratios}}</text>
   </view>
@@ -77,19 +63,8 @@
       <text class="{{metricsIndex==1?'active':''}}" style="border-left: none;" bindtap="onMetricSelectorClick" data-index="1">表格</text>
     </view>
     <canvas canvas-id="stockNumberChart" class="canvas.hide{{!showInfoPopup?'.show':''}}" style="width:100%;height:200px;" wx:if="{{metricsIndex == 0}}"> </canvas>
-    <view class="table" style="width:100%" wx:else>
-      <block wx:for="{{metricsTbl}}" wx:key="{{code}}">
-        <view class="tr bg-g" wx:if="{{index % 2 == 0}}">
-          <view class="td">{{item.code}}</view>
-          <view class="td">{{item.text}}</view>
-        </view>
-        <view class="tr" wx:else>
-          <view class="td">{{item.code}}</view>
-          <view class="td">{{item.text}}</view>
-        </view>
-      </block>
-    </view>
-  </view>
+
+  </view> -->
 
   <view class="item-tab">
     <view class="item_title_icon C3-bg"></view>
@@ -98,23 +73,24 @@
   <view class="hide{{showPercentage?'show':''}}">
     <view class="selector-tab">
       <text class="{{holdingsIndex==0?'active':''}}" bindtap="onHoldingsSelectorClick" data-index="0">个股列表</text>
-      <text class="{{holdingsIndex==1?'active':''}}" style="border-left: none;" bindtap="onHoldingsSelectorClick" data-index="1">各股占比</text>
+      <text class="{{holdingsIndex==1?'active':''}}" style="border-left: none;" bindtap="onHoldingsSelectorClick" data-index="1">入选历史</text>
       <!-- <text class="{{holdingsIndex==2?'active':''}}" style="border-left: none;" bindtap="onHoldingsSelectorClick" data-index="2">板块</text> -->
     </view>
     <view class="item-space" style="display:block">
-      <canvas canvas-id="pieCanvas" class="canvas.hide{{!showInfoPopup?'.show':''}}" style="width:100%;height:300px;" bindtouchstart="pieCharttouchHandler" wx:if="{{holdingsIndex == 1}}"></canvas>
-      <canvas canvas-id="ringCanvas" class="canvas.hide{{!showInfoPopup?'.show':''}}" style="width:100%;height:300px;" bindtouchstart="ringCharttouchHandler" wx:if="{{holdingsIndex == 2}}"></canvas>
+      <canvas canvas-id="stockNumberChart" class="canvas.hide{{!showInfoPopup?'.show':''}}" style="width:100%;height:200px;" wx:if="{{holdingsIndex == 1}}"> </canvas>
+      <!-- <canvas canvas-id="pieCanvas" class="canvas.hide{{!showInfoPopup?'.show':''}}" style="width:100%;height:300px;" bindtouchstart="pieCharttouchHandler" wx:if="{{holdingsIndex == 1}}"></canvas>
+      <canvas canvas-id="ringCanvas" class="canvas.hide{{!showInfoPopup?'.show':''}}" style="width:100%;height:300px;" bindtouchstart="ringCharttouchHandler" wx:if="{{holdingsIndex == 2}}"></canvas> -->
       <!-- class="item-space"  -->
       <view class="item-space" wx:if="{{holdingsIndex == 0}}">
         <view class="lisetview_data_container B1" style="height: 60rpx">
-          <text class="S2 T2 lisetview_item_left_container" bindtap='onStockTickerColumnSwitch' style='color:#3b3a37'>代码/名称</text>
-          <text class="S2 T2 lisetview_item_middle_container">最新价</text>
+          <text class="S2 T2 lisetview_item_left_container" style='color:#3b3a37'>股票代码</text>
+          <text class="S2 T2 lisetview_item_middle_container" style="display:flex;color:#3b3a37">公司名称</text>
+          <text class="S2 T2 lisetview_item_right_container" style='color:#3b3a37'>最新价</text>
           <text class="S2 C1-font lisetview_item_zdf_container" bindtap="onZDFSort" style='color:#3b3a37'>{{sortState==1?'涨跌幅↑':'涨跌幅↓'}}</text>
-          <text class="S2 T2 lisetview_item_right_container">入选时间</text>
         </view>
         <view id="section_list" style="top:{{bkArr.length>0?'415rpx':'175rpx'}}">
           <block wx:for="{{holdings}}" wx:key="id">
-            <template is="StockCell" data="{{data:item}}"/>
+            <template is="StockCell" data="{{data:item}}" />
           </block>
         </view>
       </view>
@@ -134,7 +110,4 @@
       </view>
     </view>
   </view>
-
-  <!-- <view class="filter-shadow" wx:if="{{showfilter}}" bindtap="hideFilter"></view> -->
-
 </view>

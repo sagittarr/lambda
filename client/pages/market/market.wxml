@@ -24,7 +24,7 @@
     <view class="search_view B1">
       <view class="search_bar B2" bindtap="onSearchBarClick">
         <icon type="search" size="15"></icon>
-        <view class="T1 S4" placeholder="{{searchData.placeholder}}"  value="{{searchData.searchContent}}">搜索个股</view>
+        <view class="T1 S4" placeholder="{{searchData.placeholder}}" value="{{searchData.searchContent}}">搜索个股</view>
       </view>
     </view>
     <view style='width:100%; display:flex; flex-direction:row'>
@@ -33,9 +33,9 @@
         <text class="{{sectorPeriodIndex==1?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="1">最近一月</text>
         <text class="{{sectorPeriodIndex==2?'active':''}}" style="border-left: none;" bindtap="onPeriodSelectorClick" data-index="2">最近一年</text>
       </view>
-      <view>
+      <!-- <view>
         <image class="inline_icon_right" style="margin-right:10px" src="../../images/Translate-256.png" bindtap="onNewPortfolioTap" />
-      </view>
+      </view> -->
     </view>
     <view class="table">
       <block wx:for="{{sectorsToShow}}" wx:key="{{index}}">
@@ -65,19 +65,25 @@
       </block>
       <view class="C1-bg tab_item_sel_line_container" style="left:{{currListIndex*25}}%;" />
     </view>
-    <view class="lisetview_data_container B1" style="height: 70rpx">
-      <text class="S2 T2 lisetview_item_left_container">名称</text>
+    <!-- <view class="lisetview_data_container B1" style="height: 70rpx">
+      <text class="S2 T2 lisetview_item_left_container" style="justify-content: center;align-items: center">名称</text>
       <text class="S2 T2 lisetview_item_middle_container">最新价</text>
       <text class="S2 C1-font lisetview_item_zdf_container" bindtap="onZDFSort">{{sortState==1?'涨跌幅↑':'涨跌幅↓'}}</text>
       <text class="S2 T2 lisetview_item_right_container">终选时间</text>
+    </view> -->
+    <view class="lisetview_data_container B1" style="height: 60rpx">
+      <text class="S2 T2 lisetview_item_left_container" style='color:#3b3a37'>代码</text>
+      <text class="S2 T2 lisetview_item_middle_container" style="display:flex;color:#3b3a37">公司名称</text>
+      <text class="S2 T2 lisetview_item_right_container" style='color:#3b3a37'>最新价</text>
+      <text class="S2 C1-font lisetview_item_zdf_container" bindtap="onZDFSort" style='color:#3b3a37'>{{sortState==1?'涨跌幅↑':'涨跌幅↓'}}</text>
     </view>
-    <view class="S3 T2" style="text-align:center;width:100%;background-color:#ebebeb"wx:if="{{showList.length==0}}">暂无数据，点击上方搜索栏添加自选股</view>
+    <view class="S3 T2" style="text-align:center;width:100%;background-color:#ebebeb" wx:if="{{showList.length==0}}">暂无数据，点击上方搜索栏添加自选股</view>
     <view id="section_list">
       <block wx:for="{{showList}}" wx:key="symbol">
         <template is="StockCell" data="{{data:item}}" />
       </block>
     </view>
-    <view class="S3 T2" style="text-align:center;width:100%;background-color:#ebebeb"wx:if="{{showList.length!=0 && currListIndex==0}}">提示：长按弹出删除按键，再次长按收回</view>
+    <view class="S3 T2" style="text-align:center;width:100%;background-color:#ebebeb" wx:if="{{showList.length!=0 && currListIndex==0}}">提示：长按弹出删除按键，再次长按收回</view>
   </view>
 </view>
 <!--搜索按钮-->

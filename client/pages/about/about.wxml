@@ -1,9 +1,13 @@
 
-<view class="about-tab" style="display:flex; flex-direction:row">
-  <image class="userinfo-avatar" src="{{logged ? userInfo.avatarUrl : '../../images/crown_regal_king-512.png'}}" background-size="cover"></image>
-  <!-- <text bindtap="onChangeShowState" class="{{showView?'active':''}}">关于</text> -->
-</view>
+ <!-- <view class=s"about-tab" style="display:flex; flex-direction:row"> -->
+  <!-- <image class="userinfo-avatar" src="{{logged ? userInfo.avatarUrl : '../../images/skyscraper.jpg'}}" background-size="cover"></image> -->
+    <image style='width:100%;height:150px;margin:0px' src='../../images/background2.jpg' background-size="cover"></image>
+<!-- </view>  -->
 <view class="about-space">
 <!-- class="hide{{showView?'show':''}}" -->
-  <text >公众号：掌控研投社\n 开发者：燕歌行； Wechat ID: swifter003\n 版本号：{{version}}</text>
+  <text >欢迎洽谈合作事宜\n开发者：燕歌行； Wechat ID: swifter003\n 版本号：{{version}}</text>
 </view>
+<view class="about-space">
+  <text >提供信息仅供参考，不构成投资建议。\n数据由第三方API提供。</text>
+</view>
+<!-- \n数据由Yahoo Finance/IEX Finance提供。 -->

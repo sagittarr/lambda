@@ -10,8 +10,22 @@ function StockData () {
     this.valuesWithDate = {}
     this.isBenchmark = false
     this.last_update = NaN
+    this.quant = {}
 }
-
+// StockData.prototype.computeQuantMetric = function(){
+//     // var ab = Calculator.computeAlphaBeta(this.dailyPctChange, this.benchmark.dailyPctChange)
+//     // var sharp = Calculator.computeSharpRatio(this.dailyPctChange, this.benchmark.dailyPctChange)
+//     var mdd = Calculator.computeMDD(this.values)
+//     var voli = Calculator.computeVolatility(this.dailyPctChange)
+//     let totalReturn = (this.values[this.values.length - 1] / this.values[0]) - 1
+//     let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (this.dateIndex.length - 1)) - 1
+//     this.quant = {
+//         mdd: mdd,
+//         voli: voli,
+//         totalReturn: totalReturn*100,
+//         avgDlyReturn: avgDlyReturn*100,
+//         numOfDays: this.dateIndex.length}
+// }
 function StockDataFactory(){}
 StockDataFactory.prototype.build = function(input, ticker, lastUpdate=NaN, benchmarkTicker = 'SPY'){
     var prices = []
@@ -47,34 +61,13 @@ function Aggregation(name){
     this.numOfDays = NaN
     this.quant = {}
 }
-Aggregation.prototype.computeQuantMetric = function(){
-    // var ab = Calculator.computeAlphaBeta(this.dailyPctChange, this.benchmark.dailyPctChange)
-    // var sharp = Calculator.computeSharpRatio(this.dailyPctChange, this.benchmark.dailyPctChange)
-    var mdd = Calculator.computeMDD(this.values)
-    var voli = Calculator.computeVolatility(this.dailyPctChange)
-    let totalReturn = (this.values[this.values.length - 1] / this.values[0]) - 1
-    let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (this.dateIndex.length - 1)) - 1
-    this.quant = { '1y': {
-        // alpha: ab.alpha,
-        //     beta: ab.beta,
-        //     sharp: sharp,
-            mdd: mdd, voli: voli, totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: this.dateIndex.length}}
-    var incpIndex = _.indexOf(this.dateIndex, this.inceptionDate, true)
-    if(incpIndex!=-1){
-        let totalReturn = _.last(this.values) / this.values[incpIndex] - 1
-        let avgDlyReturn = Math.pow(totalReturn + 1, 1. / (this.dateIndex.length - incpIndex - 1)) - 1
-        this.quant['inception'] = { totalReturn: totalReturn*100, avgDlyReturn: avgDlyReturn*100, numOfDays: this.dateIndex.length - incpIndex}
-    }
-    else{
-        this.quant['inception'] = ['Error', this.inceptionDate, this.dateIndex]
-    }
-}
+// Aggregation.prototype.computeQuantMetric = function(){
+//     this.quant['inception'] = Calculator.computeAll(this.values)
+// }
 
 function AggregationFactory(){}
 
 AggregationFactory.prototype.build = function(stocks, spy, inceptionDate=undefined){
-    // var benchmark = [];
-    // stocks.map(stock=> {if(stock.isBenchmark) benchmark = stock} )
     stocks.map(stock => {
         if(stock.dateIndex.length<spy.dateIndex.length){
             let tmp = []
@@ -86,11 +79,8 @@ AggregationFactory.prototype.build = function(stocks, spy, inceptionDate=undefin
     var cumvalues = []
     for (var i = 0; i < spy.dateIndex.length; i++) {
         let all = []
-        // stocks.map(stock => { if (!stock.isBenchmark) { all.push(stock.values[i])}  })
         stocks.map(stock => { all.push(stock.values[i])})
-
         all = _.compact(all)
-        // info.push(all.length)
         if(all.length == 0){
             if(cumvalues.length>0){
                 cumvalues.push(_.last(cumvalues));

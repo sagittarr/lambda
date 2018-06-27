@@ -57,7 +57,7 @@ module.exports = async (ctx, next) => {
         await api.updateProfile(profile, ctx.state)
     }
     else if(ctx.query.operation.toUpperCase() === 'DEL'){
-        var profile = JSON.parse(ctx.query.profile)
-        await api.deleteProfile(profile, ctx.state)
+        var id = JSON.parse(ctx.query.id)
+        await api.deleteProfile(id, ctx.state)
     }
 }

@@ -1,17 +1,17 @@
 <template name="StockCell">
   <view class="lisetview_data_container" hover="true" hover-class="navigator-hover" bindlongpress='longPressStockItem' data-item="{{data}}">
     <view class="lisetview_item_left_container" bindtap="clickStockItem" data-item="{{data}}" >
-      <text class="S3 T3" wx:if="{{!data.show_name}}">{{data.ticker}}</text>
-      <!-- <text class="S5 T3">{{id}}</text> -->
-      <text class="S1 T2" wx:if="{{data.show_name}}">{{data.companyName}}</text>
+      <text class="S3 T3">{{data.ticker}}</text>
+      <!-- <text class="S1 T2">{{data.companyNameInShort}}</text> -->
     </view>
-    <text class="S5 T3 lisetview_item_middle_container" bindtap="clickStockItem" data-item="{{data}}">{{data.suspension==1?'--':data.price}}</text>
+         <text class="S3 T2 lisetview_item_middle_container" bindtap="clickStockItem" data-item="{{data}}">{{data.companyNameInShort}}</text> 
+    <text class="S5 T3 lisetview_item_right_container" bindtap="clickStockItem" data-item="{{data}}">{{data.suspension==1?'--':data.price}}</text>
     <view class="lisetview_item_zdf_container" bindtap="clickStockItem" data-item="{{data}}">
       <view class="listview_item_zdf_bg " style="background-color: {{data.bgColor}}">
         <text class="S5 T4 listview_item_zdf">{{data.suspension==1?'停牌':data.chgPctDisplay}}</text>
       </view>
     </view>
-    <text class="S3 T2 lisetview_item_right_container" bindtap="clickStockItem" data-item="{{data}}">yyyymmdd</text>
+
 
     <view class="icon_panel_icon" style="width:90rpx;margin-right:10rpx" bindtap='removeStockItem' data-item="{{data}}" wx:if="{{data.toDel}}">
       <image src='../../images/Trash-512.png' style="width:100%; height:100%; background-color:wheat"></image>

@@ -29,13 +29,13 @@
         "pagePath": "pages/market/market",
         "iconPath": "images/lambda.png",
         "selectedIconPath": "images/lambda-active.png",
-        "text": "Market"
+        "text": "市场行情"
       },
       {
         "pagePath": "pages/about/about",
         "iconPath": "images/lambda.png",
         "selectedIconPath": "images/lambda-active.png",
-        "text": "关于掌控"
+        "text": "关于"
       }
     ]
   }

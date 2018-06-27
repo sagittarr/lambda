@@ -5,7 +5,8 @@ const response = require('./middlewares/response')
 const bodyParser = require('koa-bodyparser')
 const config = require('./config')
 const knex = require('knex')
-var cron = require('node-cron');
+const ExtApi = require('./tools/externalApi')
+const cron = require('node-cron');
 const axios = require('axios')
 
 var util = require('./tools/Util.js')
@@ -56,25 +57,20 @@ cron.schedule('5,26 9,11 * * *', function () {
     })
 });
 
+// cron.schedule('*/30 * 13 * * *', function () {
+//     api.readTable('intraday', {source : 'IEX'}).then( function (rows) {
+//         console.log('number of rows intraddy', rows.length, rows)
+//         let tickers = []
+//         rows.map(row=>{tickers.push(row.ticker)})
+//         let symbols = tickers.join(',')
+//         let iexReq = {apiUrl : 'https://api.iextrading.com/1.0/stock/market/batch?symbols='+symbols+'&types=chart&range=1d'}
+//         ExtApi.asking(iexReq).then(function (res) {
+//             tickers.map(ticker=>{
+//                 api.insertTable('intraday',{id:ticker+'_IEX'},{id: ticker+'_IEX',ticker: ticker, source: 'IEX', data: JSON.stringify(res[ticker].chart)})
+//             })
+//         }).catch(function(err){console.error(err);reject(err)})
+//     }).catch(function (err) {
+//         console.error(err)
+//     })
+// });
 
-// api.retryer(5, 'NVDA', function () {
-//     return new Promise(function (resolve, reject) {
-//         let fromTo = util.yearAgo2Today()
-//         var request = { ticker: 'NVDA', from: fromTo.from, to: fromTo.to, freq: 'd' }
-//         api.getHistoricalDataFromYahoo(request).then(function (ts) {
-//             if (!ts || ts.length == 0) {
-//                 resolve(false)
-//             }
-//             else {
-//                 api.insert_historical('NVDA', JSON.stringify(ts), Date.now() / 1000, 'yahoo');
-//                 console.log('updated', 'NVDA', ts.length, new Date().toISOString(), 'yahoo')
-//                 resolve(true)
-//             }
-//         })
-//     });
-// })
-// axios.get('https://api.iextrading.com/1.0/stock/aapl/chart/5y').then(function(response){
-//     var data = response.data
-//     api.insert_historical('AAPL', JSON.stringify(data), Date.now() / 1000, 'iex')
-//     console.log('https://api.iextrading.com/1.0/stock/aapl/chart/5y', data)
-// })

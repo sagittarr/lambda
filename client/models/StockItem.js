@@ -5,7 +5,8 @@ function StockItem(ticker, companyName, chgPct, price, securityType){
     this.chgPct = parseFloat(chgPct)
     this.price = parseFloat(price).toFixed(2)
     this.securityType = securityType
-
+    this.companyNameInShort = this.companyName
+    // .length>25 ? this.companyName.slice(0,22) + '...': this.companyName
     let pctValue = parseFloat(chgPct)
     let mark = pctValue > 0 ? '+' : ''
     this.chgPctDisplay = mark + (chgPct*100).toFixed(2) + '%'

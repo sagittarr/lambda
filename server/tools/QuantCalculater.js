@@ -12,10 +12,10 @@ class Calculator {
         return (ss.mean(ts1) - ss.mean(ts2)) / ss.standardDeviation(ts1);
     }
 
-    static computeMDD(data) {
+    static computeMDD(ts) {
         var peak = 0.;
         var mdd = 1.;
-        data.forEach(function (current, i, a) {
+        ts.forEach(function (current, i, a) {
             if (current > peak) {
                 peak = current;
             }
@@ -24,13 +24,22 @@ class Calculator {
                 mdd = current / peak;
             }
         })
-        return mdd
+        return (1.-mdd)*100
     }
 
     static computeVolatility(returns) {
         // console.log(portfolio.aggregation.returns.map(Math.log))
         var N = returns.length;
         return Math.sqrt(N) * ss.standardDeviation(returns.map(Math.log))
+    }
+
+    static computeAll(ts1, ts2){
+        let dlyRtns= ts1.map((v, i) => { return i > 0 ? v / ts1[i - 1] : 1 })
+        let voli  = Calculator.computeVolatility(dlyRtns)
+        let mdd = Calculator.computeMDD(ts1)
+        let totalRtn = ts1[ts1.length-1] / ts1[0]
+        let avgDlyRtn = 100*(Math.pow(totalRtn, 1./ts1.length) - 1)
+        return {dlyRtns: dlyRtns, avgDlyRtn: avgDlyRtn, totalRtn:100*(totalRtn-1), mdd: mdd, voli:voli, numOfDays: ts1.length}
     }
 }
 module.exports  = Calculator

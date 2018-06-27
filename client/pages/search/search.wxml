@@ -43,7 +43,7 @@
       <view class="icon_panel_icon" wx:if="{{stockList.length != 0}}" bindtap='onCreateNewPortfolio'>
         <image src='../../images/Folder_Plus-512.png' style="width:100%; height:100%"></image>
       </view>
-      <text>创建新组合</text>
+      <text>创建策略</text>
     </view>
   </view>
   <view class="weui-cells__title">入选个股</view>

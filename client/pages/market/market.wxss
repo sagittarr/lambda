@@ -25,11 +25,11 @@
    width: 100%;
 }
 .period-selector-tab{
-      width: 100%;   
+    width: 100%;   
     height: 66rpx;
     background-color: #f8f8f8;
-     margin-left: 10px; 
-          margin-top: 5px; 
+    margin-left: 10px; 
+    margin-top: 5px; 
     display: flex;
     flex-direction: row;
     /* border: 1px solid rgba(0, 0, 0, 0.1);

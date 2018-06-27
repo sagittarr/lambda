@@ -1,4 +1,5 @@
 const putils = require('./port_utils.js');
+const parser = require('../../parsers/quote_parser.js')
 const calculator = require('./metrics.js')
 const config = require('../../config')
 const chart_utils = require('./chart_utils.js')
@@ -41,12 +42,14 @@ Page({
 
         keywords: keywords,
         metricsTbl: [
-            { "code": keywords.return, "text": "text0", "test":"value" },
-            { "code": keywords.volatility, "text": "text1" },
-            { "code": keywords.sharpe_ratio, "text": "text2" },
-            { "code": keywords.max_drawdown, "text": "text3" },
-            { "code": keywords.alpha, "text": "text4" },
-            { "code": keywords.beta, "text": "text5" }
+          { "code": '', "col1": "投资组合", "col2": "标准普尔指数" },
+          { "code": keywords.return, "col1": "text0", "col2":"value" },
+          { "code": '日均收益率', "col1": "text0", "col2": "value" },
+          { "code": keywords.max_drawdown, "col1": "text3", "col2": "value" },
+          // { "code": keywords.volatility, "col1": "text1", "col2": "value" },
+          // { "code": keywords.sharpe_ratio, "col1": "text2", "col2": "value" },
+          // { "code": keywords.alpha, "col1": "text4", "col2": "value" },
+          // { "code": keywords.beta, "col1": "text5", "col2": "value" }
         ],
         metricsIndex: 1,
         holdingsIndex: 0,
@@ -65,9 +68,9 @@ Page({
     },
 
 
-    onLoad: function (e) {
+    onLoad: function (options) {
         // this.windowWidth = 375;
-        var that = this;
+        let that = this;
 
         try {
             var res = wx.getSystemInfoSync();
@@ -76,48 +79,67 @@ Page({
         } catch (e) {
             console.error('getSystemInfoSync failed!');
         }
-        var profile = getApp().globalData.selected;
+        if(!options || !options.profile){
+            console.error('no profile provided');f
+            return;
+        }
+        let profile = JSON.parse(options.profile);
         // console.log("selected", profile);
-        this.setData({ 'profile': profile })
-        var options = {
+        this.setData({ 'profile': profile });
+        let opt = {
             url: config.service.db_handler,
             data: profile.isLocal === true ? { operation: 'LOAD', phases: profile.phases } : { operation: 'LOAD', id: profile.id, mode: 'debug', toUpdateDB: true },
             success(result) {
-                console.log("read LOAD", result)
-                result.data.data.timeRange.map(ts => {
+                let data = result.data.data;
+                console.log("read LOAD", result);
+                data.timeRange.map(ts => {
                     if (ts == null) return;
                     ts.series = [{ ticker: 'strategy', data: ts.values }, { ticker: 'SPY', data: ts.benchmark }]
                     that.data.timeSeriesData[ts.timeId] = ts
                 })
-                lineChart = chart_utils.createPortfolioLineChart2(result.data.data.timeRange[4], that.windowWidth);
-                profile.numOfDays = result.data.data.dataset.numOfDays
+                that.setQuantTable(data.quant, data.benchmark.quant)
+                lineChart = chart_utils.createPortfolioLineChart2(data.timeRange[4], that.windowWidth);
+                profile.numOfDays = data.dataset.numOfDays
                 if (profile.isLocal == true) {
-                    that.syncDataToLocalStorage(profile.id, result.data.data.quant, profile.numOfDays)
+                    that.syncDataToLocalStorage(profile.id, data.quant, profile.numOfDays)
                 }
             },
             fail(error) {
                 util.showModel('请求失败', error);
                 console.log('request fail', error);
             }
-        }
+        };
+        wx.request(opt);
 
-        putils.realtime_price(profile.tickers, function (results) {
-            if (!Array.isArray(results)) {
-                results = [results]
-            }
-            that.setData({ holdings: putils.quoteRealTimePriceCallback(results) })
+        parser.getStockItemList(profile.tickers, function(list){
+          that.setData({
+            holdings: list
+          })
+          wx.stopPullDownRefresh();
         })
-        wx.request(options);
     },
-
-    onShareAppMessage: function () {
-        var that = this;
+    onShareAppMessage: function (options) {
+        let that = this;
         return {
-            title: '投资组合分析',
-            desc: that.data.profile.name,
-            path: '/pages/portfolio/analyzer'
-        }
+            title :that.data.profile.name,
+            desc:  '投资策略评估',
+            path: '/pages/lab2/lab?profile='+JSON.stringify(that.data.profile),
+            success: function (){
+                wx.showToast({
+                    title: '转发成功！',
+                    icon: 'success'
+                });
+            }
+        };
     },
+    // onShareAppMessage: function () {
+    //     let that = this;
+    //     return {
+    //         title: '投资组合分析',
+    //         desc: that.data.profile.name,
+    //         path: '/pages/portfolio/analyzer'
+    //     }
+    // },
     computeComparisonMetrics: function (range){
         let p = this.data.portfolioCache[range]
         let port_metrics = this.computeTimeSeriesMetrics(p.aggregation)
@@ -179,6 +201,20 @@ Page({
         ratios.alpha = ab.alpha;
         ratios.beta = ab.beta;
         return ratios;
+    },
+
+    setQuantTable: function(quant){
+      console.log(quant)
+      let table = this.data.metricsTbl
+      table[1].col1 = quant['inception'].totalRtn.toFixed(2) + '%';
+      table[2].col1 = quant['inception'].avgDlyRtn.toFixed(2) + '%';
+      table[3].col1 = quant['inception'].mdd.toFixed(2) + '%';
+
+      table[1].col2 = quant['benchmark'].totalRtn.toFixed(2) + '%';
+      table[2].col2 = quant['benchmark'].avgDlyRtn.toFixed(2) + '%';
+      table[3].col2 = quant['benchmark'].mdd.toFixed(2) + '%';
+
+      this.setData({ metricsTbl: table })
     },
 
     showPortfolioMetrics:function(table){
@@ -264,10 +300,14 @@ Page({
     onPullDownRefresh: function (e) {
         var that = this;
         var tickers = getApp().globalData.selected.curr_holds;
-        putils.realtime_price(tickers, function (results) {
-            that.setData({holdings:putils.quoteRealTimePriceCallback(results)})
-            wx.stopPullDownRefresh();
+        parser.getBatchDataFromIEX(tickers, 'quote', '', function (result) {
+          putils.quoteRealTimePriceCallback(result, tickers);
+          wx.stopPullDownRefresh();
         })
+        // putils.realtime_price(tickers, function (results) {
+        //   that.setData({ holdings: putils.quoteRealTimePriceCallback(results, tickers)})
+        //     wx.stopPullDownRefresh();
+        // })
     },
 
     onMetricSelectorClick: function (e) {
@@ -298,21 +338,17 @@ Page({
     },
 
     onHoldingsSelectorClick: function (e) {
-        let that = this
-        let index = parseInt(e.currentTarget.dataset.index)
-        this.setData({
-            holdingsIndex: index
-        })
-        if (this.data.holdingsIndex == 0) {
-        }
-        else if (this.data.holdingsIndex == 1) {
-            // pieChart = chart_utils.createPieChart2(that.data.timeSeriesData[this.data.timeRange[this.data.currentTimeIndex]], that.windowWidth);
-            pieChart = chart_utils.createPieChart2(that.data.timeSeriesData['inception'], that.windowWidth);
-            // pieChart = chart_utils.createPieChart(p, this.windowWidth);
-        }
-        else if (this.data.holdingsIndex == 2) {
-            ringChart = chart_utils.createRingChart(this.data.assetProfile, p, this.data.timeRange[this.data.currentTimeIndex] , this.windowWidth);
-        }
+      let that = this
+      let index = parseInt(e.currentTarget.dataset.index)
+      this.setData({
+        holdingsIndex: index
+      })
+      if (this.data.holdingsIndex == 0) {
+      }
+      else if (this.data.holdingsIndex == 1) {
+        let profile = getApp().globalData.selected;
+        stockNumberChart = chart_utils.createColumnChart(profile.phases, this.windowWidth)
+      }
     },
 
     onChangeShowState: function () {

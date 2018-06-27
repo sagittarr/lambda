@@ -1,6 +1,7 @@
 // pages/preview/preview.js
-var util = require('../../utils/util.js');
-const config = require('../../config')
+const util = require('../../utils/util.js');
+const config = require('../../config');
+const StockItem = require('../../models/StockItem.js');
 Page({
 
   /**
@@ -89,7 +90,7 @@ Page({
       url: config.service.db_handler,
       data: {
         operation: 'NEW',
-        profile: profile
+        profile: { id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: profile.curr_holds.map(stk=>{return {'ticker':stk.ticker,'companyName':stk.companyName, 'securityType':stk.typeDisp}}), ratiosTable: profile.ratiosTable, visible: 1 , phases: profile.phases}
       },
       success(result) {
         console.log('Insert profile in cloud: result =  ', result)
@@ -104,6 +105,7 @@ Page({
       }
     }
     // send request
+    console.log(options.data)
     wx.request(options);
   }
 })

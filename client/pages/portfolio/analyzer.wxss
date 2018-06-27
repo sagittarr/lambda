@@ -9,11 +9,7 @@ page {
     flex-direction: column;
     justify-content: flex-start;
 }
- /* .selector{
-    width: 100%;
-    font-size: 15px;
-    align-items: left;
-}  */
+
 .item_title_icon {
   position: relative;
   width: 8rpx;
@@ -29,7 +25,7 @@ page {
   display: flex;
   width: 100%;
   justify-content: center;
-   height: 2.5em; 
+   height: 1.75em; 
   align-items: center;
 }
 .td {
@@ -39,10 +35,10 @@ page {
     font-size: 15px;
 }
 .bg-w{
-  background: gainsboro;
+  background: silver;
 }
 .bg-g{
-  background: #ebebeb;
+  background: #edf0f4;
 }
 .th {
   width: 40%;

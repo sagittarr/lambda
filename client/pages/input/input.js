@@ -157,7 +157,7 @@ Page({
         toSave.inception = newDate
         toSave.ratiosTable = {}
         toSave.isLocal = true
-        toSave.phases = [{ phaseId: 1, 'stocks': stocks, 'tickers': tickers, from: parseInt(toSave.inception), to: -1 }]
+        toSave.phases = [{ phaseId: 1,  'tickers': tickers, from: parseInt(toSave.inception), to: -1 }]
       }
       else {
         toSave.isLocal = profile.isLocal
@@ -188,12 +188,14 @@ Page({
           else{
             toSave.phases[num - 1].from = newDate
           } 
-          toSave.phases[num - 1].stocks = stocks
+          // toSave.phases[num - 1].stocks = stocks
           toSave.phases[num - 1].tickers = tickers
         }
         else {
-          toSave.phases[num - 1].to = newDate
-          toSave.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: -1 })
+          toSave.phases[num - 1].to = newDate;
+            toSave.phases.push({ phaseId: num + 1,  'tickers': tickers, from: newDate, to: -1 })
+            // toSave.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: -1 })
+
         }
 
       }
@@ -238,38 +240,6 @@ Page({
       }
       else{
         that.saveProfileToCloud(toSave)
-        // profile.phases = JSON.parse(profile.phases)
-        // let newDate = parseInt(this.data.date.replace('-', '').replace('-', ''))
-        // let num = profile.phases.length
-        // let stocks = that.data.stockList
-        // let tickers = stocks.map(stock => stock.ticker)
-        // if (getApp().globalData.editing == true){
-        //   profile.phases[num - 1].from = newDate
-        //   profile.phases[num - 1].stocks = stocks
-        //   profile.phases[num - 1].tickers = tickers
-        // }
-        // else{
-        //   profile.phases[num - 1].to = newDate
-        //   profile.phases.push({ phaseId: num + 1, 'stocks': stocks, 'tickers': tickers, from: newDate, to: -1 })
-        // }
-        // var options = {
-        //   url: config.service.db_handler,
-        //   data: {
-        //     operation: 'UPDATE',
-        //     profile: profile
-        //   },
-        //   success(result) {
-        //     console.log('Update profile in cloud: result =  ', result)
-        //     wx.navigateBack({
-        //       delta: 2
-        //     })
-        //     util.showSuccess('Update')
-        //   },
-        //   fail(error) {
-        //     console.log('Update request fail', error);
-        //   }
-        // }
-        // wx.request(options);
       }
     },
 });

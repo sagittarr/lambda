@@ -27,6 +27,7 @@ Page({
         // sectorPerfTable : {},
         tabArr: ["自选", "领涨", "领跌", "活跃"],//tab
         showList: [],//列表数据
+        show_name: false,
         sectorTables: { 'realtime': {}, '1month': {}, '1year': {} },
         sectorsToShow: [{}, {}, {}, {}],
         sectorPeriodIndex: 0,
@@ -34,22 +35,11 @@ Page({
     },
 
     onLoad: function (options) {
-        // 上次hide是退出hide时，才自动跳转到其它页面
-        var that = this
-        var page = ''
-        // if (options.hasOwnProperty('page')) {
-        //   page = options.page
-
-        //   if (page != '') {
-        //     if (page == 'stock' || page == 'bk') {
-        //       if (options.hasOwnProperty('id') && options.hasOwnProperty('name') && options.hasOwnProperty('code')) {
-        //         util.gotoQuote(parseInt(options.id), options.name, options.code)
-        //       }
-        //     } else if (page == 'search') {
-        //       util.gotoSearchPage('search', '')
-        //     }
-        //   }
-        // }
+        var that = this;
+        console.log(options);
+        if (options && options.ticker) {
+            util.gotoStockPage(options.ticker, options.companyName, options.currentTimeIndex, options.currentInfoIndex);
+        }
     },
 
     onReady: function () {
@@ -76,18 +66,17 @@ Page({
         this.stopTimer();
     },
 
-    //分享
     onShareAppMessage: function () {
+        let that = this;
         return {
-            title: `看盘`,
-            desc: `${getApp().globalData.shareDesc}`,
-            path: `/pages/kanpan/kanpan`
+            title: "市场行情",
+            desc: getApp().globalData.shareDesc,
+            path: '/pages/market/market'
         }
     },
-
     //下拉刷新
     onPullDownRefresh: function () {
-       this.getData(function(){wx.stopPullDownRefresh()})
+        this.getData(function(){wx.stopPullDownRefresh()})
         // wx.stopPullDownRefresh();
     },
 
@@ -110,62 +99,34 @@ Page({
     getData: function (callback) {
         var that = this
         helper.quoteMarketIndex(this, this.data.marketIndex)
-        // if (stockLists[0].length == 0) {
-            wx.getStorage({
-                key: lambda_key,
-                success: function (res) {
-                    if (res && res.data && res.data['watchlist']) {
-                        stockLists[0] = res.data['watchlist']
-                        if (stockLists[0].length==0) return
-                        let tickers = stockLists[0].map(stk => stk.ticker)
-                        putil.realtime_price(tickers, function (results) {
-                            if(results.length == undefined){
-                              results = [results]
-                            }
-                            stockLists[0] = putil.quoteRealTimePriceCallback(results)
-                            that.setData({ showList: stockLists[that.data.currListIndex] })
-                            let data = res.data
-                            data['watchlist'] = stockLists[0]
-                            wx.setStorage({
-                              key: lambda_key,
-                              data: data,
-                            })
-                            if(callback){
-                              callback()
-                            }
+        wx.getStorage({
+            key: lambda_key,
+            success: function (res) {
+                if (res && res.data && res.data['watchlist']) {
+                    stockLists[0] = res.data['watchlist'];
+                    if (stockLists[0].length==0) return
+                    let tickers = stockLists[0].map(stk => stk.ticker);
+                    // parser.getBatchDataFromIEX(tickers, 'chart', [{ 'key': 'range', 'value': '1d' },{'key': 'chartSimplify', 'value': 'true'}],function (list){console.log('spark',list)});
+                    parser.getStockItemList(tickers, function (list) {
+                        stockLists[0] = list;
+                        console.log(list);
+                        that.setData({ showList: stockLists[that.data.currListIndex] });
+                        let data = res.data;
+                        data['watchlist'] = stockLists[0];
+                        wx.setStorage({
+                            key: lambda_key,
+                            data: data,
                         })
-                    }
-                },
-                fail: function (res) {
-                    console.log('storage is empty')
+                        if (callback) {
+                            callback()
+                        }
+                    })
                 }
-            });
-        // }
-        // else{
-        //     let tickers = stockLists[0].length == 1 ? [stockLists[0][0].ticker] : stockLists[0].map(stk => stk.ticker)
-        //     putil.realtime_price(tickers, function (results) {
-        //       console.log(results)
-        //         stockLists[0] = putil.quoteRealTimePriceCallback(results)
-        //         that.setData({ showList: stockLists[that.data.currListIndex] })
-        //         wx.getStorage({
-        //             key: lambda_key,
-        //             success: function (res) {
-        //                 if (res && res.data)
-        //                     res.data['watchlist'] = stockLists[0]
-        //                 wx.setStorage({
-        //                     key: lambda_key,
-        //                     data: data,
-        //                     success: function(res){
-        //                         console.log(res)
-        //                     }
-        //                 })
-        //             },
-        //             fail: function (res) {
-        //                 console.log('storage is empty')
-        //             }
-        //         });
-        //     })
-        // }
+            },
+            fail: function (res) {
+                console.log('storage is empty')
+            }
+        });
 
         parser.getSectorPerformanceFromALV(function (input) {
             let sectorTables = {}
@@ -250,12 +211,6 @@ Page({
         })
     },
 
-    //listview item的点击事件
-    // onItemClickEvent: function (e) {
-    //   var data = e.currentTarget.dataset
-    //   util.gotoQuote(data.item.id, data.item.name, data.item.code)
-    // },
-
     //涨跌幅排序
     onZDFSort: function (e) {
         var tempSortState = -this.data.sortState;
@@ -272,9 +227,11 @@ Page({
             url: '../search/search'
         })
     },
+
     onSearchBarClick: function (e) {
         util.gotoSearchPage('search', '')
     },
+
     longPressStockItem: function (e) {
         console.log(e)
         if (this.data.currListIndex!=0) return;
@@ -300,13 +257,27 @@ Page({
         this.setData({ showList: showList })
         // whileLongPress = true
     },
+
     clickStockItem: function (e) {
         var data = e.currentTarget.dataset
         // console.log(data)
         util.gotoStockPage(data.item.ticker, data.item.companyName)
     },
+    switchTickerName: function (e) {
+        let that = this
+        console.log(!that.data.show_name)
+        let showList = this.data.showList
+        showList.map(item => {
+            if (item.show_name) {
+                item.show_name = false;
+            } else {
+                item.show_name = true;
+            }
+
+        })
+        this.setData({ showList: showList})
+    },
     removeStockItem: function(e){
-        console.log(e)
         let showList = this.data.showList
         showList = showList.filter(x => x.ticker != e.currentTarget.dataset.item.ticker);
         this.setData({showList:showList})
@@ -328,6 +299,5 @@ Page({
                 console.log('storage is empty')
             }
         });
-
     }
 })

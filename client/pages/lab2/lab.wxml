@@ -93,7 +93,7 @@
               <view class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" bindtap="onPortfolioSelect" data-item="{{item}}" style="width:90%">
                 <view class="" style="height:60px; width:100%;">
                   <view class="T5 S6" style="width: 100%; display:flex; flex-direction: row;margin-left:10px">{{item.name}}
-                    <view class="item_type" style="width:50px; height: 20px">主题投资</view>
+                    <!-- <view class="item_type" style="width:50px; height: 20px">主题投资</view> -->
                     <!-- <image class="inline_icon_right" src="../../images/Info_01-512.png" />  -->
                   </view>
                   <view class="minor_cell_placeholder" style=" margin-left:10px">
@@ -143,12 +143,14 @@
             </view>
           </view>
           <view class="weui-flex menu_bar">
+
             <!-- <image class="menu_bar__thumb" src="../../images/More-256.png" bindtap="togglePopup" data-item="{{item}}" wx:if="{{activeIndex <= 1}}" />  -->
             <!-- <image class="menu_bar__thumb" src="../../images/Info_01-512.png" /> -->
             <!-- <image class="menu_bar__thumb" src="../../images/List-512.png" />  -->
           </view>
         </view>
       </block>
+          <view class="S3 T2" style="text-align:center;width:100%;background-color:#ebebeb" wx:if="{{collection.length==0}}">暂无数据，点击上方搜索栏创建新策略</view>
     </view>
   </view>
 </view>

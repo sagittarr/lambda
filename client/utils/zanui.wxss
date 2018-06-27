@@ -1503,8 +1503,8 @@
 }
 
 .zan-panel-title {
-  font-size: 14px;
-  line-height: 1;
+  font-size: 16px;
+  line-height: 20px;
   color: #999;
   padding: 20px 15px 0 15px;
 }
@@ -2172,4 +2172,21 @@
 .zan-toptips--show {
   -webkit-transform: translateZ(0) translateY(0);
   opacity: 1;
+}
+
+
+.doc-title {
+  position: relative;
+  padding: 15px 0;
+  margin: 10px 15px;
+  line-height: 20px;
+  font-size: 14px;
+  color: #666;
+}
+.doc-description {
+  margin: 14px 0;
+  padding: 0 15px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #666;
 }

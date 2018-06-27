@@ -6,7 +6,7 @@ var util = require('../../utils/util.js')
 Page({
     data: {
         userInfo: {},
-        version: '0.0.1',
+        version: '1.0',
         logged: false,
         takeSession: false,
         requestResult: '',
@@ -18,6 +18,18 @@ Page({
           { name: 'greenGain', value: '绿涨红跌' },
           { name: 'redGain', value: '红涨绿跌', checked: 'true' }
         ]
+    },
+    onShareAppMessage: function (options) {
+        let that = this;
+        return {
+            path: '/pages/about/about',
+            success: function (){
+                wx.showToast({
+                    title: '转发成功！',
+                    icon: 'success'
+                });
+            }
+        };
     },
     flodFn: function () {
       this.setData({

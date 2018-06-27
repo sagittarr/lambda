@@ -1,16 +1,16 @@
-var yahooFinance = require('yahoo-finance');
-var Promise = require('promise')
-var _u = require('underscore');
+const yahooFinance = require('yahoo-finance');
+const Promise = require('promise')
+const _u = require('underscore');
 const _  = _u;
 const axios = require('axios')
 var STK = require('./StockData.js')
 var StockData = STK.StockData;
-var StockDataFactory = STK.StockDataFactory;
+const StockDataFactory = STK.StockDataFactory;
 var AggregationData = STK.Aggregation;
-var AggregationFactory = STK.AggregationFactory
-var StrategyBuilder = require('./StrategyBuilder')
+const AggregationFactory = STK.AggregationFactory
+const StrategyBuilder = require('./StrategyBuilder')
 const ExtApi = require('./externalApi')
-
+const Calculator = require('./QuantCalculater')
 
 var knex = require('knex')({
     client: 'mysql',
@@ -136,12 +136,19 @@ async function buildStrategyFromPhases(phases){
                 var timeRange = SplitTimeRange(timeIds, strategyData.dateIndex, strategyData.values, spy, phases[0].from)
                 strategyData.benchmark = spy
                 strategyData.inceptionDate = phases[0].from
-                strategyData.computeQuantMetric()
+                strategyData.quant['inception'] =  Calculator.computeAll(strategyData.values)
+
                 var result = {}
                 result.benchmark = spy;
-                result.dataset = strategyData
-                result.timeRange = timeRange
-                result.quant = strategyData.quant
+                result.dataset = strategyData;
+                result.timeRange = timeRange;
+                result.quant = strategyData.quant;
+                timeRange.map(tr=>{
+                    if(tr.timeId == 'inception'){
+                        result.quant['benchmark'] = Calculator.computeAll(tr.spyValues)
+                    }
+                });
+
                 resolve(result)
             })
         }).catch(function (err) {
@@ -163,14 +170,15 @@ async function smartLoadIntraday(request){
     return new Promise(function(resolve, reject){
         readTable('intraday',{'id': request.ticker+'_'+ request.source}).then(function(rows){
             console.log(rows)
-            if (rows.length === 0) {
-                // if(request.source === 'iex'){
-                    var iexReq = {apiUrl: request.apiUrl}
-                    ExtApi.call(iexReq).then(function (res) {
-                        insertTable('intraday',{'id': request.ticker+'_'+ request.source}, {'id': request.ticker+'_'+ request.source, 'ticker': request.ticker, 'source':request.source, 'data': JSON.stringify(res)})
-                        resolve(res)
-                    }).catch(function(err){console.error(err);reject(err)})
-                // }
+            if (rows.length == 0) {
+                console.log('call api ' + request.apiUrl)
+                var iexReq = {apiUrl: request.apiUrl}
+                ExtApi.asking(iexReq).then(function (res) {
+                    console.log(res)
+                    insertTable('intraday',{'id': request.ticker+'_'+ request.source}, {'id': request.ticker+'_'+ request.source, 'ticker': request.ticker, 'source':request.source, 'data': JSON.stringify(res)})
+                    resolve(res)
+                }).catch(function(err){console.error(err);reject(err)})
+
             }
             else {
                 resolve(JSON.parse(rows[0].data))
@@ -250,9 +258,9 @@ async function loadMultipleStockData(tickers) {
 
 
 
-async function deleteProfile(profile, response) {
+async function deleteProfile(id, response) {
     knex('portfolio_metadata')
-        .where({ id: profile.id })
+        .where({ id: id })
         .del().then(function(res){response.data =res})
 }
 async function createNewProfile(profile, response) {
@@ -269,14 +277,14 @@ async function createNewProfile(profile, response) {
     })
 }
 
-function updateProfileCalculationData(id, table) {
+function updateProfileCalculationData(id, quant) {
     if (id) {
         console.log('updating profile calculation data')
-        knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(table)}).then(function (result) { console.log(result) })
+        knex('portfolio_metadata').where('id', '=', id).update({ ratiosTable: JSON.stringify(quant)}).then(function (result) { console.log(result) })
     }
 }
 async function updateProfile(profile, response) {
-  knex('portfolio_metadata').where('id', '=', profile.id).update({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), phases: JSON.stringify(profile.phases) }).then(function (data) {
+  knex('portfolio_metadata').where('id', '=', profile.id).update({ id: profile.id, name: profile.name, desp: profile.desp, inception: profile.inception, last_update: profile.last_update, publisher: profile.publisher, curr_holds: JSON.stringify(profile.curr_holds), ratiosTable: JSON.stringify(profile.ratiosTable), phases: JSON.stringify(profile.phases)}).then(function (data) {
     console.log(data);
     response.data = data
   })
@@ -449,6 +457,8 @@ module.exports = {
     retryer: reTryer,
     deleteProfile:deleteProfile,
     convertHistoricalData:convertHistoricalData,
-    smartLoadIntraday:smartLoadIntraday
+    smartLoadIntraday:smartLoadIntraday,
+    readTable: readTable,
+    insertTable: insertTable
 };
 

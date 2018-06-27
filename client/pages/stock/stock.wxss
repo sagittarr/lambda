@@ -1,6 +1,6 @@
 @import "../common/KLineView/KLineView.wxss";
 @import "../common/FundView/FundView.wxss";
-
+@import "../../utils/zanui.wxss";
 #section_quotation {
     width: 750rpx;
     height: 213rpx;
@@ -224,3 +224,41 @@
     text-align: center;
     line-height: 270rpx;
 }
+.table {
+  border: 0px solid darkgray;
+}
+.tr {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  height: 1.75em; 
+  align-items: center;
+}
+.td {
+    width:40%;
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+}
+.bg-w{
+  background: silver;
+}
+.bg-g{
+  background: #edf0f4;
+}
+.th {
+  width: 40%;
+  justify-content: center;
+  background: #3366FF;
+  color: #fff;
+  display: flex;
+  height: 3rem;
+  align-items: center;
+}
+/* .doc-description {
+  margin: 14px 0;
+  padding: 0 15px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #666;
+} */

@@ -7,12 +7,20 @@ const NewsItem = require('../models/NewsItem.js')
 const SectorPerf = require('../models/SectorPerformance.js')
 const config = require('../config')
 
+
+function quoteSingleStockFromIEX(ticker, option, callback){
+    var url = 'https://api.iextrading.com/1.0/stock/'+ticker+'/'+option
+    api.call3rdPartyAPI('IEX', url, {}, function (result) {
+        callback(result)
+    })
+}
+
 function getQuotation(ticker, callback){
     api.quoteYahooFinance(ticker, ['summaryDetail','price'],function(quote){
-        // console.log(quote)
-        var quotePrice = quote.price
-        var quoteDetail = quote.summaryDetail
-        var result = new Quotation(
+        let quotePrice = quote.price;
+        let quoteDetail = quote.summaryDetail;
+        // console.log(quotePrice);
+        let result = new Quotation(
             quotePrice.regularMarketPrice,
             quotePrice.regularMarketChange,
             quotePrice.regularMarketChangePercent,
@@ -22,34 +30,53 @@ function getQuotation(ticker, callback){
             NaN,
             NaN,
             NaN,
-            quoteDetail.volume,
+            (parseInt(quoteDetail.volume / 1000000)).toFixed(1) + 'M',
+            parseInt(quoteDetail.volume),
             NaN,
-            (parseInt(quoteDetail.marketCap / 1000000)).toString()+'M',
+            (parseInt(quoteDetail.marketCap / 1000000000)).toFixed(1)+'B',
             NaN,
             NaN,
             NaN,
             quotePrice.regularMarketTime,
-            quotePrice.regularMarketTime,
-            'brown',
-            ticker
-        )
+            quotePrice.preMarketTime,
+            'gainsboro',
+            ticker,
+            quotePrice.marketState,
+        );
         callback(result)
     })
-    // getSectorPerformanceFromALV(function (result) {
-    //     console.log(result)
-    // })
 }
 
-function getBatchDataFromIEX(tickers, quote, callback){
+function getStockItemList(tickers,callback) {
+  getBatchDataFromIEX(tickers,'quote', '', function(res){
+    callback(parseStockItemList(res, tickers))
+  })
+}
+
+function getBatchDataFromIEX(tickers, quote, options, callback){
     var url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols=' + tickers.join(',') +'&types='+ quote
+    if(options && options!=''){
+      options.map(kv=>{url = url + '&'+kv.key +'='+kv.value})
+    }
     api.call3rdPartyAPI('IEX', url, {}, function (batchResult) {
+        // console.log(batchResult)
         callback(batchResult)
     })
 }
+
+function parseStockItemList(result, tickers) {
+  let list = []
+  tickers.map(ticker => {
+    // console.log(result[ticker].quote)
+    list.push(parseStockItemFromIEX(result[ticker].quote))
+  })
+  return list
+}
+
 function parseStockItemFromIEX(item){
     return new StockItem(
       item.symbol, 
-      item.companyName.replace(new RegExp('&amp;','g'),'\&'),
+      item.companyName,
       item.changePercent,
       item.latestPrice
       );
@@ -88,6 +115,7 @@ function buildSectorPerformanceObject(data){
         {name: 'Utilities',shorterName :'Utilities', nameCN: '公用事业', desp : ''}]
     return sectorList.map(sector=> new SectorPerf(sector.shorterName, sector.nameCN, sector.desp, data[sector.name]))
 }
+
 function getSectorPerformanceFromALV(callback){
     var url = 'https://www.alphavantage.co/query?function=SECTOR&apikey=demo'
     api.call3rdPartyAPI('ALV', url, {}, function(result){
@@ -106,61 +134,52 @@ function getMinuteData(ticker, option, callback, source = 'IEX'){
         if(iexQuote && iexChartData){
             var minutes = []
             var preClose = iexQuote.previousClose
+            var closeAttribute = 'close'
             iexChartData.map(minute => {
+              if (!minute[closeAttribute]){
+                closeAttribute = 'marketClose'
+              }
                 minutes.push(new MinuteData(
                     parseInt(minute.minute.replace(':', '')),
-                    parseFloat(minute.marketClose) * 1000,
-                    parseFloat(minute.marketAverage) * 1000,
+                    parseFloat(minute[closeAttribute]) * 1000,
+                    0,
                     parseInt(minute.marketVolume),
                     parseInt(minute.marketNotional)))
-                if (isNaN(parseFloat(minute.marketClose))) { //skip NaN data
+                if (minute[closeAttribute] == 0 || isNaN(parseFloat(minute[closeAttribute]))) { //skip NaN/ 0 data
                     var time = minutes[minutes.length - 1].time
                     minutes[minutes.length - 1] = minutes[minutes.length - 2]
                     minutes[minutes.length - 1].time = time
                 }
             })
+            let avgSum = 0
+            minutes.map((minData, i)=>{
+              avgSum += minData.price 
+              minData.avg = (avgSum/(i+1)).toFixed(2)
+            });
             callback({ close: preClose * 1000, goods_id: 10000, market_date: parseInt(iexChartData[0].date), minutes: minutes })
         }
     }
     api.call3rdPartyAPI("IEX",'https://api.iextrading.com/1.0/stock/'+ticker+'/quote', {}, function (_iexQuote) {
         iexQuote = _iexQuote
-        console.log(_iexQuote)
+        // console.log(_iexQuote)
         handle()
     })
-    var options = {
-      url: config.service.db_handler,
-      data: { operation: 'LOAD_INTRADAY', ticker: ticker, source: 'IEX', apiUrl: 'https://api.iextrading.com/1.0/stock/' + ticker + '/chart/1d' },
-      success(res) {
-        let _iexChartData = res.data.data
-        console.log("LOAD_INTRADAY", _iexChartData)
+    api.call3rdPartyAPI("IEX",'https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, {convertKLineChart: true, freq: option.freq}, function (_iexChartData) {
         iexChartData = _iexChartData
-        console.log(iexChartData)
+        // console.log(_iexChartData)
         handle()
-      },
-      fail(error) {
-        util.showModel('请求失败', error);
-        console.log('LOAD_INTRADAY', error);
-      }
-    }
-    wx.request(options);
-    // api.call3rdPartyAPI("IEX",'https://api.iextrading.com/1.0/stock/'+ticker+'/chart/'+option.range, {convertKLineChart: true, freq: option.freq}, function (_iexChartData) {
-    //     iexChartData = _iexChartData
-    //     console.log(_iexChartData)
-    //     handle()
-    // })
+    })
 }
 
 function getKlineData(ticker, option, callback, source= 'IEX'){
-    // if(option.range === '5y'){
-    // console.log(option)
     var options = {
         url: config.service.db_handler,
         data: { operation: 'READ_HISTORY', ticker: ticker, source : 'iex', option: option },
         success(result) {
-            console.log("read LOAD", result.data.data)
+            // console.log("read LOAD", result.data.data);
             var kline = []
             result.data.data.map(data=>{
-                var klineData = new KlineData(parseInt(data.date.replace(/-/g,'')), parseFloat(data.open)*1000, parseFloat(data.high)*1000, parseFloat(data.low)*1000, parseFloat(data.close)*1000, parseFloat(data.vwap)*1000,undefined,undefined,parseFloat(data.volume),parseFloat(data.close)*1000,parseFloat(data.volume) )
+                let klineData = new KlineData(parseInt(data.date.replace(/-/g,'')), parseFloat(data.open)*1000, parseFloat(data.high)*1000, parseFloat(data.low)*1000, parseFloat(data.close)*1000, parseFloat(data.vwap)*1000,undefined,undefined,parseFloat(data.volume),parseFloat(data.close)*1000,parseFloat(data.volume) )
                 kline.push(klineData)
             })
             callback(kline)
@@ -174,8 +193,8 @@ function getKlineData(ticker, option, callback, source= 'IEX'){
     return
 }
 function getNewsItems(tickers, callback){
-    var newsItems = {}
-    getBatchDataFromIEX(tickers,'news', function(results){
+    var newsItems = {};
+    getBatchDataFromIEX(tickers,'news', '', function(results){
         tickers.map(ticker=>{
             newsItems[ticker] = []
             results[ticker].news.map(newsData=>{
@@ -193,4 +212,8 @@ module.exports = {
     getBatchDataFromIEX : getBatchDataFromIEX,
     getNewsItems: getNewsItems,
     getSectorPerformanceFromALV: getSectorPerformanceFromALV,
-    getStockListFromIEX: getStockListFromIEX}
+    getStockListFromIEX: getStockListFromIEX,
+    parseStockItemFromIEX:parseStockItemFromIEX,
+    getStockItemList: getStockItemList,
+    // getCompanyInfo: getCompanyInfo,
+    quoteSingleStockFromIEX: quoteSingleStockFromIEX};
