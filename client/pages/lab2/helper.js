@@ -72,17 +72,6 @@ function quoteMarketIndex (that, marketIndex) {
 }
 
 function quoteProfileDailyChangeFromYHD(profile, that) {
-    // let tickers
-    // if(profile.isLocal){
-    //     tickers = profile.tickers
-    // }
-    // else{
-    //     if (profile.curr_holds && profile.curr_holds[0] && typeof(profile.curr_holds[0]) === typeof("str"))
-    //         tickers = profile.curr_holds
-    //     else{
-    //         tickers = profile.curr_holds.map(stock=>stock.ticker)
-    //     }
-    // }
     putils.realtime_price(profile.tickers, function (results) {
         var chg_pct = 0
         if (results == undefined) {
@@ -144,7 +133,6 @@ function loadProfileFromServer(that) {
             });
 
             that.data.public_list.forEach(function (profile) {
-                // quoteChangePrecentageForProfile(profile, that);
                 quoteProfileDailyChangeFromIEX(profile, that)
             })
             that.showProfileList()

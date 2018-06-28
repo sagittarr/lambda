@@ -1,11 +1,12 @@
 
-function NewsItem(url, from, newsId, pt, sortId, title) {
+function NewsItem(url, from, newsId, pt, sortId, title, content) {
 	this.url = url
 	this.from = from
 	this.newsId = newsId
-	this.time = formatTime(pt)
+	this.time = pt
 	this.sortId = sortId
 	this.title = title
+	this.content = content
 
 	function formatTime(pt) {
 		// 2015-10-19 13:21:00.000  -->  02-13

@@ -72,5 +72,34 @@ function call3rdPartyAPI(source, apiUrl, arg, callback){
         }
         wx.request(options1);
     }
+    else if(source === 'YHD'){
+        var opt = {
+            url: config.service.stockHistoryUrl,
+            data: {source: 'YHD', ticker: arg.ticker, module: arg.module},
+            success(result) {
+                callback(result)
+            },
+            fail(error) {
+                console.log('request fail', error);
+            }
+        };
+        wx.request(opt);
+    }
+    else{
+        let option = {
+            url: config.service.stockHistoryUrl,
+            data: {
+                source: '',
+                apiUrl: encodeURIComponent(apiUrl)
+            },
+            success(result) {
+                callback(result.data.data)
+            },
+            fail(error) {
+                console.log('request fail', error);
+            }
+        }
+        wx.request(option);
+    }
 }
 module.exports = {quoteYahooFinance : quoteYahooFinance, call3rdPartyAPI: call3rdPartyAPI}

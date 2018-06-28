@@ -1,5 +1,6 @@
 var api  = require('../tools/db_api.js');
 var _ = require('underscore');
+// const ExtApi = require('../tools/externalApi');
 var knex = require('knex')({
     client: 'mysql',
     connection: {
@@ -20,6 +21,13 @@ module.exports = async (ctx, next) => {
             console.log('final data', ctx.state.data)
         }).catch(function(err){ctx.state.data = err; console.error(err)})
     }
+    // else if(ctx.query.operation.toUpperCase() === 'API'){
+    //     console.log('API', ctx.query);
+    //     let iexReq = {apiUrl: ctx.query.apiUrl};
+    //     ExtApi.asking(iexReq).then(function (res) {
+    //         ctx.state.data = res;
+    //     }).catch(function(err){console.error(err);reject(err)});
+    // }
     else if(ctx.query.operation.toUpperCase() === 'LOAD_INTRADAY'){
         console.log('LOAD_INTRADAY', ctx.query)
         await api.smartLoadIntraday({ticker: ctx.query.ticker, source: ctx.query.source, apiUrl: ctx.query.apiUrl}).then(function(res){

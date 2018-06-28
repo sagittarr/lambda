@@ -2,7 +2,11 @@ var yahooFinance = require('yahoo-finance');
 var _ = require('underscore');
 var api = require('../tools/db_api.js')
 const axios = require('axios');
-
+const YahooFinanceAPI = require('yahoo-finance-data');
+const yhfd = new YahooFinanceAPI({
+    key: 'dj0yJmk9N29ibVZ0ZkRncGFnJmQ9WVdrOWIxUm5Wemt4TldVbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD03YQ--',
+    secret: 'aca598741b22f2b8355dec4d3bf891f97efe3bca'
+});
 
 module.exports = async (ctx, next) => {
     if (ctx.query.source === 'ALV') {
@@ -44,7 +48,21 @@ module.exports = async (ctx, next) => {
             ctx.state.data = quotes
         })
     }
+    else if(ctx.query.source === 'YHD'){
+        let ticker = ctx.query.ticker;
+        if(ctx.query.module === 'getHeadlinesByTicker'){
+            await yhfd.getHeadlinesByTicker(ticker)
+                .then(data => console.log(ctx.state.data = data.query.results))
+                .catch(err => console.log(err));
+        }
+    }
     else {
-        ctx.state.data = 'unexpected source'
+        let apiUrl = decodeURIComponent(ctx.query.apiUrl);
+        console.log(apiUrl);
+        await axios.get(apiUrl)
+            .then(function(response){
+                console.log(response.data)
+                ctx.state.data = response.data
+            });
     }
 }

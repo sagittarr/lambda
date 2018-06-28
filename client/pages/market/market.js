@@ -104,7 +104,7 @@ Page({
             success: function (res) {
                 if (res && res.data && res.data['watchlist']) {
                     stockLists[0] = res.data['watchlist'];
-                    if (stockLists[0].length==0) return
+                    if (stockLists[0].length === 0) return;
                     let tickers = stockLists[0].map(stk => stk.ticker);
                     // parser.getBatchDataFromIEX(tickers, 'chart', [{ 'key': 'range', 'value': '1d' },{'key': 'chartSimplify', 'value': 'true'}],function (list){console.log('spark',list)});
                     parser.getStockItemList(tickers, function (list) {

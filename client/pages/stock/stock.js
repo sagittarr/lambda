@@ -3,7 +3,7 @@ const KlineData = require('../../models/KLineData.js');
 const NewsItem = require('NewsItem.js');
 const Quotation = require('../../models/Quotation.js');
 const parser = require('../../parsers/quote_parser.js');
-const dataApi = require('../../api/data_api.js');
+// const dataApi = require('../../api/data_api.js');
 const util = require('../../utils/util.js');
 const api = require('../../api/data_api.js');
 const color_style = getApp().globalData.color_style;
@@ -141,8 +141,6 @@ Page({
         initData(this)
         this.kLineView = new KLineView()
         this.timerId = -1             // 循环请求id
-
-        console.log('stock page onLoad ', this.data.ticker, option)
         util.showBusy('请求中...');
         this.getData()
     },
@@ -150,7 +148,6 @@ Page({
 
     onShareAppMessage: function (options) {
         let that = this;
-        console.log(that.data.currentTimeIndex)
         return {
             title : that.data.ticker,
             desc: '个股信息',
@@ -201,19 +198,20 @@ Page({
 
     // 循环请求
     getData: function () {
-        let that = this
+        let that = this;
 
         // 请求行情
         this.getQuotationValue(function () {
-            wx.hideNavigationBarLoading()
-            wx.stopPullDownRefresh()
-        })
+            wx.hideNavigationBarLoading();
+            wx.stopPullDownRefresh();
+            that.getQuotationTrend(function () {
+                wx.hideNavigationBarLoading();
+                util.showSuccess('请求成功');
+                wx.stopPullDownRefresh();
+            })
+        });
         // 请求走势，请求哪个走势，在getQuotationTrend中判断
-        this.getQuotationTrend(function () {
-            wx.hideNavigationBarLoading()
-            util.showSuccess('请求成功');
-            wx.stopPullDownRefresh()
-        })
+
         // 请求个股资讯，具体是否请求，在getNews中判断
         this.getNews(function () {
             wx.hideNavigationBarLoading()
@@ -229,7 +227,6 @@ Page({
         })
         util.isStockInWatchList(this.data.ticker, function(res){
             that.setData({ isAddToZxg: res})
-            console.log(that.data.ticker,that.data.isAddToZxg)
         })
     },
     getFinanicalTableFromYH(callback){
@@ -250,7 +247,6 @@ Page({
             fTable.push({ 'code': 'freeCashflow', 'col1': quote['financialData'].freeCashflow });
             fTable.push({ 'code': 'totalRevenue', 'col1': quote['financialData'].totalRevenue });
             that.setData({finanicalTable: fTable});
-            console.log(quote)
             callback();
         })
     },
@@ -265,7 +261,6 @@ Page({
             stats.institutionPercent = stats.institutionPercent + '%'
             stats.latestEPSDate = stats.latestEPSDate.replace('-', '').replace('-', '')
             that.setData({ keyStats: stats })
-            // console.log(stats)
         })
     },
     getCompanyInfo: function(callback){
@@ -304,7 +299,9 @@ Page({
                 quotation.realVolume,
                 parseFloat(quotation.price)*1000,
                 quotation.realVolume);
-            that.setData({ quotation: quotation, latestKline: klineData});
+            that.setData({
+                quotation: quotation,
+                latestKline: klineData});
             if (callback != null && typeof (callback) == 'function') {
                 callback()
             }
@@ -321,7 +318,6 @@ Page({
                 callback()
             }
             util.showSuccess('请求成功');
-            console.log(minutes)
             that.kLineView.drawMinuteCanvas(minutes, getCanvasId(quotePeriod))
 
         })
@@ -335,13 +331,12 @@ Page({
             if (callback != null && typeof(callback) == 'function') {
                 callback()
             }
-            if(quotePeriod === 100 && that.data.latestKline && that.data.latestKline.time > klineData[klineData.length -1].time){
+            if(quotePeriod === 100 && that.data.latestKline && that.data.latestKline.time < klineData[klineData.length -1].time ){
                 klineData.push(that.data.latestKline);
             }
             movingAverage(klineData, 'ma20');
             movingAverage(klineData, 'ma5');
             movingAverage(klineData, 'ma10');
-            // console.log(klineData);
             that.kLineView.drawKLineCanvas(klineData, getCanvasId(quotePeriod), quotePeriod);
         })
     },
@@ -361,20 +356,31 @@ Page({
         // 如果数据已请求完成，不再请求
         if (this.getIsInfoLoad()) return;
         wx.showNavigationBarLoading();
-        var that = this
-        var ticker = that.data.ticker
-        parser.getNewsItems([ticker], function(newsItems){
-            if (callback != null && typeof (callback) == 'function') {
-                callback()
-            }
-            if (newsItems.hasOwnProperty(ticker) && newsItems[ticker].length>0) {
-                that.setIsInfoLoad('0')
-                that.setData({
-                    news: newsItems[ticker]
-                })
-                console.log(newsItems[ticker])
-            }
-        })
+        let that = this;
+        let ticker = that.data.ticker;
+
+        api.call3rdPartyAPI('YHD','',{ticker:ticker, module: 'getHeadlinesByTicker'}, function(res){
+            let newsItems = res.data.data.Articles.Article.map(item=>{
+                return new NewsItem('',item.Source,'',item.PubDate.substr(0,5), '', item.Title, item.Content.Paragraph.join('\n').replace(/['"]+/g, ''))})
+
+                // return new NewsItem('',item.Source,'',item.PubDate, '', item.Title, encodeURIComponent(JSON.stringify(item.Content.Paragraph)))});
+            that.setIsInfoLoad('0')
+            that.setData({
+                news: newsItems
+            })
+            console.log(res.data.data.Articles.Article,newsItems)
+        });
+        // parser.getNewsItems([ticker], function(newsItems){
+        //     if (callback != null && typeof (callback) == 'function') {
+        //         callback()
+        //     }
+        //     if (newsItems.hasOwnProperty(ticker) && newsItems[ticker].length>0) {
+        //         that.setIsInfoLoad('0')
+        //         that.setData({
+        //             news: newsItems[ticker]
+        //         })
+        //     }
+        // })
 
     },
     updateWatchList: function (e) {
@@ -395,8 +401,7 @@ Page({
                 Zan.TopTips.showZanTopTips(this, '已经加入自选股');
             }
             util.isStockInWatchList(this.data.ticker, function (res) {
-                that.setData({ isAddToZxg: res })
-                console.log(that.data.ticker, that.data.isAddToZxg)
+                that.setData({ isAddToZxg: res });
             })
         }
     },
@@ -479,20 +484,13 @@ Page({
     },
 
     onNewsDetailEvent: function (e) {
-        var newsItem = e.currentTarget.dataset.newsItem
-        // var newsType = e.currentTarget.dataset.newsType
-        //
-        // var data = e.currentTarget.dataset
-        // var url = Util.urlNavigateEncode(newsItem.url)
+        let newsItem = e.currentTarget.dataset.newsItem;
         wx.navigateTo({
-            url: `../newsdetail/newsdetail?date=${newsItem.time}&title=${newsItem.title}&content=${newsItem.summary}`
+            url: `../newsdetail/newsdetail`
+            // url: '../newsdetail/newsdetail?item='+JSON.stringify(newsItem)
         })
-        // dataApi.call3rdPartyAPI(newsItem.url,{}, function(content){
-        //     console.log(content)
-        //     wx.navigateTo({
-        //         url: `../newsdetail/newsdetail?date=${newsItem.time}&title=${newsItem.title}&content=${content}`
-        //     })
-        // })
+        getApp().globalData.newsItem = newsItem;
+
     },
 
     // 添加删除自选股

@@ -1,7 +1,7 @@
 // pages/newsdetail/newsdetail.js
-
-// var Api = require('../../api/api.js')
-var Util = require('../../utils/util.js')
+const WxParse = require('../../wxParse/wxParse.js');
+const dataApi = require('../../api/data_api.js');
+var Util = require('../../utils/util.js');
 // var newsUtil = require('../../utils/newsUtil.js')
 
 Page({
@@ -9,18 +9,25 @@ Page({
     title: "",
     time: "",
     content: "",
-    url: ''
+    url: '',
+      source: ''
   },
   onLoad: function (options) {
-    // newsUtil.updateReadNews(options.id)
-
+    let that = this;
+    let item = getApp().globalData.newsItem
+    console.log(options, getApp().globalData.newsItem)
     this.setData({
-      time: options.date,
-      content: options.content,
-      title: options.title
+      time: item.date,
+      content: item.content.replace(new RegExp('&amp;','g'),'\&'),
+      title: item.title,
+        source: item.from
     })
-    // this.time = options.time
-    // this.getData(options.id, options.type, Util.urlNavigateDecode(options.url))
+      // dataApi.call3rdPartyAPI('',options.url,{}, function(content){
+      //     // console.log(content)
+      //     let article = content;
+      //     WxParse.wxParse('article', 'html', article, that, 0);
+      //     console.log(article)
+      // })
   },
   onReady: function () {
     // 页面渲染完成

@@ -8,7 +8,7 @@ const helper = require('./helper.js')
 
 Page({
     data: {
-        tabs: ["公开", "本地"],
+      tabs: ["精选组合", "自建组合"],
         activeIndex: 0,
         sliderOffset: 0,
         sliderLeft: 0,

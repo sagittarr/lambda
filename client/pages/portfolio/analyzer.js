@@ -80,7 +80,7 @@ Page({
             console.error('getSystemInfoSync failed!');
         }
         if(!options || !options.profile){
-            console.error('no profile provided');f
+            console.error('no profile provided');
             return;
         }
         let profile = JSON.parse(options.profile);
