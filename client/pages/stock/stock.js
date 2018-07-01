@@ -360,15 +360,23 @@ Page({
         let ticker = that.data.ticker;
 
         api.call3rdPartyAPI('YHD','',{ticker:ticker, module: 'getHeadlinesByTicker'}, function(res){
-            let newsItems = res.data.data.Articles.Article.map(item=>{
-                return new NewsItem('',item.Source,'',item.PubDate.substr(0,5), '', item.Title, item.Content.Paragraph.join('\n').replace(/['"]+/g, ''))})
+          console.log('news', res)
+          let newsItems = res.data.data.Articles.Article.map(item => {
+            try {
+              return new NewsItem('', item.Source, '', item.PubDate.substr(0, 5), '', item.Title, item.Content.Paragraph.join('\n').replace(/['"]+/g, ''))
+            }
+            catch (TypeError) {
+              console.log('errors in news input',item)
+              return null;
+            }
 
-                // return new NewsItem('',item.Source,'',item.PubDate, '', item.Title, encodeURIComponent(JSON.stringify(item.Content.Paragraph)))});
+          });
+          newsItems = newsItems.filter(x=>x!=null);           
             that.setIsInfoLoad('0')
+
             that.setData({
                 news: newsItems
             })
-            console.log(res.data.data.Articles.Article,newsItems)
         });
         // parser.getNewsItems([ticker], function(newsItems){
         //     if (callback != null && typeof (callback) == 'function') {

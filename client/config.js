@@ -3,8 +3,8 @@
  */
 
 // 此处主机域名修改成腾讯云解决方案分配的域名
-// var host = 'https://782368275.lambdatrader.club';
-var host = "https://kkbkpixp.qcloud.la";
+var host = 'https://782368275.lambdatrader.club';
+// var host = "https://kkbkpixp.qcloud.la";
 // var socketHost = 'wss://nbpuar4i.ws.qcloud.la';
 var config = {
     // portfolio: 'port1',
