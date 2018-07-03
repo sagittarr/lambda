@@ -331,8 +331,9 @@ Page({
             if (callback != null && typeof(callback) == 'function') {
                 callback()
             }
-            if(quotePeriod === 100 && that.data.latestKline && that.data.latestKline.time < klineData[klineData.length -1].time ){
-                klineData.push(that.data.latestKline);
+            if (quotePeriod === 100 && that.data.latestKline.time > klineData[klineData.length - 1].time ) {
+              // console.log('lll', that.data.latestKline, klineData[klineData.length - 1].time)
+              klineData.push(that.data.latestKline);
             }
             movingAverage(klineData, 'ma20');
             movingAverage(klineData, 'ma5');
@@ -505,17 +506,6 @@ Page({
     onZxgTap: function(e) {
         console.log("page stock onZxgTap", e)
         var that = this
-
-        // Api.stock.commitOptionals({
-        //     ticker: that.data.ticker
-        // }).then(function (res) {
-        //     console.log("添加自选股", res)
-        //     if (res == 0 || res == '0') {
-        //         that.isCurrentGoodsInZxgList()
-        //     }
-        // }, function (res) {
-        //     console.log("添加自选股", res)
-        // })
     },
 
     getIsInfoLoad: function () {
