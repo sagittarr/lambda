@@ -129,6 +129,15 @@ function movingAverage(klineData = [new KlineData()], option){
         }
     });
 };
+function initData(that) {
+  // 初始化数据显示
+  // Quotation(price, zd, zdf, open, high, low, hsl, syl, sjl, cjl, jl, zz, cje, lb, ltsz, date, time, color, ticker)
+  // var quota = new Quotation('--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
+  var quota = new Quotation('--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
+  that.setData({
+    quotation: quota
+  });
+};
 
 Page({
     data: {
@@ -150,6 +159,12 @@ Page({
         infoSwiperHeight: 0,    // 新闻列表、资金图高度
         infoCls: '0',
         fundViewData: {},
+        gradeHistoryTable: [
+          { "code": "", "col1": "", "col2": "", "col3": "" },
+          { "code": "", "col1": "", "col2": "", "col3": "" },
+          { "code": "", "col1": "", "col2": "", "col3": "" },
+          { "code": "", "col1": "", "col2": "", "col3": "" },
+          { "code": "", "col1": "", "col2": "", "col3": "" }],
         isInforLoad: {    // 个股新闻等是否已加载
             news: false,
             fund: false,
@@ -179,6 +194,9 @@ Page({
             this.setData({
                 companyName: option.companyName
             })
+            this.getRecommandationTrend(function () {
+
+            });
         }
         if (option.hasOwnProperty('currentTimeIndex') ) {
             let idx = parseInt(option.currentTimeIndex);
@@ -284,9 +302,7 @@ Page({
         this.getFinanicalTableFromYH(function(){
             wx.hideNavigationBarLoading()
         });
-        this.getRecommandationTrend(function(){
 
-        });
         util.isStockInWatchList(this.data.ticker, function(res){
             that.setData({ isAddToZxg: res})
         })
@@ -296,7 +312,32 @@ Page({
         api.quoteYahooFinance(this.data.ticker, ['recommendationTrend', 'upgradeDowngradeHistory'], function (quote) {
           // console.log('rec', quote.recommendationTrend.trend);
           createRecTrendChart(quote.recommendationTrend.trend, that.windowWidth, 200);
-          console.log('udh', quote.upgradeDowngradeHistory);
+          let consensusTrend = [];
+          quote.recommendationTrend.trend.map(period=>{
+            let consensus = period.strongBuy * 5 + period.buy * 4 + period.hold * 3 + period.sell * 2 + period.strongSell * 1;
+            consensus = consensus / (period.strongBuy + period.buy + period.hold+ period.sell + period.strongSell);
+            consensusTrend.push(consensus);
+            });
+          consensusTrend.reverse();
+          // console.log('t',consensusTrend);
+          // console.log('udh', quote.upgradeDowngradeHistory.history);
+          let table = [
+            { epochGradeDate: "日期", firm: "机构", toGrade: "新评级", fromGrade: "前评级", action: "变化" }]
+
+          if (quote.upgradeDowngradeHistory.history.length <=5){
+            quote.upgradeDowngradeHistory.history.map(record => { 
+              record.epochGradeDate = record.epochGradeDate.slice(0, 10).replace(new RegExp('-', 'g'), '');
+              table.push(record);
+              })
+          }
+          else{
+            let topFive = quote.upgradeDowngradeHistory.history.slice(0,5);
+            topFive.map(record => {
+              record.epochGradeDate = record.epochGradeDate.slice(0, 10).replace(new RegExp('-', 'g'), '');
+              table.push(record);
+            })
+          }
+          that.setData({ gradeHistoryTable: table})
             callback();
         })
     },
@@ -634,12 +675,3 @@ Page({
 })
 
 
-function initData(that) {
-    // 初始化数据显示
-    // Quotation(price, zd, zdf, open, high, low, hsl, syl, sjl, cjl, jl, zz, cje, lb, ltsz, date, time, color, ticker)
-    // var quota = new Quotation('--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
-    var quota = new Quotation('--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', 0, 0, '#e64340', 0)
-    that.setData({
-        quotation: quota
-    })
-}

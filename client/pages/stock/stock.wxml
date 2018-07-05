@@ -125,8 +125,36 @@
 
   <!-- 研报 -->
   <view hidden="{{currentInfoIndex != 3}}">
-        <canvas canvas-id="RecTrendChart"  style="width:100%;height:200px;" > </canvas>
-    <!-- <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{research.length != 0}}">功能暂未开通</view> -->
+    <view class="item-tab">
+    <view class="item_title_icon C3-bg"></view>
+      <text>评级统计</text>
+    </view>
+    <canvas canvas-id="RecTrendChart"  style="width:100%;height:200px;" > </canvas>
+    <view class="item-tab">
+    <view class="item_title_icon C3-bg"></view>
+      <text>最新评级</text>
+    </view>
+    <view class="table" style="width:100%">
+      <block wx:for="{{gradeHistoryTable}}" wx:key="{{code}}">
+        <view class="tr" style='height: 2em;' wx:if="{{index % 2 == 0}}">
+          <view class="td">{{item.epochGradeDate}}</view>
+          <view class="td">{{item.firm}}</view>
+          <view class="td">{{item.toGrade}}</view>
+          <view class="td">{{item.fromGrade}}</view>
+          <view class="td">{{item.action}}</view>
+        </view>
+        <view class="tr bg-g" style='height: 2em;' wx:else>
+          <view class="td">{{item.epochGradeDate}}</view>
+          <view class="td">{{item.firm}}</view>
+          <view class="td">{{item.toGrade}}</view>
+          <view class="td">{{item.fromGrade}}</view>
+          <view class="td">{{item.action}}</view>
+        </view>
+      </block>
+    </view>
+
+
+ <!-- <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{research.length != 0}}">功能暂未开通</view> -->
   </view>
 
 </view>
