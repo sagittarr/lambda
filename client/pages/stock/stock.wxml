@@ -125,11 +125,8 @@
 
   <!-- 研报 -->
   <view hidden="{{currentInfoIndex != 3}}">
-    <view class="news_item" hover="true" hover-class="item_select" wx:key="id" wx:for="{{research}}" bindtap="onNewsDetailEvent" data-news-item="{{item}}" data-news-type="2">
-      <text class="time"> {{item.time}} </text>
-      <text class="title"> {{item.title}} </text>
-    </view>
-    <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{research.length != 0}}">功能暂未开通</view>
+        <canvas canvas-id="RecTrendChart"  style="width:100%;height:200px;" > </canvas>
+    <!-- <view class="showOnInfoEmpty" bindtap="onInfoEmptyClick" hidden="{{research.length != 0}}">功能暂未开通</view> -->
   </view>
 
 </view>

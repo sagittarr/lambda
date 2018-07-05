@@ -9,7 +9,59 @@ const api = require('../../api/data_api.js');
 const color_style = getApp().globalData.color_style;
 const Zan = require('../../utils/dist/index');
 const StockItem = require('../../models/StockItem.js');
+const wxCharts = require('../../utils/wxcharts-lambda.js');
 
+function createRecTrendChart(trend, width, height, canvasId ='RecTrendChart'){
+  let categories = trend.map(t=>{return t.period});
+  var columnChart = new wxCharts({
+    canvasId: canvasId,
+    type: 'column',
+    animation: true,
+    categories: categories,
+    series: [{
+      name: 'Strong buy',
+      data: trend.map(t => { return t.strongBuy }),
+    },
+    {
+      name: 'Buy',
+      data: trend.map(t => { return t.buy }),
+      // format: function (val, name) {
+      //   return val.toFixed(2) + '万';
+      // }
+    },
+    {
+      name: 'hold',
+      data: trend.map(t => { return t.hold }),
+    },
+    {
+      name: 'sell',
+      data: trend.map(t => { return t.sell }),
+    }, {
+      name: 'Strong sell',
+      data: trend.map(t => { return t.strongSell }),
+    }
+    ],
+    yAxis: {
+      // format: function (val) {
+      //   return Math.round(val);
+      // },
+      title: '观点数量',
+      min: 0
+    },
+    xAxis: {
+      disableGrid: false,
+      type: 'calibration'
+    },
+    // extra: {
+    //   column: {
+    //     width: 15
+    //   }
+    // },
+    width: width,
+    height: height
+  });
+  return columnChart
+}
 function getIEXHistoricalDataOption(period) {
     switch (period) {
         case 1:
@@ -111,6 +163,13 @@ Page({
     },
 
     onLoad: function (option) {
+      try {
+        var res = wx.getSystemInfoSync();
+        this.windowWidth = res.windowWidth;
+        console.info('window width: ', this.windowWidth);
+      } catch (e) {
+        console.error('getSystemInfoSync failed!');
+      }
         if (option.hasOwnProperty('ticker')) {
             this.setData({
                 ticker: option.ticker
@@ -224,9 +283,21 @@ Page({
         })
         this.getFinanicalTableFromYH(function(){
             wx.hideNavigationBarLoading()
-        })
+        });
+        this.getRecommandationTrend(function(){
+
+        });
         util.isStockInWatchList(this.data.ticker, function(res){
             that.setData({ isAddToZxg: res})
+        })
+    },
+    getRecommandationTrend(callback){
+        let that = this;
+        api.quoteYahooFinance(this.data.ticker, ['recommendationTrend', 'upgradeDowngradeHistory'], function (quote) {
+          // console.log('rec', quote.recommendationTrend.trend);
+          createRecTrendChart(quote.recommendationTrend.trend, that.windowWidth, 200);
+          console.log('udh', quote.upgradeDowngradeHistory);
+            callback();
         })
     },
     getFinanicalTableFromYH(callback){

@@ -3,18 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="722b7472-90db-49d1-8755-d4a9cca0e551" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/api/data_api.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/api/data_api.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/lab2/helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/helper.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/market/market.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/market/market.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/newsdetail/newsdetail.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/newsdetail/newsdetail.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/newsdetail/newsdetail.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/newsdetail/newsdetail.wxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/portfolio/analyzer.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/portfolio/analyzer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pages/stock/NewsItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/stock/NewsItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/lab2/lab.wxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/pages/stock/stock.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/stock/stock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/db_handler.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/db_handler.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/realtime_price.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/realtime_price.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/stock_historical_price.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/stock_historical_price.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pages/stock/stock.wxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pages/stock/stock.wxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/.idea/python.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/SHARADAR-SF1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/pipeline.py" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -28,15 +25,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="db_handler.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/controllers/db_handler.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="46">
-              <caret line="2" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="50" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -59,7 +47,7 @@
         <entry file="file://$PROJECT_DIR$/client/api/data_api.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="192">
-              <caret line="92" column="23" lean-forward="true" selection-start-line="92" selection-start-column="23" selection-end-line="92" selection-end-column="50" />
+              <caret line="92" column="23" selection-start-line="92" selection-start-column="23" selection-end-line="92" selection-end-column="50" />
             </state>
           </provider>
         </entry>
@@ -85,8 +73,8 @@
       <file leaf-file-name="stock.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/pages/stock/stock.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="488" column="42" selection-start-line="488" selection-start-column="42" selection-end-line="488" selection-end-column="42" />
+            <state relative-caret-position="192">
+              <caret line="298" column="60" selection-start-line="298" selection-start-column="60" selection-end-line="298" selection-end-column="60" />
             </state>
           </provider>
         </entry>
@@ -95,7 +83,7 @@
         <entry file="file://$PROJECT_DIR$/server/controllers/realtime_price.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="184">
-              <caret line="8" column="26" lean-forward="true" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
+              <caret line="8" column="26" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -113,7 +101,7 @@
         <entry file="file://$PROJECT_DIR$/client/models/StockItem.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="69">
-              <caret line="3" column="72" lean-forward="true" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="72" />
+              <caret line="3" column="72" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="72" />
             </state>
           </provider>
         </entry>
@@ -204,6 +192,7 @@
         <option value="$PROJECT_DIR$/client/api/data_api.js" />
         <option value="$PROJECT_DIR$/client/pages/newsdetail/newsdetail.js" />
         <option value="$PROJECT_DIR$/client/pages/stock/NewsItem.js" />
+        <option value="$PROJECT_DIR$/client/images/lambda/client/pages/stock/stock.js" />
         <option value="$PROJECT_DIR$/client/pages/stock/stock.js" />
       </list>
     </option>
@@ -299,12 +288,12 @@
       <workItem from="1527303179452" duration="1197000" />
       <workItem from="1528080149075" duration="3803000" />
       <workItem from="1528859857799" duration="11043000" />
-      <workItem from="1529646941847" duration="46464000" />
+      <workItem from="1529646941847" duration="47741000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="175327000" />
+    <option name="totallyTimeSpent" value="176604000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1477" height="797" extended-state="6" />
@@ -322,11 +311,22 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24277908" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.20029895" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.18535127" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info id="Favorites" order="2" side_tool="true" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -341,11 +341,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/pages/input/input.wxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-88" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/test/test.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="38">
@@ -630,7 +625,7 @@
     <entry file="file://$PROJECT_DIR$/server/controllers/realtime_price.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="184">
-          <caret line="8" column="26" lean-forward="true" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
+          <caret line="8" column="26" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
         </state>
       </provider>
     </entry>
@@ -644,14 +639,7 @@
     <entry file="file://$PROJECT_DIR$/client/api/data_api.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="192">
-          <caret line="92" column="23" lean-forward="true" selection-start-line="92" selection-start-column="23" selection-end-line="92" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/models/StockItem.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="3" column="72" lean-forward="true" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="72" />
+          <caret line="92" column="23" selection-start-line="92" selection-start-column="23" selection-end-line="92" selection-end-column="50" />
         </state>
       </provider>
     </entry>
@@ -669,10 +657,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/images/lambda/client/pages/stock/stock.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3749">
+          <caret line="224" column="36" selection-start-line="224" selection-start-column="13" selection-end-line="224" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/models/StockItem.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="3" column="72" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/pages/stock/stock.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="488" column="42" selection-start-line="488" selection-start-column="42" selection-end-line="488" selection-end-column="42" />
+        <state relative-caret-position="192">
+          <caret line="298" column="60" selection-start-line="298" selection-start-column="60" selection-end-line="298" selection-end-column="60" />
         </state>
       </provider>
     </entry>
